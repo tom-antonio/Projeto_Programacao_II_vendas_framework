@@ -1,0 +1,5 @@
+# Local secrets and environment files
+*.env
+*.local
+local.properties
+db_config.properties
