@@ -10,6 +10,19 @@ import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.util.Properties;
 
+import org.hibernate.SessionFactory;
+import org.hibernate.cfg.Configuration;
+
+import com.luan.vendas.model.Categoria;
+import com.luan.vendas.model.Cliente;
+import com.luan.vendas.model.Compra;
+import com.luan.vendas.model.CompraProduto;
+import com.luan.vendas.model.Fornecedor;
+import com.luan.vendas.model.FornecedorProduto;
+import com.luan.vendas.model.Produto;
+import com.luan.vendas.model.ProdutoVenda;
+import com.luan.vendas.model.Venda;
+
 public class Postgres {
 
     private static final String DEFAULT_CONFIG_PATH =
@@ -70,4 +83,40 @@ public class Postgres {
             return null;
         }
     }
+// Configurações para conexão com Hibernate
+    private static final SessionFactory SESSION_FACTORY = criarSessao();
+
+    private static SessionFactory criarSessao() {
+        try {
+            Properties propriedades = new Properties();
+            InputStream inputStream = Postgres.class.getClassLoader().getResourceAsStream("hibernate.properties");
+
+            if (inputStream == null) {
+                throw new RuntimeException("Arquivo hibernate.properties nao encontrado.");
+            }
+
+            propriedades.load(inputStream);
+
+            Configuration configuration = new Configuration();
+            configuration.setProperties(propriedades);
+            configuration.addAnnotatedClass(Categoria.class);
+            configuration.addAnnotatedClass(Cliente.class);
+            configuration.addAnnotatedClass(Fornecedor.class);
+            configuration.addAnnotatedClass(FornecedorProduto.class);
+            configuration.addAnnotatedClass(Produto.class);
+            configuration.addAnnotatedClass(Venda.class);
+            configuration.addAnnotatedClass(Compra.class);
+            configuration.addAnnotatedClass(ProdutoVenda.class);
+            configuration.addAnnotatedClass(CompraProduto.class);
+
+            return configuration.buildSessionFactory();
+        } catch (Exception e) {
+            throw new RuntimeException("Erro ao configurar Hibernate", e);
+        }
+    }
+
+    public static SessionFactory getSessionFactory() {
+        return SESSION_FACTORY;
+    }
+
 }

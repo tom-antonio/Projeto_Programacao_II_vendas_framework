@@ -18,6 +18,17 @@
         <!-- Source: https://mvnrepository.com/artifact/org.postgresql/postgresql -->
         <dependency>
             <groupId>org.postgresql</groupId>
+    <!-- JavaFX para interface gráfica -->
+    <dependency>
+      <groupId>org.openjfx</groupId>
+      <artifactId>javafx-controls</artifactId>
+      <version>22.0.1</version>
+    </dependency>
+    <dependency>
+      <groupId>org.openjfx</groupId>
+      <artifactId>javafx-fxml</artifactId>
+      <version>22.0.1</version>
+    </dependency>
             <artifactId>postgresql</artifactId>
             <version>42.7.10</version>
             <scope>compile</scope>
