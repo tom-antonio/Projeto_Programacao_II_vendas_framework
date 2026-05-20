@@ -1,5 +1,9 @@
 package com.luan.vendas.ui;
 
+import org.hibernate.SessionFactory;
+
+import com.luan.vendas.dao.Postgres;
+
 import javafx.application.Application;
 import javafx.geometry.Insets;
 import javafx.scene.Scene;
@@ -7,9 +11,6 @@ import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
-import org.hibernate.SessionFactory;
-
-import com.luan.vendas.dao.Postgres;
 
 public class TelaTesteConexao extends Application {
 

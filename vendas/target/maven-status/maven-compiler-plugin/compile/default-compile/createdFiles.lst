@@ -21,6 +21,7 @@ com/luan/vendas/controller/VendaController.class
 com/luan/vendas/controller/CategoriaController.class
 com/luan/vendas/model/Venda.class
 com/luan/vendas/controller/CompraController.class
+com/luan/vendas/ui/TelaTesteConexao.class
 com/luan/vendas/controller/ProdutoVendaController.class
 com/luan/vendas/controller/ClienteController.class
 com/luan/vendas/dao/CategoriaDao.class
