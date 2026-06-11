@@ -1,64 +1,38 @@
 package com.luan.vendas.model;
 
-import java.util.Date;
+import java.time.LocalDate;
 import java.util.List;
 
+import jakarta.persistence.CascadeType;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
+@AllArgsConstructor
+@NoArgsConstructor
+@Data
+@Entity
+
 public class Venda {
-    
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
-    private Date data_venda;
-    private double valor_total;
+
+    @ManyToOne
     private Cliente cliente;
+
+    private LocalDate data_venda;
+
+    @Column(nullable = false, length = 20)
+    private double valor_total;
+
+    @OneToMany(mappedBy = "venda", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<ProdutoVenda> produtosVenda;
-
-    public Venda() {
-    }
-
-    public Venda(int id, Date data_venda, double valor_total, Cliente cliente, List<ProdutoVenda> produtosVenda) {
-        this.id = id;
-        this.data_venda = data_venda;
-        this.valor_total = valor_total;
-        this.cliente = cliente;
-        this.produtosVenda = produtosVenda;
-    }
-
-    public int getId() {
-        return id;
-    }
-
-    public void setId(int id) {
-        this.id = id;
-    }
-
-    public Date getData_venda() {
-        return data_venda;
-    }
-
-    public void setData_venda(Date data_venda) {
-        this.data_venda = data_venda;
-    }
-
-    public double getValor_total() {
-        return valor_total;
-    }
-
-    public void setValor_total(double valor_total) {
-        this.valor_total = valor_total;
-    }
-
-    public Cliente getCliente() {
-        return cliente;
-    }
-
-    public void setCliente(Cliente cliente) {
-        this.cliente = cliente;
-    }
-
-    public List<ProdutoVenda> getProdutosVenda() {
-        return produtosVenda;
-    }
-
-    public void setProdutosVenda(List<ProdutoVenda> produtosVenda) {
-        this.produtosVenda = produtosVenda;
-    }
 }

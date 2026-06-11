@@ -1,51 +1,30 @@
 package com.luan.vendas.model;
 
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
+@AllArgsConstructor
+@NoArgsConstructor
+@Data
+@Entity
+
 public class Fornecedor {
-
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
+    
+    @Column(nullable = false, length = 100)
     private String nome_fantasia;
+
+    @Column(nullable = false, length = 100)
     private String razao_social;
+
+    @Column(nullable = false, length = 14)
     private String cnpj;
-
-    public Fornecedor() {
-    }
-
-    public Fornecedor(int id, String nome_fantasia, String razao_social, String cnpj) {
-        this.id = id;
-        this.nome_fantasia = nome_fantasia;
-        this.razao_social = razao_social;
-        this.cnpj = cnpj;
-    }
-
-    public int getId() {
-        return id;
-    }
-
-    public void setId(int id) {
-        this.id = id;
-    }
-
-    public String getNome_fantasia() {
-        return nome_fantasia;
-    }
-
-    public void setNome_fantasia(String nome_fantasia) {
-        this.nome_fantasia = nome_fantasia;
-    }
-
-    public String getRazao_social() {
-        return razao_social;
-    }
-
-    public void setRazao_social(String razao_social) {
-        this.razao_social = razao_social;
-    }
-
-    public String getCnpj() {
-        return cnpj;
-    }
-
-    public void setCnpj(String cnpj) {
-        this.cnpj = cnpj;
-    }
 }

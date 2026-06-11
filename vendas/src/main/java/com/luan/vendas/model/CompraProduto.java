@@ -1,72 +1,29 @@
 package com.luan.vendas.model;
 
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+
+@AllArgsConstructor
+@NoArgsConstructor
+@Data
+@Entity
 public class CompraProduto {
-
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
-    private int idCompra;
-    private int idProduto;
+    
+    @ManyToOne
+    @JoinColumn(name = "id_compra", nullable = false)
+    private Compra compra;
+
+    @ManyToOne
+    @JoinColumn(name = "id_produto", nullable = false)
+    private Produto produto;
+
+    @Column(nullable = false, length = 20)
     private int qtdeProduto;
+
+    @Column(nullable = false, length = 20)
     private double valorUnit;
-
-    public CompraProduto() {
-    }
-
-    public CompraProduto(int idProduto, int qtdeProduto) {
-        this.idProduto = idProduto;
-        this.qtdeProduto = qtdeProduto;
-    }
-
-    public CompraProduto(int idProduto, int qtdeProduto, double valorUnit) {
-        this.idProduto = idProduto;
-        this.qtdeProduto = qtdeProduto;
-        this.valorUnit = valorUnit;
-    }
-
-    public CompraProduto(int id, int idCompra, int idProduto, int qtdeProduto, double valorUnit) {
-        this.id = id;
-        this.idCompra = idCompra;
-        this.idProduto = idProduto;
-        this.qtdeProduto = qtdeProduto;
-        this.valorUnit = valorUnit;
-    }
-
-    public int getId() {
-        return id;
-    }
-
-    public void setId(int id) {
-        this.id = id;
-    }
-
-    public int getIdCompra() {
-        return idCompra;
-    }
-
-    public void setIdCompra(int idCompra) {
-        this.idCompra = idCompra;
-    }
-
-    public int getIdProduto() {
-        return idProduto;
-    }
-
-    public void setIdProduto(int idProduto) {
-        this.idProduto = idProduto;
-    }
-
-    public int getQtdeProduto() {
-        return qtdeProduto;
-    }
-
-    public void setQtdeProduto(int qtdeProduto) {
-        this.qtdeProduto = qtdeProduto;
-    }
-
-    public double getValorUnit() {
-        return valorUnit;
-    }
-
-    public void setValorUnit(double valorUnit) {
-        this.valorUnit = valorUnit;
-    }
 }
