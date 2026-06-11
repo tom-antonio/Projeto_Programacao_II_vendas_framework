@@ -4,6 +4,8 @@ import com.luan.vendas.dao.ProdutoDao;
 import com.luan.vendas.model.Categoria;
 import com.luan.vendas.model.Produto;
 
+import jakarta.transaction.SystemException;
+
 public class ProdutoController {
 
 	private final ProdutoDao produtoDao;
@@ -35,7 +37,11 @@ public class ProdutoController {
 		produto.setQtde_estoque(qtdeEstoque);
 		produto.setCategoria(categoria);
 
-		return produtoDao.salvar(produto);
+		try {
+			return produtoDao.salvarHibernate(produto);
+		} catch (SystemException e) {
+			return false;
+		}
 	}
 
 	public boolean alterarProduto(int id, String nome, double qtdeEstoque, int categoriaId) {
@@ -61,7 +67,11 @@ public class ProdutoController {
 		produto.setQtde_estoque(qtdeEstoque);
 		produto.setCategoria(categoria);
 
-		return produtoDao.alterar(produto);
+		try {
+			return produtoDao.alterarHibernate(produto);
+		} catch (SystemException e) {
+			return false;
+		}
 	}
 
 	public boolean excluirProduto(int id) {
@@ -69,7 +79,11 @@ public class ProdutoController {
 			return false;
 		}
 
-		return produtoDao.excluir(id);
+		try {
+			return produtoDao.excluirHibernate(id);
+		} catch (SystemException e) {
+			return false;
+		}
 	}
 
 	public Produto pesquisarProduto(int id) {
@@ -77,15 +91,21 @@ public class ProdutoController {
 			return null;
 		}
 
-		return produtoDao.pesquisar(id);
+		return produtoDao.pesquisarHibernate(id);
 	}
 
 	public boolean atualizarEstoque(Produto produto, int qtde_produto){
-		return produtoDao.atualizarEstoque(produto, qtde_produto);
+		Produto produtoExistente = produtoDao.pesquisarHibernate(produto.getId());
+		if (produtoExistente == null) {
+			return false;
+		}
+
+		produtoExistente.setQtde_estoque(produtoExistente.getQtde_estoque() + qtde_produto);
+		return produtoDao.atualizarEstoque(produtoExistente);
 	}
 
 	public boolean verificarEstoque(Produto produto, int qtde_produto) {
-		Produto produtoExistente = produtoDao.pesquisar(produto.getId());
+		Produto produtoExistente = produtoDao.pesquisarHibernate(produto.getId());
 		if (produtoExistente == null) {
 			System.out.println("Produto não encontrado para verificar estoque.");
 			return false;

@@ -39,7 +39,7 @@ public class CompraController {
         }
 
         for (CompraProduto compraProduto : compraProdutos) {
-            if (compraProduto.getIdProduto() <= 0) {
+            if (compraProduto.getProduto() == null || compraProduto.getProduto().getId() <= 0) {
                 return false;
             }
             if (compraProduto.getQtdeProduto() <= 0) {
@@ -73,13 +73,21 @@ public class CompraController {
 
         for (CompraProduto cp : compraProdutos) {
             try {
-                boolean valorUltimaCompra = produtoDao.atualizarValorUltimaCompra(cp.getIdProduto(), cp.getValorUnit());
+                Produto produtoUltimaCompra = new Produto();
+                produtoUltimaCompra.setId(cp.getProduto().getId());
+                produtoUltimaCompra.setValor_ultima_compra(cp.getValorUnit());
+
+                boolean valorUltimaCompra = produtoDao.atualizarValorUltimaCompra(produtoUltimaCompra);
                 if (!valorUltimaCompra) {
-                    System.out.println("Aviso: não foi possível atualizar valor_ultima_compra para produto " + cp.getIdProduto());
+                    System.out.println("Aviso: não foi possível atualizar valor_ultima_compra para produto " + cp.getProduto().getId());
                 }
-                boolean precoMedio = produtoDao.atualizarPrecoMedio(cp.getIdProduto());
+
+                Produto produtoPrecoMedio = new Produto();
+                produtoPrecoMedio.setId(cp.getProduto().getId());
+
+                boolean precoMedio = produtoDao.atualizarPrecoMedio(produtoPrecoMedio);
                 if (!precoMedio) {
-                    System.out.println("Aviso: não foi possível atualizar preco_medio para produto " + cp.getIdProduto());
+                    System.out.println("Aviso: não foi possível atualizar preco_medio para produto " + cp.getProduto().getId());
                 }
             } catch (Exception e) {
                 System.out.println("Erro ao atualizar valor_ultima_compra: " + e.getMessage());
@@ -92,7 +100,12 @@ public class CompraController {
     // Método para verificar se os produtos existem antes de salvar a compra
     private boolean verificarEstoque(List<CompraProduto> compraProdutos) {
         for (CompraProduto compraProduto : compraProdutos) {
-            Produto produtoExistente = produtoDao.pesquisar(compraProduto.getIdProduto());
+            Produto produtoReferencia = compraProduto.getProduto();
+            if (produtoReferencia == null) {
+                return false;
+            }
+
+            Produto produtoExistente = produtoDao.pesquisar(produtoReferencia.getId());
             if (produtoExistente == null) {
                 return false;
             }
@@ -104,10 +117,19 @@ public class CompraController {
     // Método para atualizar o estoque dos produtos após salvar a compra
     private boolean atualizarEstoque(List<CompraProduto> compraProdutos, int sinal) {
         for (CompraProduto compraProduto : compraProdutos) {
-            Produto produto = new Produto();
-            produto.setId(compraProduto.getIdProduto());
+            Produto produtoReferencia = compraProduto.getProduto();
+            if (produtoReferencia == null) {
+                return false;
+            }
 
-            boolean atualizado = produtoDao.atualizarEstoque(produto, sinal * compraProduto.getQtdeProduto());
+            Produto produto = produtoDao.pesquisar(produtoReferencia.getId());
+            if (produto == null) {
+                return false;
+            }
+
+            produto.setQtde_estoque(produto.getQtde_estoque() + (sinal * compraProduto.getQtdeProduto()));
+
+            boolean atualizado = produtoDao.atualizarEstoque(produto);
             if (!atualizado) {
                 return false;
             }
@@ -134,7 +156,7 @@ public class CompraController {
         }
 
         for (CompraProduto compraProduto : compraProdutos) {
-            if (compraProduto.getIdProduto() <= 0) {
+            if (compraProduto.getProduto() == null || compraProduto.getProduto().getId() <= 0) {
                 return false;
             }
             if (compraProduto.getQtdeProduto() <= 0) {

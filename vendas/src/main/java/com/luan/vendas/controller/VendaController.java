@@ -1,5 +1,7 @@
 package com.luan.vendas.controller;
 
+import java.time.LocalDate;
+import java.time.ZoneId;
 import java.util.Date;
 import java.util.List;
 
@@ -10,6 +12,8 @@ import com.luan.vendas.model.Cliente;
 import com.luan.vendas.model.Produto;
 import com.luan.vendas.model.ProdutoVenda;
 import com.luan.vendas.model.Venda;
+
+import jakarta.transaction.SystemException;
 
 public class VendaController {
 
@@ -41,13 +45,13 @@ public class VendaController {
 		}
 
 		// Verificar se o cliente existe
-		Cliente clienteExistente = clienteDao.pesquisar(clienteId);
+		Cliente clienteExistente = (Cliente) clienteDao.pesquisarHibernate(clienteId);
 		if (clienteExistente == null) {
 			return false;
 		}
 
 		// Verificar se o cliente já realizou 3 ou mais vendas nos últimos 30 dias
-		int vendasNoMes = vendaDao.contarVendas(clienteExistente.getCpf(), dataVenda);
+		int vendasNoMes = vendaDao.contarVendas(clienteExistente, dataVenda);
 		if (vendasNoMes == 1000) {
 			System.out.println("Erro ao contar vendas para o cliente " + clienteExistente.getCpf());
 			return false; // Erro ao acesar o banco de dados, não processar a venda
@@ -58,7 +62,7 @@ public class VendaController {
 		}
 
 		for (ProdutoVenda produtoVenda : produtosVenda) {
-			if (produtoVenda.getIdProduto() <= 0) {
+			if (produtoVenda.getProduto() == null || produtoVenda.getProduto().getId() <= 0) {
 				return false;
 			}
 			if (produtoVenda.getQtdeProduto() <= 0) {
@@ -76,12 +80,18 @@ public class VendaController {
 
 		Venda venda = new Venda();
 		venda.setId(id);
-		venda.setData_venda(dataVenda);
+		LocalDate dataVendaLocal = dataVenda.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+		venda.setData_venda(dataVendaLocal);
 		venda.setValor_total(valorTotal);
 		venda.setCliente(clienteExistente);
 		venda.setProdutosVenda(produtosVenda);
 
-		boolean salvo = vendaDao.salvar(venda);
+		boolean salvo;
+		try {
+			salvo = vendaDao.salvarHibernate(venda);
+		} catch (SystemException e) {
+			return false;
+		}
 		if (!salvo) {
 			atualizarEstoque(produtosVenda, 1);
 			return false;
@@ -89,9 +99,13 @@ public class VendaController {
 
 		for (ProdutoVenda pv : produtosVenda) {
 			try {
-				boolean updated = produtoDao.atualizarValorUltimaVenda(pv.getIdProduto(), pv.getValorUnit());
+				Produto produtoUltimaVenda = new Produto();
+				produtoUltimaVenda.setId(pv.getProduto().getId());
+				produtoUltimaVenda.setValor_ultima_venda(pv.getValorUnit());
+
+				boolean updated = produtoDao.atualizarValorUltimaVenda(produtoUltimaVenda);
 				if (!updated) {
-					System.out.println("Aviso: não foi possível atualizar valor_ultima_venda para produto " + pv.getIdProduto());
+					System.out.println("Aviso: não foi possível atualizar valor_ultima_venda para produto " + pv.getProduto().getId());
 				}
 			} catch (Exception e) {
 				System.out.println("Erro ao atualizar valor_ultima_venda: " + e.getMessage());
@@ -103,7 +117,12 @@ public class VendaController {
 
 	private boolean verificarEstoque(List<ProdutoVenda> produtosVenda) {
 		for (ProdutoVenda produtoVenda : produtosVenda) {
-			Produto produtoExistente = produtoDao.pesquisar(produtoVenda.getIdProduto());
+			Produto produtoReferencia = produtoVenda.getProduto();
+			if (produtoReferencia == null) {
+				return false;
+			}
+
+			Produto produtoExistente = produtoDao.pesquisarHibernate(produtoReferencia.getId());
 			if (produtoExistente == null) {
 				return false;
 			}
@@ -119,10 +138,19 @@ public class VendaController {
 
 	private boolean atualizarEstoque(List<ProdutoVenda> produtosVenda, int sinal) {
 		for (ProdutoVenda produtoVenda : produtosVenda) {
-			Produto produto = new Produto();
-			produto.setId(produtoVenda.getIdProduto());
+			Produto produtoReferencia = produtoVenda.getProduto();
+			if (produtoReferencia == null) {
+				return false;
+			}
 
-			boolean atualizado = produtoDao.atualizarEstoque(produto, sinal * produtoVenda.getQtdeProduto());
+			Produto produto = produtoDao.pesquisarHibernate(produtoReferencia.getId());
+			if (produto == null) {
+				return false;
+			}
+
+			produto.setQtde_estoque(produto.getQtde_estoque() + (sinal * produtoVenda.getQtdeProduto()));
+
+			boolean atualizado = produtoDao.atualizarEstoque(produto);
 			if (!atualizado) {
 				return false;
 			}
@@ -147,13 +175,13 @@ public class VendaController {
 			return false;
 		}
 
-		Cliente clienteExistente = clienteDao.pesquisar(clienteId);
+		Cliente clienteExistente = (Cliente) clienteDao.pesquisarHibernate(clienteId);
 		if (clienteExistente == null) {
 			return false;
 		}
 
 		for (ProdutoVenda produtoVenda : produtosVenda) {
-			if (produtoVenda.getIdProduto() <= 0) {
+			if (produtoVenda.getProduto() == null || produtoVenda.getProduto().getId() <= 0) {
 				return false;
 			}
 			if (produtoVenda.getQtdeProduto() <= 0) {
@@ -163,12 +191,17 @@ public class VendaController {
 
 		Venda venda = new Venda();
 		venda.setId(id);
-		venda.setData_venda(dataVenda);
+		LocalDate dataVendaLocal = dataVenda.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+		venda.setData_venda(dataVendaLocal);
 		venda.setValor_total(valorTotal);
 		venda.setCliente(clienteExistente);
 		venda.setProdutosVenda(produtosVenda);
 
-		return vendaDao.alterar(venda);
+		try {
+			return vendaDao.alterarHibernate(venda);
+		} catch (SystemException e) {
+			return false;
+		}
 	}
 
 	public boolean excluirVenda(int id) {
@@ -176,7 +209,11 @@ public class VendaController {
 			return false;
 		}
 
-		return vendaDao.excluir(id);
+		try {
+			return vendaDao.excluirHibernate(id);
+		} catch (SystemException e) {
+			return false;
+		}
 	}
 
     public Venda pesquisarVenda(int id) {
@@ -184,6 +221,6 @@ public class VendaController {
 			return null;
 		}
 
-		return vendaDao.pesquisar(id);
+		return vendaDao.pesquisarHibernate(id);
 	}
 }
