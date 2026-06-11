@@ -1,156 +1,96 @@
 package com.luan.vendas.dao;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.hibernate.Session;
+import org.hibernate.Transaction;
+
 import com.luan.vendas.model.CompraProduto;
+
+import jakarta.transaction.SystemException;
 
 public class CompraProdutoDao {
 
-    public boolean salvar(CompraProduto compraProduto) {
-        try (Connection conn = Postgres.conectar()) {
-            if (conn == null) {
-                return false;
-            }
+    public boolean salvarHibernate(CompraProduto compraProduto) throws IllegalStateException, SystemException {
+		Transaction transaction = null;
 
-            return inserir(conn, compraProduto);
-        } catch (SQLException e) {
-            System.out.println("Erro ao salvar relação compra-produto: " + e.getMessage());
-            return false;
-        }
-    }
+		try (Session session = Postgres.getSESSION_FACTORY().openSession()) {
+			transaction = session.beginTransaction();
+			session.persist(compraProduto);
+			transaction.commit();
+			return true;
+		} catch (Exception e) {
+			if (transaction != null) {
+				transaction.rollback();
+			}
+			return false;
+		}
+	}
 
-    boolean inserir(Connection conn, CompraProduto compraProduto) throws SQLException {
-        String sql = "INSERT INTO tprod_compra (id_prodcompra, fk_compra, fk_produto, qtde_prodcompra, valor_unit) VALUES (?, ?, ?, ?, ?)";
+	public boolean alterarHibernate(CompraProduto compraProduto) throws IllegalStateException, SystemException {
+		Transaction transaction = null;
 
-        try (PreparedStatement ps = conn.prepareStatement(sql)) {
-            ps.setInt(1, compraProduto.getId());
-            ps.setInt(2, compraProduto.getIdCompra());
-            ps.setInt(3, compraProduto.getIdProduto());
-            ps.setInt(4, compraProduto.getQtdeProduto());
-            ps.setDouble(5, compraProduto.getValorUnit());
+		try (Session session = Postgres.getSESSION_FACTORY().openSession()) {
+			transaction = session.beginTransaction();
+			session.merge(compraProduto);
+			transaction.commit();
+			return true;
+		} catch (Exception e) {
+			if (transaction != null) {
+				transaction.rollback();
+			}
+			return false;
+		}
+	}
 
-            int linhasAfetadas = ps.executeUpdate();
-            return linhasAfetadas > 0;
-        }
-    }
+	public boolean excluirHibernate(int id) throws IllegalStateException, SystemException {
+		Transaction transaction = null;
 
-    public List<CompraProduto> listarTodos() {
-        List<CompraProduto> relacionamentos = new ArrayList<>();
-        String sql = "SELECT id_prodcompra, fk_compra, fk_produto, qtde_prodcompra, valor_unit FROM tprod_compra ORDER BY fk_compra, fk_produto";
+		try (Session session = Postgres.getSESSION_FACTORY().openSession()) {
+			transaction = session.beginTransaction();
+			CompraProduto compraProduto = session.find(CompraProduto.class, id);
 
-        try (Connection conn = Postgres.conectar();
-             PreparedStatement ps = conn != null ? conn.prepareStatement(sql) : null) {
+			if (compraProduto == null) {
+				transaction.rollback();
+				return false;
+			}
 
-            if (ps == null) {
-                return relacionamentos;
-            }
+			session.remove(compraProduto);
+			transaction.commit();
+			return true;
+		} catch (Exception e) {
+			if (transaction != null) {
+				transaction.rollback();
+			}
+			System.out.println("Erro ao excluir relação compra-produto: " + e.getMessage());
+			return false;
+		}
+	}
 
-            ResultSet rs = ps.executeQuery();
-            while (rs.next()) {
-                CompraProduto compraProduto = new CompraProduto(
-                        rs.getInt("id_prodcompra"),
-                        rs.getInt("fk_compra"),
-                        rs.getInt("fk_produto"),
-                        rs.getInt("qtde_prodcompra"),
-                        rs.getDouble("valor_unit")
-                );
-                relacionamentos.add(compraProduto);
-            }
-        } catch (SQLException e) {
-            System.out.println("Erro ao listar relações compra-produto: " + e.getMessage());
-        }
-        return relacionamentos;
-    }
+	public List<CompraProduto> pesquisarHibernate() {
+		try (Session session = Postgres.getSESSION_FACTORY().openSession()) {
+			return session.createQuery("FROM CompraProduto", CompraProduto.class).list();
+		} catch (Exception e) {
+			return new ArrayList<>();
+		}
+	}
 
-    public boolean excluir(int compraId, Connection conn) {
-        String sql = "DELETE FROM tprod_compra WHERE fk_compra = ?";
+	public List<CompraProduto> pesquisarHibernate(int compraId) {
+		try (Session session = Postgres.getSESSION_FACTORY().openSession()) {
+			return session.createQuery("FROM CompraProduto cp WHERE cp.compra.id = :compraId ORDER BY cp.produto.id", CompraProduto.class)
+					.setParameter("compraId", compraId)
+					.list();
+		} catch (Exception e) {
+			return new ArrayList<>();
+		}
+	}
 
-        if (conn != null) {
-            try (PreparedStatement ps = conn.prepareStatement(sql)) {
-                ps.setInt(1, compraId);
-                ps.executeUpdate();
-                return true;
-            } catch (SQLException e) {
-                System.out.println("Erro ao excluir relação compra-produto: " + e.getMessage());
-                return false;
-            }
-        }
-
-        try (Connection novaConn = Postgres.conectar();
-             PreparedStatement ps = novaConn != null ? novaConn.prepareStatement(sql) : null) {
-
-            if (ps == null) {
-                return false;
-            }
-
-            ps.setInt(1, compraId);
-            ps.executeUpdate();
-            return true;
-        } catch (SQLException e) {
-            System.out.println("Erro ao excluir relação compra-produto: " + e.getMessage());
-            return false;
-        }
-    }
-
-    public List<CompraProduto> listarPorCompraId(int compraId) {
-        List<CompraProduto> relacionamentos = new ArrayList<>();
-        String sql = "SELECT id_prodcompra, fk_compra, fk_produto, qtde_prodcompra, valor_unit FROM tprod_compra WHERE fk_compra = ? ORDER BY fk_produto";
-
-        try (Connection conn = Postgres.conectar();
-             PreparedStatement ps = conn != null ? conn.prepareStatement(sql) : null) {
-
-            if (ps == null) {
-                return relacionamentos;
-            }
-
-            ps.setInt(1, compraId);
-            ResultSet rs = ps.executeQuery();
-            while (rs.next()) {
-                CompraProduto compraProduto = new CompraProduto(
-                        rs.getInt("id_prodcompra"),
-                        rs.getInt("fk_compra"),
-                        rs.getInt("fk_produto"),
-                        rs.getInt("qtde_prodcompra"),
-                        rs.getDouble("valor_unit")
-                );
-                relacionamentos.add(compraProduto);
-            }
-        } catch (SQLException e) {
-            System.out.println("Erro ao listar relações compra-produto por compra: " + e.getMessage());
-        }
-        return relacionamentos;
-    }
-
-    public CompraProduto pesquisar(int id_prodcompra) {
-        String sql = "SELECT id_prodcompra, fk_compra, fk_produto, qtde_prodcompra, valor_unit FROM tprod_compra WHERE id_prodcompra = ?";
-        try (Connection conn = Postgres.conectar();
-             PreparedStatement ps = conn != null ? conn.prepareStatement(sql) : null) {
-
-            if (ps == null) {
-                return null;
-            }
-
-            ps.setInt(1, id_prodcompra);
-            try (ResultSet rs = ps.executeQuery()) {
-                if (rs.next()) {
-                    return new CompraProduto(
-                        rs.getInt("id_prodcompra"),
-                        rs.getInt("fk_compra"),
-                        rs.getInt("fk_produto"),
-                        rs.getInt("qtde_prodcompra"),
-                        rs.getDouble("valor_unit")
-                    );
-                }
-            }
-            return null;
-        } catch (SQLException e) {
-            System.out.println("Erro ao pesquisar relação compra-produto: " + e.getMessage());
-            return null;
-        }
-    }
+	public CompraProduto pesquisarHibernatePorId(int id) {
+		try (Session session = Postgres.getSESSION_FACTORY().openSession()) {
+			return session.find(CompraProduto.class, id);
+		} catch (Exception e) {
+			return null;
+		}
+	}
 }

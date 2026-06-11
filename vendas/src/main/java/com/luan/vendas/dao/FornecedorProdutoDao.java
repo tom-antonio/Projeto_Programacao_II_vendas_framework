@@ -1,114 +1,86 @@
 package com.luan.vendas.dao;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.hibernate.Session;
+import org.hibernate.Transaction;
+
 import com.luan.vendas.model.FornecedorProduto;
+
+import jakarta.transaction.SystemException;
 
 public class FornecedorProdutoDao {
 
-    public boolean salvar(FornecedorProduto fornecedorProduto) {
-        String sql = "INSERT INTO tprodforne (id_prod_forne, fk_fornecedor, fk_produto, qtde_prodforne) VALUES (?, ?, ?, ?) "
-            + "ON CONFLICT (fk_fornecedor, fk_produto) DO NOTHING";
+    public boolean salvarHibernate(FornecedorProduto fornecedorProduto) throws IllegalStateException, SystemException {
+		Transaction transaction = null;
 
-        try (Connection conn = Postgres.conectar();
-             PreparedStatement ps = conn != null ? conn.prepareStatement(sql) : null) {
+		try (Session session = Postgres.getSESSION_FACTORY().openSession()) {
+			transaction = (Transaction) session.beginTransaction();
+			session.persist(fornecedorProduto);
+			transaction.commit();
+			return true;
+		} catch (Exception e) {
+			if (transaction != null) {
+				transaction.rollback();
+			}
+			return false;
+		}
+	}
 
-            if (ps == null) {
-                return false;
-            }
+	public boolean alterarHibernate(FornecedorProduto fornecedorProduto) throws IllegalStateException, SystemException {
+		Transaction transaction = null;
 
-            ps.setInt(1, fornecedorProduto.getId());
-            ps.setInt(2, fornecedorProduto.getIdFornecedor());
-            ps.setInt(3, fornecedorProduto.getIdProduto());
-            ps.setInt(4, 0);
+		try (Session session = Postgres.getSESSION_FACTORY().openSession()) {
+			transaction = (Transaction) session.beginTransaction();
+			session.merge(fornecedorProduto);
+			transaction.commit();
+			return true;
+		} catch (Exception e) {
+			if (transaction != null) {
+				transaction.rollback();
+			}
+			return false;
+		}
+	}
 
-            int linhasAfetadas = ps.executeUpdate();
-            if (linhasAfetadas > 0) {
-                return true;
-            }
+	public boolean excluirHibernate(int id) throws IllegalStateException, SystemException {
+		Transaction transaction = null;
 
-            // Quando ja existe a combinacao fornecedor-produto, mantemos operacao idempotente.
-            return true;
-        } catch (SQLException e) {
-            System.out.println("Erro ao salvar relação fornecedor-produto: " + e.getMessage());
-        }
-        return false;
-    }
+		try (Session session = Postgres.getSESSION_FACTORY().openSession()) {
+			transaction = (Transaction) session.beginTransaction();
+			FornecedorProduto fornecedorProduto = session.find(FornecedorProduto.class, id);
 
-    public List<FornecedorProduto> listarTodos() {
-        List<FornecedorProduto> relacionamentos = new ArrayList<>();
-        String sql = "SELECT id_prod_forne, fk_fornecedor, fk_produto FROM tprodforne ORDER BY fk_fornecedor, fk_produto";
+			if (fornecedorProduto == null) {
+				transaction.rollback();
+				return false;
+			}
 
-        try (Connection conn = Postgres.conectar();
-             PreparedStatement ps = conn != null ? conn.prepareStatement(sql) : null) {
+			session.remove(fornecedorProduto);
+			transaction.commit();
+			return true;
+		} catch (Exception e) {
+			if (transaction != null) {
+				transaction.rollback();
+			}
+			System.out.println("Erro ao excluir fornecedor produto: " + e.getMessage());
+			return false;
+		}
+	}
 
-            if (ps == null) {
-                return relacionamentos;
-            }
+	public List<FornecedorProduto> pesquisarHibernate() {
+		try (Session session = Postgres.getSESSION_FACTORY().openSession()) {
+			return session.createQuery("FROM FornecedorProduto", FornecedorProduto.class).list();
+		} catch (Exception e) {
+			return new ArrayList<>();
+		}
+	}
 
-            ResultSet rs = ps.executeQuery();
-            while (rs.next()) {
-                FornecedorProduto fornecedorProduto = new FornecedorProduto(
-                    rs.getInt("id_prod_forne"),
-                    rs.getInt("fk_fornecedor"),
-                    rs.getInt("fk_produto")
-                );
-                relacionamentos.add(fornecedorProduto);
-            }
-        } catch (SQLException e) {
-            System.out.println("Erro ao listar relações fornecedor-produto: " + e.getMessage());
-        }
-        return relacionamentos;
-    }
-
-    public boolean excluir(int id) {
-        String sql = "DELETE FROM tprodforne WHERE id_prod_forne = ?";
-
-        try (Connection conn = Postgres.conectar();
-             PreparedStatement ps = conn != null ? conn.prepareStatement(sql) : null) {
-
-            if (ps == null) {
-                return false;
-            }
-
-            ps.setInt(1, id);
-
-            int linhasAfetadas = ps.executeUpdate();
-            return linhasAfetadas > 0;
-        } catch (SQLException e) {
-            System.out.println("Erro ao excluir relação fornecedor-produto: " + e.getMessage());
-        }
-        return false;
-    }
-
-    public FornecedorProduto pesquisar(int id_fornecedor_produto) {
-        String sql = "SELECT id_prod_forne, fk_fornecedor, fk_produto FROM tprodforne WHERE id_prod_forne = ?";
-        try (Connection conn = Postgres.conectar();
-             PreparedStatement ps = conn != null ? conn.prepareStatement(sql) : null) {
-
-            if (ps == null) {
-                return null;
-            }
-
-            ps.setInt(1, id_fornecedor_produto);
-            try (ResultSet rs = ps.executeQuery()) {
-                if (rs.next()) {
-                    return new FornecedorProduto(
-                        rs.getInt("id_prod_forne"),
-                        rs.getInt("fk_fornecedor"),
-                        rs.getInt("fk_produto")
-                    );
-                }
-            }
-            return null;
-        } catch (SQLException e) {
-            System.out.println("Erro ao pesquisar relação fornecedor-produto: " + e.getMessage());
-            return null;
-        }
-    }
+	public FornecedorProduto pesquisarHibernate(int id) {
+		try (Session session = Postgres.getSESSION_FACTORY().openSession()) {
+			return session.find(FornecedorProduto.class, id);
+		} catch (Exception e) {
+			return null;
+		}
+	}
 }

@@ -2,15 +2,25 @@ package com.luan.vendas.controller;
 
 import java.util.List;
 
+import com.luan.vendas.dao.CompraDao;
 import com.luan.vendas.dao.CompraProdutoDao;
+import com.luan.vendas.dao.ProdutoDao;
+import com.luan.vendas.model.Compra;
 import com.luan.vendas.model.CompraProduto;
+import com.luan.vendas.model.Produto;
+
+import jakarta.transaction.SystemException;
 
 public class CompraProdutoController {
 
     private final CompraProdutoDao compraProdutoDao;
+	private final CompraDao compraDao;
+	private final ProdutoDao produtoDao;
 
     public CompraProdutoController() {
         this.compraProdutoDao = new CompraProdutoDao();
+		this.compraDao = new CompraDao();
+		this.produtoDao = new ProdutoDao();
     }
 
     public boolean salvarCompraProduto(int id, int compraId, int produtoId, int qtdeProduto, double valorUnit) {
@@ -30,14 +40,28 @@ public class CompraProdutoController {
             return false;
         }
 
+        Compra compra = (Compra) compraDao.pesquisarHibernate(compraId);
+        if (compra == null) {
+            return false;
+        }
+
+        Produto produto = produtoDao.pesquisarHibernate(produtoId);
+        if (produto == null) {
+            return false;
+        }
+
         CompraProduto compraProduto = new CompraProduto();
         compraProduto.setId(id);
-        compraProduto.setIdCompra(compraId);
-        compraProduto.setIdProduto(produtoId);
+        compraProduto.setCompra(compra);
+        compraProduto.setProduto(produto);
         compraProduto.setQtdeProduto(qtdeProduto);
         compraProduto.setValorUnit(valorUnit);
 
-        return compraProdutoDao.salvar(compraProduto);
+		try {
+			return compraProdutoDao.salvarHibernate(compraProduto);
+		} catch (SystemException e) {
+			return false;
+		}
     }
 
     public boolean excluirCompraProduto(int id) {
@@ -45,11 +69,15 @@ public class CompraProdutoController {
             return false;
         }
 
-        return compraProdutoDao.excluir(id, null);
+		try {
+			return compraProdutoDao.excluirHibernate(id);
+		} catch (SystemException e) {
+			return false;
+		}
     }
 
     public List<CompraProduto> listarCompraProdutos() {
-        return compraProdutoDao.listarTodos();
+		return compraProdutoDao.pesquisarHibernate();
     }
 
     public CompraProduto pesquisarCompraProduto(int id) {
@@ -57,6 +85,6 @@ public class CompraProdutoController {
             return null;
         }
 
-        return compraProdutoDao.pesquisar(id);
+		return compraProdutoDao.pesquisarHibernatePorId(id);
     }
 }
