@@ -1,7 +1,6 @@
 package com.luan.vendas.model;
 
 import java.time.LocalDate;
-import java.util.List;
 
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
@@ -10,7 +9,6 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.ManyToOne;
-import jakarta.persistence.OneToMany;
 import jakarta.persistence.OneToOne;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -21,22 +19,28 @@ import lombok.NoArgsConstructor;
 @Data
 @Entity
 
-public class Compra {
+public class Financeiro {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
 
-    private LocalDate data_compra;
+    private LocalDate data_conta;
 
-    @Column(nullable = false, length = 20)
-    private double valor_total;
+    @Column(nullable = false, length = 10)
+    private int pagar_ou_receber;
 
     @ManyToOne
     private Fornecedor fornecedor;
 
-    @OneToMany(mappedBy = "compra", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<CompraProduto> compraProduto;
+    @ManyToOne
+    private Categoria categoria;
 
-    @OneToOne
-    private Financeiro financeiro;
+    @ManyToOne
+    private TipoConta tipoConta;
+
+    @ManyToOne
+    private FormaPagamento formaPagamento;
+
+    @OneToOne(mappedBy = "financeiro", cascade = CascadeType.ALL, orphanRemoval = true)
+    private FinanceiroParcela financeiroParcela;
 }

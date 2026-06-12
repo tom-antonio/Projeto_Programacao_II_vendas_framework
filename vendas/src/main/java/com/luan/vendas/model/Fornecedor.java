@@ -1,10 +1,15 @@
 package com.luan.vendas.model;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.OneToMany;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -27,4 +32,7 @@ public class Fornecedor {
 
     @Column(nullable = false, length = 14)
     private String cnpj;
+
+    @OneToMany(mappedBy = "fornecedor", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<FornecedorProduto> produtos = new ArrayList<>();
 }

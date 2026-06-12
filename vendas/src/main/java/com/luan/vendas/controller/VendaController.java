@@ -84,6 +84,14 @@ public class VendaController {
 		venda.setData_venda(dataVendaLocal);
 		venda.setValor_total(valorTotal);
 		venda.setCliente(clienteExistente);
+		for (ProdutoVenda produtoVenda : produtosVenda) {
+			Produto produtoExistente = produtoDao.pesquisarHibernate(produtoVenda.getProduto().getId());
+			if (produtoExistente == null) {
+				return false;
+			}
+			produtoVenda.setVenda(venda);
+			produtoVenda.setProduto(produtoExistente);
+		}
 		venda.setProdutosVenda(produtosVenda);
 
 		boolean salvo;
@@ -195,6 +203,14 @@ public class VendaController {
 		venda.setData_venda(dataVendaLocal);
 		venda.setValor_total(valorTotal);
 		venda.setCliente(clienteExistente);
+		for (ProdutoVenda produtoVenda : produtosVenda) {
+			Produto produtoExistente = produtoDao.pesquisarHibernate(produtoVenda.getProduto().getId());
+			if (produtoExistente == null) {
+				return false;
+			}
+			produtoVenda.setVenda(venda);
+			produtoVenda.setProduto(produtoExistente);
+		}
 		venda.setProdutosVenda(produtosVenda);
 
 		try {

@@ -1,156 +1,98 @@
 package com.luan.vendas.dao;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.hibernate.Session;
+import org.hibernate.Transaction;
+
 import com.luan.vendas.model.ProdutoVenda;
+
+import jakarta.transaction.SystemException;
 
 public class ProdutoVendaDao {
 
-    public boolean salvar(ProdutoVenda produtoVenda) {
-        try (Connection conn = Postgres.conectar()) {
-            if (conn == null) {
-                return false;
-            }
+    public boolean salvarHibernate(ProdutoVenda produtoVenda) throws IllegalStateException, SystemException {
+		Transaction transaction = null;
 
-            return inserir(conn, produtoVenda);
-        } catch (SQLException e) {
-            System.out.println("Erro ao salvar relação produto-venda: " + e.getMessage());
-            return false;
-        }
-    }
+		try (Session session = Postgres.getSESSION_FACTORY().openSession()) {
+			transaction = session.beginTransaction();
+			session.persist(produtoVenda);
+			transaction.commit();
+			return true;
+		} catch (Exception e) {
+			if (transaction != null) {
+				transaction.rollback();
+			}
+			return false;
+		}
+	}
 
-    boolean inserir(Connection conn, ProdutoVenda produtoVenda) throws SQLException {
-        String sql = "INSERT INTO tprod_venda (id_prodvenda, fk_venda, fk_produto, qtde_prodvenda, valor_unit) VALUES (?, ?, ?, ?, ?)";
+	public boolean alterarHibernate(ProdutoVenda produtoVenda) throws IllegalStateException, SystemException {
+		Transaction transaction = null;
 
-        try (PreparedStatement ps = conn.prepareStatement(sql)) {
-            ps.setInt(1, produtoVenda.getId());
-            ps.setInt(2, produtoVenda.getIdVenda());
-            ps.setInt(3, produtoVenda.getIdProduto());
-            ps.setInt(4, produtoVenda.getQtdeProduto());
-            ps.setDouble(5, produtoVenda.getValorUnit());
+		try (Session session = Postgres.getSESSION_FACTORY().openSession()) {
+			transaction = session.beginTransaction();
+			session.merge(produtoVenda);
+			transaction.commit();
+			return true;
+		} catch (Exception e) {
+			if (transaction != null) {
+				transaction.rollback();
+			}
+			return false;
+		}
+	}
 
-            int linhasAfetadas = ps.executeUpdate();
-            return linhasAfetadas > 0;
-        }
-    }
+	public boolean excluirHibernate(int id) throws IllegalStateException, SystemException {
+		Transaction transaction = null;
 
-    public List<ProdutoVenda> listarTodos() {
-        List<ProdutoVenda> relacionamentos = new ArrayList<>();
-        String sql = "SELECT id_prodvenda, fk_venda, fk_produto, qtde_prodvenda, valor_unit FROM tprod_venda ORDER BY fk_venda, fk_produto";
+		try (Session session = Postgres.getSESSION_FACTORY().openSession()) {
+			transaction = session.beginTransaction();
+			ProdutoVenda produtoVenda = session.find(ProdutoVenda.class, id);
 
-        try (Connection conn = Postgres.conectar();
-             PreparedStatement ps = conn != null ? conn.prepareStatement(sql) : null) {
+			if (produtoVenda == null) {
+				transaction.rollback();
+				return false;
+			}
 
-            if (ps == null) {
-                return relacionamentos;
-            }
+			session.remove(produtoVenda);
+			transaction.commit();
+			return true;
+		} catch (Exception e) {
+			if (transaction != null) {
+				transaction.rollback();
+			}
+			System.out.println("Erro ao excluir relação produto-venda: " + e.getMessage());
+			return false;
+		}
+	}
 
-            ResultSet rs = ps.executeQuery();
-            while (rs.next()) {
-                ProdutoVenda produtoVenda = new ProdutoVenda(
-                        rs.getInt("id_prodvenda"),
-                        rs.getInt("fk_venda"),
-                        rs.getInt("fk_produto"),
-                        rs.getInt("qtde_prodvenda"),
-                        rs.getDouble("valor_unit")
-                );
-                relacionamentos.add(produtoVenda);
-            }
-        } catch (SQLException e) {
-            System.out.println("Erro ao listar relações produto-venda: " + e.getMessage());
-        }
-        return relacionamentos;
-    }
+	public List<ProdutoVenda> pesquisarHibernate() {
+		try (Session session = Postgres.getSESSION_FACTORY().openSession()) {
+			return session.createQuery("FROM ProdutoVenda", ProdutoVenda.class).list();
+		} catch (Exception e) {
+			return new ArrayList<>();
+		}
+	}
 
-    public boolean excluir(int vendaId, Connection conn) {
-        String sql = "DELETE FROM tprod_venda WHERE fk_venda = ?";
+	public List<ProdutoVenda> pesquisarHibernate(int vendaId) {
+		try (Session session = Postgres.getSESSION_FACTORY().openSession()) {
+			return session.createQuery(
+					"FROM ProdutoVenda pv WHERE pv.venda.id = :vendaId ORDER BY pv.produto.id",
+					ProdutoVenda.class)
+					.setParameter("vendaId", vendaId)
+					.list();
+		} catch (Exception e) {
+			return new ArrayList<>();
+		}
+	}
 
-        if (conn != null) {
-            try (PreparedStatement ps = conn.prepareStatement(sql)) {
-                ps.setInt(1, vendaId);
-                ps.executeUpdate();
-                return true;
-            } catch (SQLException e) {
-                System.out.println("Erro ao excluir relação produto-venda: " + e.getMessage());
-                return false;
-            }
-        }
-
-        try (Connection novaConn = Postgres.conectar();
-             PreparedStatement ps = novaConn != null ? novaConn.prepareStatement(sql) : null) {
-
-            if (ps == null) {
-                return false;
-            }
-
-            ps.setInt(1, vendaId);
-            ps.executeUpdate();
-            return true;
-        } catch (SQLException e) {
-            System.out.println("Erro ao excluir relação produto-venda: " + e.getMessage());
-            return false;
-        }
-    }
-
-    public List<ProdutoVenda> listarPorVendaId(int vendaId) {
-        List<ProdutoVenda> relacionamentos = new ArrayList<>();
-        String sql = "SELECT id_prodvenda, fk_venda, fk_produto, qtde_prodvenda, valor_unit FROM tprod_venda WHERE fk_venda = ? ORDER BY fk_produto";
-
-        try (Connection conn = Postgres.conectar();
-             PreparedStatement ps = conn != null ? conn.prepareStatement(sql) : null) {
-
-            if (ps == null) {
-                return relacionamentos;
-            }
-
-            ps.setInt(1, vendaId);
-            ResultSet rs = ps.executeQuery();
-            while (rs.next()) {
-                ProdutoVenda produtoVenda = new ProdutoVenda(
-                        rs.getInt("id_prodvenda"),
-                        rs.getInt("fk_venda"),
-                        rs.getInt("fk_produto"),
-                        rs.getInt("qtde_prodvenda"),
-                        rs.getDouble("valor_unit")
-                );
-                relacionamentos.add(produtoVenda);
-            }
-        } catch (SQLException e) {
-            System.out.println("Erro ao listar relações produto-venda por venda: " + e.getMessage());
-        }
-        return relacionamentos;
-    }
-
-    public ProdutoVenda pesquisar(int id_prodvenda) {
-        String sql = "SELECT id_prodvenda, fk_venda, fk_produto, qtde_prodvenda, valor_unit FROM tprod_venda WHERE id_prodvenda = ?";
-        try (Connection conn = Postgres.conectar();
-             PreparedStatement ps = conn != null ? conn.prepareStatement(sql) : null) {
-
-            if (ps == null) {
-                return null;
-            }
-
-            ps.setInt(1, id_prodvenda);
-            try (ResultSet rs = ps.executeQuery()) {
-                if (rs.next()) {
-                    return new ProdutoVenda(
-                        rs.getInt("id_prodvenda"),
-                        rs.getInt("fk_venda"),
-                        rs.getInt("fk_produto"),
-                        rs.getInt("qtde_prodvenda"),
-                        rs.getDouble("valor_unit")
-                    );
-                }
-            }
-            return null;
-        } catch (SQLException e) {
-            System.out.println("Erro ao pesquisar relação produto-venda: " + e.getMessage());
-            return null;
-        }
-    }
+	public ProdutoVenda pesquisarHibernatePorId(int id) {
+		try (Session session = Postgres.getSESSION_FACTORY().openSession()) {
+			return session.find(ProdutoVenda.class, id);
+		} catch (Exception e) {
+			return null;
+		}
+	}
 }

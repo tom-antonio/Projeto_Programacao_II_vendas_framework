@@ -11,6 +11,7 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
+import jakarta.persistence.OneToOne;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -34,5 +35,8 @@ public class Venda {
     private double valor_total;
 
     @OneToMany(mappedBy = "venda", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<ProdutoVenda> produtosVenda;
+    private List<ProdutoVenda> produtoVenda;
+
+    @OneToOne
+    private Financeiro financeiro;
 }
