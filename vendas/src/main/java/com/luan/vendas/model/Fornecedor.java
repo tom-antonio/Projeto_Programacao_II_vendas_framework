@@ -35,4 +35,12 @@ public class Fornecedor {
 
     @OneToMany(mappedBy = "fornecedor", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<FornecedorProduto> produtos = new ArrayList<>();
+
+    public void setNome(String valueAt) {
+        this.nome_fantasia = valueAt;
+    }
+
+    public String getNome() {
+        return nome_fantasia;
+    }
 }

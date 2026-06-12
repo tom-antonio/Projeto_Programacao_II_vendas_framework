@@ -78,7 +78,9 @@ public class FornecedorDao {
 
 	public List<Fornecedor> pesquisarHibernate(String nome) {
 		try (Session session = Postgres.getSESSION_FACTORY().openSession()) {
-			return session.createQuery("FROM Fornecedor f WHERE lower(f.nome) LIKE :nome order by f.nome", Fornecedor.class)
+			return session.createQuery(
+					"FROM Fornecedor f WHERE lower(f.nome_fantasia) LIKE :nome order by f.nome_fantasia",
+					Fornecedor.class)
 					.setParameter("nome", "%" + nome.toLowerCase() + "%")
 					.list();
 		} catch (Exception e) {
