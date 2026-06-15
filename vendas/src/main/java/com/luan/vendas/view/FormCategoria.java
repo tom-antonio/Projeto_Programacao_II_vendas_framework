@@ -75,10 +75,8 @@ public class FormCategoria extends JFrame {
                 return;
             }
 
-            boolean alterado = categoriaController.salvarCategoria(
-                idCategoriaAtual,
-                txtNome_categoria.getText().trim()
-            );
+            Categoria categoria = montarCategoriaAtual();
+            boolean alterado = categoriaController.alterarCategoria(categoria);
 
             if (!alterado) {
                 JOptionPane.showMessageDialog(this, "Não foi possível alterar a categoria.", "Erro", JOptionPane.ERROR_MESSAGE);
@@ -153,10 +151,8 @@ public class FormCategoria extends JFrame {
     }
 
     private void salvarCategoria() {
-        boolean salvo = categoriaController.salvarCategoria(
-            idCategoriaAtual,
-            txtNome_categoria.getText().trim()
-        );
+        Categoria categoria = montarCategoriaAtual();
+        boolean salvo = categoriaController.salvarCategoria(categoria);
 
         if (!salvo) {
             JOptionPane.showMessageDialog(this, "Não foi possível salvar a categoria.", "Erro", JOptionPane.ERROR_MESSAGE);
@@ -171,5 +167,12 @@ public class FormCategoria extends JFrame {
         txtNome_categoria.setText("");
         idCategoriaAtual = null;
         txtNome_categoria.requestFocus();
+    }
+
+    private Categoria montarCategoriaAtual() {
+        Categoria categoria = new Categoria();
+        categoria.setId(idCategoriaAtual);
+        categoria.setNome(txtNome_categoria.getText().trim());
+        return categoria;
     }
 }

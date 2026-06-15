@@ -94,6 +94,54 @@ public class ProdutoDao {
 		}
 	}
 
+	public double buscarPrecoMedio(int idProduto) {
+		try (Session session = Postgres.getSESSION_FACTORY().openSession()) {
+			Double precoMedio = session.createQuery(
+					"SELECT avg(cp.valorUnit) FROM CompraProduto cp WHERE cp.produto.id = :idProduto",
+					Double.class)
+					.setParameter("idProduto", idProduto)
+					.uniqueResult();
+
+			return precoMedio != null ? precoMedio : 0.0;
+		} catch (Exception e) {
+			return 0.0;
+		}
+	}
+
+	public double buscarValorUltimaCompra(int idProduto) {
+		try (Session session = Postgres.getSESSION_FACTORY().openSession()) {
+			Double valorUltimaCompra = session.createQuery(
+					"SELECT cp.valorUnit FROM CompraProduto cp "
+						+ "WHERE cp.produto.id = :idProduto "
+						+ "ORDER BY cp.compra.data_compra DESC, cp.id DESC",
+					Double.class)
+					.setParameter("idProduto", idProduto)
+					.setMaxResults(1)
+					.uniqueResult();
+
+			return valorUltimaCompra != null ? valorUltimaCompra : 0.0;
+		} catch (Exception e) {
+			return 0.0;
+		}
+	}
+
+	public double buscarValorUltimaVenda(int idProduto) {
+		try (Session session = Postgres.getSESSION_FACTORY().openSession()) {
+			Double valorUltimaVenda = session.createQuery(
+					"SELECT pv.valorUnit FROM ProdutoVenda pv "
+						+ "WHERE pv.produto.id = :idProduto "
+						+ "ORDER BY pv.venda.data_venda DESC, pv.id DESC",
+					Double.class)
+					.setParameter("idProduto", idProduto)
+					.setMaxResults(1)
+					.uniqueResult();
+
+			return valorUltimaVenda != null ? valorUltimaVenda : 0.0;
+		} catch (Exception e) {
+			return 0.0;
+		}
+	}
+
 	public boolean atualizarEstoque(Produto produto) {
 		Transaction transaction = null;
 

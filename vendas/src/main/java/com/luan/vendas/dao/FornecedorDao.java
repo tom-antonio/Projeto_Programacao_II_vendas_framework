@@ -95,4 +95,16 @@ public class FornecedorDao {
 			return null;
 		}
 	}
+
+	public boolean listarTodosHibernate() throws IllegalStateException, SystemException {
+		try (Session session = Postgres.getSESSION_FACTORY().openSession()) {
+			List<Fornecedor> fornecedores = session.createQuery("FROM Fornecedor", Fornecedor.class).list();
+			for (Fornecedor fornecedor : fornecedores) {
+				System.out.println(fornecedor);
+			}
+			return true;
+		} catch (Exception e) {
+			return false;
+		}
+	}
 }

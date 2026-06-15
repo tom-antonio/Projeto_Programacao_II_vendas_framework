@@ -100,12 +100,8 @@ public class FormFornecedor extends JFrame {
                 return;
             }
 
-            boolean alterado = fornecedorController.salvarFornecedor(
-                idFornecedorAtual,
-                txtNome_fornecedor.getText().trim(),
-                txtRazaoSocial.getText().trim(),
-                txtCNPJ.getText().trim()
-            );
+            Fornecedor fornecedor = montarFornecedorAtual();
+            boolean alterado = fornecedorController.alterarFornecedor(fornecedor);
 
             if (!alterado) {
                 JOptionPane.showMessageDialog(this, "Não foi possível alterar o fornecedor.", "Erro", JOptionPane.ERROR_MESSAGE);
@@ -182,12 +178,8 @@ public class FormFornecedor extends JFrame {
     }
 
     private void salvarFornecedor() {
-        boolean salvo = fornecedorController.salvarFornecedor(
-            idFornecedorAtual,
-            txtNome_fornecedor.getText().trim(),
-            txtRazaoSocial.getText().trim(),
-            txtCNPJ.getText().trim()
-        );
+        Fornecedor fornecedor = montarFornecedorAtual();
+        boolean salvo = fornecedorController.salvarFornecedor(fornecedor);
 
         if (!salvo) {
             JOptionPane.showMessageDialog(this, "Não foi possível salvar o fornecedor.", "Erro", JOptionPane.ERROR_MESSAGE);
@@ -204,5 +196,14 @@ public class FormFornecedor extends JFrame {
         txtCNPJ.setText("");
         idFornecedorAtual = null;
         txtNome_fornecedor.requestFocus();
+    }
+
+    private Fornecedor montarFornecedorAtual() {
+        Fornecedor fornecedor = new Fornecedor();
+        fornecedor.setId(idFornecedorAtual);
+        fornecedor.setNome_fantasia(txtNome_fornecedor.getText().trim());
+        fornecedor.setRazao_social(txtRazaoSocial.getText().trim());
+        fornecedor.setCnpj(txtCNPJ.getText().trim());
+        return fornecedor;
     }
 }

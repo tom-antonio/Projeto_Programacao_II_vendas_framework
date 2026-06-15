@@ -15,32 +15,12 @@ public class ClienteController {
 		this.clienteDao = new ClienteDao();
 	}
 
-	public boolean salvarCliente(Integer id, String nome, String cpf, String rg, String endereco, String telefone) {
-		if (nome == null || nome.trim().isEmpty()) {
-			return false;
-		}
-		if (cpf == null || cpf.trim().isEmpty()) {
-			return false;
-		}
-		if (rg == null || rg.trim().isEmpty()) {
-			return false;
-		}
-		if (endereco == null || endereco.trim().isEmpty()) {
-			return false;
-		}
-		if (telefone == null || telefone.trim().isEmpty()) {
+	public boolean salvarCliente(Cliente cliente) {
+		if (!validarDados(cliente)) {
 			return false;
 		}
 
-		Cliente cliente = new Cliente();
-		cliente.setNome(nome);
-		cliente.setCpf(cpf);
-		cliente.setRg(rg);
-		cliente.setEndereco(endereco);
-		cliente.setTelefone(telefone);
-
-		if (id != null && id > 0) {
-			cliente.setId(id);
+		if (cliente.getId() > 0) {
 			try {
 				return clienteDao.alterarHibernate(cliente);
 			} catch (IllegalStateException | SystemException e) {
@@ -55,33 +35,10 @@ public class ClienteController {
 		}
 	}
 
-	public boolean alterarCliente(Integer id, String nome, String cpf, String rg, String endereco, String telefone) {
-		if (id == null || id <= 0) {
+	public boolean alterarCliente(Cliente cliente) {
+		if (!validarDados(cliente)) {
 			return false;
 		}
-		if (nome == null || nome.trim().isEmpty()) {
-			return false;
-		}
-		if (cpf == null || cpf.trim().isEmpty()) {
-			return false;
-		}
-		if (rg == null || rg.trim().isEmpty()) {
-			return false;
-		}
-		if (endereco == null || endereco.trim().isEmpty()) {
-			return false;
-		}
-		if (telefone == null || telefone.trim().isEmpty()) {
-			return false;
-		}
-
-		Cliente cliente = new Cliente();
-		cliente.setId(id);
-		cliente.setNome(nome);
-		cliente.setCpf(cpf);
-		cliente.setRg(rg);
-		cliente.setEndereco(endereco);
-		cliente.setTelefone(telefone);
 
 		try {
 			return clienteDao.alterarHibernate(cliente);
@@ -120,5 +77,19 @@ public class ClienteController {
 		}
 
 		return clienteDao.pesquisarHibernate(id);
+	}
+
+	public boolean validarDados(Cliente cliente) {
+		return cliente != null
+			&& cliente.getNome() != null
+			&& !cliente.getNome().trim().isEmpty()
+			&& cliente.getCpf() != null
+			&& !cliente.getCpf().trim().isEmpty()
+			&& cliente.getRg() != null
+			&& !cliente.getRg().trim().isEmpty()
+			&& cliente.getEndereco() != null
+			&& !cliente.getEndereco().trim().isEmpty()
+			&& cliente.getTelefone() != null
+			&& !cliente.getTelefone().trim().isEmpty();
 	}
 }

@@ -1,7 +1,6 @@
 package com.luan.vendas.controller;
 
 import com.luan.vendas.dao.ProdutoDao;
-import com.luan.vendas.model.Categoria;
 import com.luan.vendas.model.Produto;
 
 import jakarta.transaction.SystemException;
@@ -14,28 +13,10 @@ public class ProdutoController {
 		this.produtoDao = new ProdutoDao();
 	}
 
-	public boolean salvarProduto(int id, String nome, double qtdeEstoque, int categoriaId) {
-		if (id <= 0) {
+	public boolean salvarProduto(Produto produto) {
+		if (!validarDados(produto)) {
 			return false;
 		}
-		if (nome == null || nome.trim().isEmpty()) {
-			return false;
-		}
-		if (qtdeEstoque < 0) {
-			return false;
-		}
-		if (categoriaId <= 0) {
-			return false;
-		}
-
-		Categoria categoria = new Categoria();
-		categoria.setId(categoriaId);
-
-		Produto produto = new Produto();
-		produto.setId(id);
-		produto.setNome(nome);
-		produto.setQtde_estoque(qtdeEstoque);
-		produto.setCategoria(categoria);
 
 		try {
 			return produtoDao.salvarHibernate(produto);
@@ -44,28 +25,10 @@ public class ProdutoController {
 		}
 	}
 
-	public boolean alterarProduto(int id, String nome, double qtdeEstoque, int categoriaId) {
-		if (id <= 0) {
+	public boolean alterarProduto(Produto produto) {
+		if (!validarDados(produto)) {
 			return false;
 		}
-		if (nome == null || nome.trim().isEmpty()) {
-			return false;
-		}
-		if (qtdeEstoque < 0) {
-			return false;
-		}
-		if (categoriaId <= 0) {
-			return false;
-		}
-
-		Categoria categoria = new Categoria();
-		categoria.setId(categoriaId);
-
-		Produto produto = new Produto();
-		produto.setId(id);
-		produto.setNome(nome);
-		produto.setQtde_estoque(qtdeEstoque);
-		produto.setCategoria(categoria);
 
 		try {
 			return produtoDao.alterarHibernate(produto);
@@ -94,6 +57,30 @@ public class ProdutoController {
 		return produtoDao.pesquisarHibernate(id);
 	}
 
+	public double buscarPrecoMedio(int idProduto) {
+		if (idProduto <= 0) {
+			return 0.0;
+		}
+
+		return produtoDao.buscarPrecoMedio(idProduto);
+	}
+
+	public double buscarValorUltimaCompra(int idProduto) {
+		if (idProduto <= 0) {
+			return 0.0;
+		}
+
+		return produtoDao.buscarValorUltimaCompra(idProduto);
+	}
+
+	public double buscarValorUltimaVenda(int idProduto) {
+		if (idProduto <= 0) {
+			return 0.0;
+		}
+
+		return produtoDao.buscarValorUltimaVenda(idProduto);
+	}
+
 	public boolean atualizarEstoque(Produto produto, int qtde_produto){
 		Produto produtoExistente = produtoDao.pesquisarHibernate(produto.getId());
 		if (produtoExistente == null) {
@@ -117,5 +104,12 @@ public class ProdutoController {
 		} else {
 			return false;
 		}
+	}
+
+	public boolean validarDados(Produto produto) {
+		return produto != null
+			&& produto.getNome() != null
+			&& !produto.getNome().trim().isEmpty()
+			&& produto.getQtde_estoque() >= 0;
 	}
 }

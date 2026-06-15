@@ -15,23 +15,17 @@ public class CategoriaController {
 		this.categoriaDao = new CategoriaDao();
 	}
 
-	public boolean salvarCategoria(Integer id, String nome) {
-		if (nome == null || nome.trim().isEmpty()) {
+	public boolean salvarCategoria(Categoria categoria) {
+		if (!validarDados(categoria)) {
 			return false;
 		}
-
-		Categoria categoria = new Categoria();
-		categoria.setNome(nome);
-
-		if (id != null && id > 0) {
-			categoria.setId(id);
+		if (categoria.getId() > 0) {
 			try {
 				return categoriaDao.alterarHibernate(categoria);
 			} catch (IllegalStateException | SystemException e) {
 				return false;
 			}
 		}
-
 		try {
 			return categoriaDao.salvarHibernate(categoria);
 		} catch (IllegalStateException | SystemException e) {
@@ -39,18 +33,10 @@ public class CategoriaController {
 		}
 	}
 
-	public boolean alterarCategoria(Integer id, String nome) {
-		if (id == null || id <= 0) {
+	public boolean alterarCategoria(Categoria categoria) {
+		if (!validarDados(categoria)) {
 			return false;
 		}
-		if (nome == null || nome.trim().isEmpty()) {
-			return false;
-		}
-
-		Categoria categoria = new Categoria();
-		categoria.setId(id);
-		categoria.setNome(nome);
-
 		try {
 			return categoriaDao.alterarHibernate(categoria);
 		} catch (IllegalStateException | SystemException e) {
@@ -91,5 +77,11 @@ public class CategoriaController {
 		}
 
 		return categoriaDao.pesquisarHibernate(id);
+	}
+
+	public boolean validarDados(Categoria categoria) {
+		return categoria != null
+			&& categoria.getNome() != null
+			&& !categoria.getNome().trim().isEmpty();
 	}
 }

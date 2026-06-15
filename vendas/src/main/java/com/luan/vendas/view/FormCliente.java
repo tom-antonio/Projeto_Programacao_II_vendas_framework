@@ -126,14 +126,8 @@ public class FormCliente extends JFrame {
                 return;
             }
 
-            boolean alterado = clienteController.salvarCliente(
-                idClienteAtual,
-                txtNome_cliente.getText().trim(),
-                txtCPF.getText().trim(),
-                txtRG.getText().trim(),
-                txtEndereco.getText().trim(),
-                txtTelefone.getText().trim()
-            );
+            Cliente cliente = montarClienteAtual();
+            boolean alterado = clienteController.alterarCliente(cliente);
 
             if (!alterado) {
                 JOptionPane.showMessageDialog(this, "Não foi possível alterar o cliente.", "Erro", JOptionPane.ERROR_MESSAGE);
@@ -212,14 +206,8 @@ public class FormCliente extends JFrame {
     }
 
     private void salvarCliente() {
-        boolean salvo = clienteController.salvarCliente(
-            idClienteAtual,
-            txtNome_cliente.getText().trim(),
-            txtCPF.getText().trim(),
-            txtRG.getText().trim(),
-            txtEndereco.getText().trim(),
-            txtTelefone.getText().trim()
-        );
+        Cliente cliente = montarClienteAtual();
+        boolean salvo = clienteController.salvarCliente(cliente);
 
         if (!salvo) {
             JOptionPane.showMessageDialog(this, "Não foi possível salvar o cliente.", "Erro", JOptionPane.ERROR_MESSAGE);
@@ -238,5 +226,16 @@ public class FormCliente extends JFrame {
         txtTelefone.setText("");
         idClienteAtual = null;
         txtNome_cliente.requestFocus();
+    }
+
+    private Cliente montarClienteAtual() {
+        Cliente cliente = new Cliente();
+        cliente.setId(idClienteAtual);
+        cliente.setNome(txtNome_cliente.getText().trim());
+        cliente.setCpf(txtCPF.getText().trim());
+        cliente.setRg(txtRG.getText().trim());
+        cliente.setEndereco(txtEndereco.getText().trim());
+        cliente.setTelefone(txtTelefone.getText().trim());
+        return cliente;
     }
 }

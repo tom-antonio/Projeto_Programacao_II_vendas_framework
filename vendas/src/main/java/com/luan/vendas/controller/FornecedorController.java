@@ -15,24 +15,12 @@ public class FornecedorController {
 		this.fornecedorDao = new FornecedorDao();
 	}
 
-	public boolean salvarFornecedor(Integer id, String nomeFantasia, String razaoSocial, String cnpj) {
-		if (nomeFantasia == null || nomeFantasia.trim().isEmpty()) {
-			return false;
-		}
-		if (razaoSocial == null || razaoSocial.trim().isEmpty()) {
-			return false;
-		}
-		if (cnpj == null || cnpj.trim().isEmpty()) {
+	public boolean salvarFornecedor(Fornecedor fornecedor) {
+		if (!validarDados(fornecedor)) {
 			return false;
 		}
 
-		Fornecedor fornecedor = new Fornecedor();
-		fornecedor.setNome_fantasia(nomeFantasia);
-		fornecedor.setRazao_social(razaoSocial);
-		fornecedor.setCnpj(cnpj);
-
-		if (id != null && id > 0) {
-			fornecedor.setId(id);
+		if (fornecedor.getId() > 0) {
 			try {
 				return fornecedorDao.alterarHibernate(fornecedor);
 			} catch (IllegalStateException | SystemException e) {
@@ -47,25 +35,10 @@ public class FornecedorController {
 		}
 	}
 
-	public boolean alterarFornecedor(Integer id, String nomeFantasia, String razaoSocial, String cnpj) {
-		if (id == null || id <= 0) {
+	public boolean alterarFornecedor(Fornecedor fornecedor) {
+		if (!validarDados(fornecedor)) {
 			return false;
 		}
-		if (nomeFantasia == null || nomeFantasia.trim().isEmpty()) {
-			return false;
-		}
-		if (razaoSocial == null || razaoSocial.trim().isEmpty()) {
-			return false;
-		}
-		if (cnpj == null || cnpj.trim().isEmpty()) {
-			return false;
-		}
-
-		Fornecedor fornecedor = new Fornecedor();
-		fornecedor.setId(id);
-		fornecedor.setNome_fantasia(nomeFantasia);
-		fornecedor.setRazao_social(razaoSocial);
-		fornecedor.setCnpj(cnpj);
 
 		try {
 			return fornecedorDao.alterarHibernate(fornecedor);
@@ -104,5 +77,15 @@ public class FornecedorController {
 		}
 
 		return fornecedorDao.pesquisarHibernate(id);
+	}
+
+	public boolean validarDados(Fornecedor fornecedor) {
+		return fornecedor != null
+			&& fornecedor.getNome_fantasia() != null
+			&& !fornecedor.getNome_fantasia().trim().isEmpty()
+			&& fornecedor.getRazao_social() != null
+			&& !fornecedor.getRazao_social().trim().isEmpty()
+			&& fornecedor.getCnpj() != null
+			&& !fornecedor.getCnpj().trim().isEmpty();
 	}
 }
