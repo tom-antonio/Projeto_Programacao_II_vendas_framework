@@ -161,9 +161,7 @@ public class FormFornecedor extends JFrame {
 
     private boolean precisaPesquisarFornecedor() {
         return idFornecedorAtual == null
-            && txtNome_fornecedor.getText().trim().isEmpty()
-            && txtRazaoSocial.getText().trim().isEmpty()
-            && txtCNPJ.getText().trim().isEmpty();
+            && txtNome_fornecedor.getText().trim().isEmpty();
     }
 
     private void abrirPesquisaFornecedor() {
