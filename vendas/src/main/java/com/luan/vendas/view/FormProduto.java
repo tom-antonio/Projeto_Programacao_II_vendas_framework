@@ -1,17 +1,21 @@
 package com.luan.vendas.view;
 
 import java.awt.BorderLayout;
+import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.util.List;
+import java.util.function.ToIntFunction;
 
+import javax.swing.DefaultListCellRenderer;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JList;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
@@ -32,8 +36,8 @@ public class FormProduto extends JFrame {
     private JTextField txtPreco_medio;
     private JTextField txtValor_venda;
     private JTextField txtValor_compra;
-    private JComboBox<String> cmbFornecedor;
-    private JComboBox<String> cmbCategoria;
+    private JComboBox<Fornecedor> cmbFornecedor;
+    private JComboBox<Categoria> cmbCategoria;
     private JButton btnSalvar;
     private JButton btnAlterar;
     private JButton btnExcluir;
@@ -43,7 +47,6 @@ public class FormProduto extends JFrame {
     private final FornecedorProdutoController fornecedorProdutoController;
     private final CategoriaController categoriaController;
     private Integer idProdutoAtual;
-    private Integer idFornecedorSelecionado;
 
     public FormProduto() {
         setTitle("Cadastro de Produto");
@@ -54,6 +57,7 @@ public class FormProduto extends JFrame {
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 
         inicializarComponentes();
+        configurarRenderizadores();
         carregarFornecedor();
         carregarCategoria();
 
@@ -165,35 +169,7 @@ public class FormProduto extends JFrame {
         btnPesquisar = new JButton("Pesquisar");
 
         btnSalvar.addActionListener(e -> salvarProduto());
-
-        btnAlterar.addActionListener(e -> {
-            if (precisaPesquisarProduto()) {
-                JOptionPane.showMessageDialog(this, "Informe o produto antes de alterar.", "Aviso", JOptionPane.WARNING_MESSAGE);
-                return;
-            }
-
-            if (idFornecedorSelecionado == null || idFornecedorSelecionado <= 0) {
-                JOptionPane.showMessageDialog(this, "Selecione um fornecedor válido.", "Aviso", JOptionPane.WARNING_MESSAGE);
-                return;
-            }
-
-            Produto produto = montarProdutoAtual();
-            boolean alterado = produtoController.alterarProduto(produto);
-
-            if (!alterado) {
-                JOptionPane.showMessageDialog(this, "Não foi possível alterar o produto.", "Erro", JOptionPane.ERROR_MESSAGE);
-                return;
-            }
-
-            boolean fornecedorAssociado = associarFornecedorProduto(produto.getId(), idFornecedorSelecionado);
-            if (!fornecedorAssociado) {
-                JOptionPane.showMessageDialog(this, "Produto alterado, mas não foi possível associar o fornecedor.", "Aviso", JOptionPane.WARNING_MESSAGE);
-                return;
-            }
-
-            JOptionPane.showMessageDialog(this, "Produto alterado com sucesso!", "Sucesso", JOptionPane.INFORMATION_MESSAGE);
-            limparCampos();
-        });
+        btnAlterar.addActionListener(e -> alterarProduto());
 
         btnExcluir.addActionListener(e -> {
             if (precisaPesquisarProduto()) {
@@ -238,29 +214,49 @@ public class FormProduto extends JFrame {
         add(painelPrincipal, BorderLayout.CENTER);
     }
 
+    private void configurarRenderizadores() {
+        cmbFornecedor.setRenderer(new DefaultListCellRenderer() {
+            @Override
+            public Component getListCellRendererComponent(JList<?> list, Object value, int index, boolean isSelected, boolean cellHasFocus) {
+                super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
+                if (value == null) {
+                    setText("Selecione um Fornecedor");
+                } else if (value instanceof Fornecedor fornecedor) {
+                    setText(fornecedor.getNome_fantasia());
+                }
+                return this;
+            }
+        });
+
+        cmbCategoria.setRenderer(new DefaultListCellRenderer() {
+            @Override
+            public Component getListCellRendererComponent(JList<?> list, Object value, int index, boolean isSelected, boolean cellHasFocus) {
+                super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
+                if (value == null) {
+                    setText("Selecione uma Categoria");
+                } else if (value instanceof Categoria categoria) {
+                    setText(categoria.getNome());
+                }
+                return this;
+            }
+        });
+    }
+
     private void carregarFornecedor() {
         List<Fornecedor> fornecedores = fornecedorController.listarFornecedores();
         cmbFornecedor.removeAllItems();
-        cmbFornecedor.addItem("Selecione um Fornecedor");
+        cmbFornecedor.addItem(null);
         for (Fornecedor fornecedor : fornecedores) {
-            cmbFornecedor.addItem(fornecedor.getNome_fantasia());
+            cmbFornecedor.addItem(fornecedor);
         }
-        cmbFornecedor.addActionListener(e -> {
-            int selectedIndex = cmbFornecedor.getSelectedIndex();
-            if (selectedIndex > 0 && selectedIndex <= fornecedores.size()) {
-                idFornecedorSelecionado = fornecedores.get(selectedIndex - 1).getId();
-            } else {
-                idFornecedorSelecionado = null;
-            }
-        });
     }
 
     private void carregarCategoria() {
         List<Categoria> categorias = categoriaController.listarCategorias();
         cmbCategoria.removeAllItems();
-        cmbCategoria.addItem("Selecione uma Categoria");
+        cmbCategoria.addItem(null);
         for (Categoria categoria : categorias) {
-            cmbCategoria.addItem(categoria.getNome());
+            cmbCategoria.addItem(categoria);
         }
     }
 
@@ -284,21 +280,13 @@ public class FormProduto extends JFrame {
         txtNome_produto.setText(produto.getNome());
         txtQtde_estoque.setText(String.valueOf(produto.getQtde_estoque()));
         
-        carregarValoresPrecosCalulados(produto.getId());
+        carregarValoresPrecosCalculados(produto.getId());
         
         carregarFornecedorAssociado(produto.getId());
-        
-        if (produto.getCategoria() != null) {
-            for (int i = 0; i < cmbCategoria.getItemCount(); i++) {
-                if (cmbCategoria.getItemAt(i).equals(produto.getCategoria().getNome())) {
-                    cmbCategoria.setSelectedIndex(i);
-                    break;
-                }
-            }
-        }
+        carregarCategoriaAssociada(produto);
     }
 
-    private void carregarValoresPrecosCalulados(int idProduto) {
+    private void carregarValoresPrecosCalculados(int idProduto) {
         double precoMedio = produtoController.buscarPrecoMedio(idProduto);
         double valorUltimaCompra = produtoController.buscarValorUltimaCompra(idProduto);
         double valorUltimaVenda = produtoController.buscarValorUltimaVenda(idProduto);
@@ -311,53 +299,78 @@ public class FormProduto extends JFrame {
     private void carregarFornecedorAssociado(int idProduto) {
         FornecedorProduto fp = fornecedorProdutoController.buscarFornecedorPorProduto(idProduto);
         if (fp != null && fp.getFornecedor() != null) {
-            idFornecedorSelecionado = fp.getFornecedor().getId();
-            for (int i = 0; i < cmbFornecedor.getItemCount(); i++) {
-                if (cmbFornecedor.getItemAt(i).equals(fp.getFornecedor().getNome_fantasia())) {
-                    cmbFornecedor.setSelectedIndex(i);
-                    break;
-                }
-            }
+            selecionarItemPorId(cmbFornecedor, fp.getFornecedor().getId(), Fornecedor::getId);
+            return;
         }
+        cmbFornecedor.setSelectedIndex(0);
+    }
+
+    private void carregarCategoriaAssociada(Produto produto) {
+        if (produto.getCategoria() == null) {
+            cmbCategoria.setSelectedIndex(0);
+            return;
+        }
+
+        selecionarItemPorId(cmbCategoria, produto.getCategoria().getId(), Categoria::getId);
     }
 
     private void salvarProduto() {
-        if (idFornecedorSelecionado == null || idFornecedorSelecionado <= 0) {
+        persistirProduto(false);
+    }
+
+    private void alterarProduto() {
+        if (precisaPesquisarProduto()) {
+            JOptionPane.showMessageDialog(this, "Informe o produto antes de alterar.", "Aviso", JOptionPane.WARNING_MESSAGE);
+            return;
+        }
+
+        persistirProduto(true);
+    }
+
+    private void persistirProduto(boolean atualizando) {
+        Fornecedor fornecedorSelecionado = obterFornecedorSelecionado();
+        Categoria categoriaSelecionada = obterCategoriaSelecionada();
+
+        if (fornecedorSelecionado == null) {
             JOptionPane.showMessageDialog(this, "Selecione um fornecedor válido.", "Aviso", JOptionPane.WARNING_MESSAGE);
             return;
         }
 
-        Produto produto = montarProdutoAtual();
-        boolean salvo = produtoController.salvarProduto(produto);
+        if (categoriaSelecionada == null) {
+            JOptionPane.showMessageDialog(this, "Selecione uma categoria válida.", "Aviso", JOptionPane.WARNING_MESSAGE);
+            return;
+        }
 
-        if (!salvo) {
+        Produto produto = montarProdutoAtual();
+        boolean persistido = atualizando
+            ? produtoController.alterarProduto(produto)
+            : produtoController.salvarProduto(produto);
+
+        if (!persistido) {
             JOptionPane.showMessageDialog(this, "Não foi possível salvar o produto.", "Erro", JOptionPane.ERROR_MESSAGE);
             return;
         }
 
-        boolean fornecedorAssociado = associarFornecedorProduto(produto.getId(), idFornecedorSelecionado);
+        boolean fornecedorAssociado = associarFornecedorProduto(produto, fornecedorSelecionado);
         if (!fornecedorAssociado) {
             JOptionPane.showMessageDialog(this, "Produto salvo, mas não foi possível associar o fornecedor.", "Erro", JOptionPane.ERROR_MESSAGE);
             return;
         }
 
-        JOptionPane.showMessageDialog(this, "Produto salvo com sucesso!", "Sucesso", JOptionPane.INFORMATION_MESSAGE);
+        JOptionPane.showMessageDialog(this, atualizando ? "Produto alterado com sucesso!" : "Produto salvo com sucesso!", "Sucesso", JOptionPane.INFORMATION_MESSAGE);
         limparCampos();
     }
 
-    private boolean associarFornecedorProduto(int idProduto, int idFornecedor) {
-        FornecedorProduto fpExistente = fornecedorProdutoController.buscarFornecedorPorProduto(idProduto);
+    private boolean associarFornecedorProduto(Produto produto, Fornecedor fornecedorSelecionado) {
+        FornecedorProduto fpExistente = fornecedorProdutoController.buscarFornecedorPorProduto(produto.getId());
         
         if (fpExistente != null) {
-            fpExistente.getFornecedor().setId(idFornecedor);
+            fpExistente.setFornecedor(fornecedorSelecionado);
+            fpExistente.setProduto(produto);
             return fornecedorProdutoController.alterarFornecedorProduto(fpExistente);
         } else {
             FornecedorProduto novoFP = new FornecedorProduto();
-            Fornecedor fornecedor = new Fornecedor();
-            fornecedor.setId(idFornecedor);
-            Produto produto = new Produto();
-            produto.setId(idProduto);
-            novoFP.setFornecedor(fornecedor);
+            novoFP.setFornecedor(fornecedorSelecionado);
             novoFP.setProduto(produto);
             return fornecedorProdutoController.salvarFornecedorProduto(novoFP);
         }
@@ -372,7 +385,6 @@ public class FormProduto extends JFrame {
         cmbFornecedor.setSelectedIndex(0);
         cmbCategoria.setSelectedIndex(0);
         idProdutoAtual = null;
-        idFornecedorSelecionado = null;
         txtNome_produto.requestFocus();
     }
 
@@ -383,13 +395,31 @@ public class FormProduto extends JFrame {
         }
         produto.setNome(txtNome_produto.getText().trim());
         produto.setQtde_estoque(Double.parseDouble(txtQtde_estoque.getText().trim()));
-        
-        if (cmbCategoria.getSelectedIndex() > 0) {
-            Categoria categoria = new Categoria();
-            categoria.setNome((String) cmbCategoria.getSelectedItem());
-            produto.setCategoria(categoria);
+
+        Categoria categoriaSelecionada = obterCategoriaSelecionada();
+        if (categoriaSelecionada != null) {
+            produto.setCategoria(categoriaSelecionada);
         }
         
         return produto;
+    }
+
+    private Fornecedor obterFornecedorSelecionado() {
+        return (Fornecedor) cmbFornecedor.getSelectedItem();
+    }
+
+    private Categoria obterCategoriaSelecionada() {
+        return (Categoria) cmbCategoria.getSelectedItem();
+    }
+
+    private <T> void selecionarItemPorId(JComboBox<T> comboBox, int id, ToIntFunction<T> idExtractor) {
+        for (int i = 0; i < comboBox.getItemCount(); i++) {
+            T item = comboBox.getItemAt(i);
+            if (item != null && idExtractor.applyAsInt(item) == id) {
+                comboBox.setSelectedIndex(i);
+                return;
+            }
+        }
+        comboBox.setSelectedIndex(0);
     }
 }
