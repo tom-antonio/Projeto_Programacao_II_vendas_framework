@@ -117,8 +117,8 @@ public class FormFornecedor extends JFrame {
         });
 
         btnExcluir.addActionListener(e -> {
-            if (idFornecedorAtual == null) {
-                JOptionPane.showMessageDialog(this, "Nenhum fornecedor selecionado para excluir.", "Aviso", JOptionPane.WARNING_MESSAGE);
+            if (precisaPesquisarFornecedor()) {
+                abrirPesquisaFornecedor();
                 return;
             }
 
@@ -167,7 +167,7 @@ public class FormFornecedor extends JFrame {
     }
 
     private void abrirPesquisaFornecedor() {
-        PesquisaFornecedorDialog dialog = new PesquisaFornecedorDialog(this, fornecedorController);
+        PesquisaFornecedor dialog = new PesquisaFornecedor(this, fornecedorController);
         dialog.setVisible(true);
 
         Fornecedor selecionado = dialog.getFornecedorSelecionado();

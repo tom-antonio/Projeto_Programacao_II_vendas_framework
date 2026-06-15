@@ -19,7 +19,7 @@ import javax.swing.table.DefaultTableModel;
 import com.luan.vendas.controller.FornecedorController;
 import com.luan.vendas.model.Fornecedor;
 
-public class PesquisaFornecedorDialog extends JDialog {
+public class PesquisaFornecedor extends JDialog {
 
     private final JTextField txtPesquisa;
     private final JTable tabela;
@@ -28,7 +28,7 @@ public class PesquisaFornecedorDialog extends JDialog {
     private final List<Fornecedor> fornecedoresEncontrados;
     private Fornecedor fornecedorSelecionado;
 
-    public PesquisaFornecedorDialog(Frame parent, FornecedorController fornecedorController) {
+    public PesquisaFornecedor(Frame parent, FornecedorController fornecedorController) {
         super(parent, "Pesquisar Fornecedor", true);
         this.fornecedorController = fornecedorController;
         this.fornecedoresEncontrados = new ArrayList<>();

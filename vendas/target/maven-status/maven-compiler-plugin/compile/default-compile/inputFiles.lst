@@ -39,4 +39,5 @@
 /Users/luanmorais/GitHub/Projeto_Programacao_II_vendas_framework/vendas/src/main/java/com/luan/vendas/view/FormProduto.java
 /Users/luanmorais/GitHub/Projeto_Programacao_II_vendas_framework/vendas/src/main/java/com/luan/vendas/view/FormTelaPrincipal.java
 /Users/luanmorais/GitHub/Projeto_Programacao_II_vendas_framework/vendas/src/main/java/com/luan/vendas/view/FormVenda.java
-/Users/luanmorais/GitHub/Projeto_Programacao_II_vendas_framework/vendas/src/main/java/com/luan/vendas/view/PesquisaFornecedorDialog.java
+/Users/luanmorais/GitHub/Projeto_Programacao_II_vendas_framework/vendas/src/main/java/com/luan/vendas/view/PesquisaFornecedor.java
+/Users/luanmorais/GitHub/Projeto_Programacao_II_vendas_framework/vendas/src/main/java/com/luan/vendas/view/RunFormFornecedor.java

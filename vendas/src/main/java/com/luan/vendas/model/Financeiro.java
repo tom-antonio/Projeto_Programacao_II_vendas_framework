@@ -33,7 +33,7 @@ public class Financeiro {
     private Fornecedor fornecedor;
 
     @ManyToOne
-    private Categoria categoria;
+    private Categoria cliente;
 
     @ManyToOne
     private TipoConta tipoConta;

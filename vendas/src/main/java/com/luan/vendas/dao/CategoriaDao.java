@@ -44,12 +44,12 @@ public class CategoriaDao {
 		}
 	}
 
-	public boolean excluirHibernate(int id) throws IllegalStateException, SystemException {
+	public boolean excluirHibernate(Categoria categoria2) throws IllegalStateException, SystemException {
 		Transaction transaction = null;
 
 		try (Session session = Postgres.getSESSION_FACTORY().openSession()) {
 			transaction = (Transaction) session.beginTransaction();
-			Categoria categoria = session.find(Categoria.class, id);
+			Categoria categoria = session.find(Categoria.class, categoria2);
 
 			if (categoria == null) {
 				transaction.rollback();
