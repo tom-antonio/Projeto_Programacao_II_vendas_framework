@@ -18,9 +18,11 @@ import javax.swing.JTextField;
 
 import com.luan.vendas.controller.CategoriaController;
 import com.luan.vendas.controller.FornecedorController;
+import com.luan.vendas.controller.FornecedorProdutoController;
 import com.luan.vendas.controller.ProdutoController;
 import com.luan.vendas.model.Categoria;
 import com.luan.vendas.model.Fornecedor;
+import com.luan.vendas.model.FornecedorProduto;
 import com.luan.vendas.model.Produto;
 
 public class FormProduto extends JFrame {
@@ -38,13 +40,16 @@ public class FormProduto extends JFrame {
     private JButton btnPesquisar;
     private final ProdutoController produtoController;
     private final FornecedorController fornecedorController;
+    private final FornecedorProdutoController fornecedorProdutoController;
     private final CategoriaController categoriaController;
     private Integer idProdutoAtual;
+    private Integer idFornecedorSelecionado;
 
     public FormProduto() {
         setTitle("Cadastro de Produto");
         produtoController = new ProdutoController();
         fornecedorController = new FornecedorController();
+        fornecedorProdutoController = new FornecedorProdutoController();
         categoriaController = new CategoriaController();
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 
@@ -167,11 +172,22 @@ public class FormProduto extends JFrame {
                 return;
             }
 
+            if (idFornecedorSelecionado == null || idFornecedorSelecionado <= 0) {
+                JOptionPane.showMessageDialog(this, "Selecione um fornecedor válido.", "Aviso", JOptionPane.WARNING_MESSAGE);
+                return;
+            }
+
             Produto produto = montarProdutoAtual();
             boolean alterado = produtoController.alterarProduto(produto);
 
             if (!alterado) {
                 JOptionPane.showMessageDialog(this, "Não foi possível alterar o produto.", "Erro", JOptionPane.ERROR_MESSAGE);
+                return;
+            }
+
+            boolean fornecedorAssociado = associarFornecedorProduto(produto.getId(), idFornecedorSelecionado);
+            if (!fornecedorAssociado) {
+                JOptionPane.showMessageDialog(this, "Produto alterado, mas não foi possível associar o fornecedor.", "Aviso", JOptionPane.WARNING_MESSAGE);
                 return;
             }
 
@@ -206,7 +222,7 @@ public class FormProduto extends JFrame {
             }
         });
 
-        btnPesquisar.addActionListener(e -> pesquisarProdutoPorId());
+        btnPesquisar.addActionListener(e -> abrirPesquisaProduto());
 
         painelBotoes.add(btnSalvar);
         painelBotoes.add(btnAlterar);
@@ -229,6 +245,14 @@ public class FormProduto extends JFrame {
         for (Fornecedor fornecedor : fornecedores) {
             cmbFornecedor.addItem(fornecedor.getNome_fantasia());
         }
+        cmbFornecedor.addActionListener(e -> {
+            int selectedIndex = cmbFornecedor.getSelectedIndex();
+            if (selectedIndex > 0 && selectedIndex <= fornecedores.size()) {
+                idFornecedorSelecionado = fornecedores.get(selectedIndex - 1).getId();
+            } else {
+                idFornecedorSelecionado = null;
+            }
+        });
     }
 
     private void carregarCategoria() {
@@ -245,50 +269,64 @@ public class FormProduto extends JFrame {
             && txtNome_produto.getText().trim().isEmpty();
     }
 
-    private void pesquisarProdutoPorId() {
-        String idTexto = JOptionPane.showInputDialog(this, "Informe o ID do produto:", "Pesquisar Produto", JOptionPane.QUESTION_MESSAGE);
-        if (idTexto == null) {
-            return;
-        }
+    private void abrirPesquisaProduto() {
+        PesquisaProduto dialog = new PesquisaProduto(this, produtoController);
+        dialog.setVisible(true);
 
-        idTexto = idTexto.trim();
-        if (idTexto.isEmpty()) {
-            JOptionPane.showMessageDialog(this, "Informe um ID válido.", "Aviso", JOptionPane.WARNING_MESSAGE);
-            return;
+        Produto selecionado = dialog.getProdutoSelecionado();
+        if (selecionado != null) {
+            preencherCampos(selecionado);
         }
-
-        int id;
-        try {
-            id = Integer.parseInt(idTexto);
-        } catch (NumberFormatException e) {
-            JOptionPane.showMessageDialog(this, "O ID deve ser numérico.", "Aviso", JOptionPane.WARNING_MESSAGE);
-            return;
-        }
-
-        carregarProduto(id);
     }
 
-    private void carregarProduto(int idProduto) {
-        Produto produto = produtoController.pesquisarProduto(idProduto);
-        if (produto == null) {
-            JOptionPane.showMessageDialog(this, "Produto não encontrado.", "Aviso", JOptionPane.INFORMATION_MESSAGE);
-            return;
-        }
-
+    private void preencherCampos(Produto produto) {
         idProdutoAtual = produto.getId();
         txtNome_produto.setText(produto.getNome());
         txtQtde_estoque.setText(String.valueOf(produto.getQtde_estoque()));
+        
+        carregarValoresPrecosCalulados(produto.getId());
+        
+        carregarFornecedorAssociado(produto.getId());
+        
+        if (produto.getCategoria() != null) {
+            for (int i = 0; i < cmbCategoria.getItemCount(); i++) {
+                if (cmbCategoria.getItemAt(i).equals(produto.getCategoria().getNome())) {
+                    cmbCategoria.setSelectedIndex(i);
+                    break;
+                }
+            }
+        }
+    }
 
-        txtPreco_medio.setText(String.valueOf(produtoController.buscarPrecoMedio(produto.getId())));
-        txtValor_venda.setText(String.valueOf(produtoController.buscarValorUltimaVenda(produto.getId())));
-        txtValor_compra.setText(String.valueOf(produtoController.buscarValorUltimaCompra(produto.getId())));
+    private void carregarValoresPrecosCalulados(int idProduto) {
+        double precoMedio = produtoController.buscarPrecoMedio(idProduto);
+        double valorUltimaCompra = produtoController.buscarValorUltimaCompra(idProduto);
+        double valorUltimaVenda = produtoController.buscarValorUltimaVenda(idProduto);
+        
+        txtPreco_medio.setText(String.valueOf(precoMedio));
+        txtValor_compra.setText(String.valueOf(valorUltimaCompra));
+        txtValor_venda.setText(String.valueOf(valorUltimaVenda));
+    }
 
-        if (produto.getCategoria() != null && produto.getCategoria().getNome() != null) {
-            cmbCategoria.setSelectedItem(produto.getCategoria().getNome());
+    private void carregarFornecedorAssociado(int idProduto) {
+        FornecedorProduto fp = fornecedorProdutoController.buscarFornecedorPorProduto(idProduto);
+        if (fp != null && fp.getFornecedor() != null) {
+            idFornecedorSelecionado = fp.getFornecedor().getId();
+            for (int i = 0; i < cmbFornecedor.getItemCount(); i++) {
+                if (cmbFornecedor.getItemAt(i).equals(fp.getFornecedor().getNome_fantasia())) {
+                    cmbFornecedor.setSelectedIndex(i);
+                    break;
+                }
+            }
         }
     }
 
     private void salvarProduto() {
+        if (idFornecedorSelecionado == null || idFornecedorSelecionado <= 0) {
+            JOptionPane.showMessageDialog(this, "Selecione um fornecedor válido.", "Aviso", JOptionPane.WARNING_MESSAGE);
+            return;
+        }
+
         Produto produto = montarProdutoAtual();
         boolean salvo = produtoController.salvarProduto(produto);
 
@@ -297,8 +335,32 @@ public class FormProduto extends JFrame {
             return;
         }
 
+        boolean fornecedorAssociado = associarFornecedorProduto(produto.getId(), idFornecedorSelecionado);
+        if (!fornecedorAssociado) {
+            JOptionPane.showMessageDialog(this, "Produto salvo, mas não foi possível associar o fornecedor.", "Erro", JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+
         JOptionPane.showMessageDialog(this, "Produto salvo com sucesso!", "Sucesso", JOptionPane.INFORMATION_MESSAGE);
         limparCampos();
+    }
+
+    private boolean associarFornecedorProduto(int idProduto, int idFornecedor) {
+        FornecedorProduto fpExistente = fornecedorProdutoController.buscarFornecedorPorProduto(idProduto);
+        
+        if (fpExistente != null) {
+            fpExistente.getFornecedor().setId(idFornecedor);
+            return fornecedorProdutoController.alterarFornecedorProduto(fpExistente);
+        } else {
+            FornecedorProduto novoFP = new FornecedorProduto();
+            Fornecedor fornecedor = new Fornecedor();
+            fornecedor.setId(idFornecedor);
+            Produto produto = new Produto();
+            produto.setId(idProduto);
+            novoFP.setFornecedor(fornecedor);
+            novoFP.setProduto(produto);
+            return fornecedorProdutoController.salvarFornecedorProduto(novoFP);
+        }
     }
 
     private void limparCampos() {
@@ -307,7 +369,10 @@ public class FormProduto extends JFrame {
         txtPreco_medio.setText("");
         txtValor_venda.setText("");
         txtValor_compra.setText("");
+        cmbFornecedor.setSelectedIndex(0);
+        cmbCategoria.setSelectedIndex(0);
         idProdutoAtual = null;
+        idFornecedorSelecionado = null;
         txtNome_produto.requestFocus();
     }
 
@@ -318,16 +383,13 @@ public class FormProduto extends JFrame {
         }
         produto.setNome(txtNome_produto.getText().trim());
         produto.setQtde_estoque(Double.parseDouble(txtQtde_estoque.getText().trim()));
-        produto.setPreco_medio(parseDoubleOuZero(txtPreco_medio.getText().trim()));
-        produto.setValor_ultima_venda(parseDoubleOuZero(txtValor_venda.getText().trim()));
-        produto.setValor_ultima_compra(parseDoubleOuZero(txtValor_compra.getText().trim()));
-        return produto;
-    }
-
-    private double parseDoubleOuZero(String valor) {
-        if (valor == null || valor.isEmpty()) {
-            return 0.0;
+        
+        if (cmbCategoria.getSelectedIndex() > 0) {
+            Categoria categoria = new Categoria();
+            categoria.setNome((String) cmbCategoria.getSelectedItem());
+            produto.setCategoria(categoria);
         }
-        return Double.parseDouble(valor);
+        
+        return produto;
     }
 }

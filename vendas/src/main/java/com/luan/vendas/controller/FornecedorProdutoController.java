@@ -2,56 +2,42 @@ package com.luan.vendas.controller;
 
 import java.util.List;
 
-import com.luan.vendas.dao.FornecedorDao;
 import com.luan.vendas.dao.FornecedorProdutoDao;
-import com.luan.vendas.dao.ProdutoDao;
-import com.luan.vendas.model.Fornecedor;
 import com.luan.vendas.model.FornecedorProduto;
-import com.luan.vendas.model.Produto;
 
 import jakarta.transaction.SystemException;
 
 public class FornecedorProdutoController {
 
 	private final FornecedorProdutoDao fornecedorProdutoDao;
-	private final FornecedorDao fornecedorDao;
-	private final ProdutoDao produtoDao;
 
 	public FornecedorProdutoController() {
 		this.fornecedorProdutoDao = new FornecedorProdutoDao();
-		this.fornecedorDao = new FornecedorDao();
-		this.produtoDao = new ProdutoDao();
 	}
 
-	public boolean salvarFornecedorProduto(int id, int fornecedorId, int produtoId) {
-		if (id <= 0) {
+	public boolean salvarFornecedorProduto(FornecedorProduto fornecedorProduto) {
+		if (!validarDados(fornecedorProduto)) {
 			return false;
 		}
-		if (fornecedorId <= 0) {
-			return false;
-		}
-		if (produtoId <= 0) {
-			return false;
-		}
-
-		FornecedorProduto fornecedorProduto = new FornecedorProduto();
-		fornecedorProduto.setId(id);
-
-		Fornecedor fornecedor = fornecedorDao.pesquisarHibernate(fornecedorId);
-		if (fornecedor == null) {
-			return false;
-		}
-
-		Produto produto = produtoDao.pesquisarHibernate(produtoId);
-		if (produto == null) {
-			return false;
-		}
-
-		fornecedorProduto.setFornecedor(fornecedor);
-		fornecedorProduto.setProduto(produto);
 
 		try {
 			return fornecedorProdutoDao.salvarHibernate(fornecedorProduto);
+		} catch (SystemException e) {
+			return false;
+		}
+	}
+
+	public boolean alterarFornecedorProduto(FornecedorProduto fornecedorProduto) {
+		if (!validarDados(fornecedorProduto)) {
+			return false;
+		}
+
+		if (fornecedorProduto.getId() <= 0) {
+			return false;
+		}
+
+		try {
+			return fornecedorProdutoDao.alterarHibernate(fornecedorProduto);
 		} catch (SystemException e) {
 			return false;
 		}
@@ -79,5 +65,25 @@ public class FornecedorProdutoController {
 		}
 
 		return fornecedorProdutoDao.pesquisarHibernate(id);
+	}
+
+	public FornecedorProduto buscarFornecedorPorProduto(int produtoId) {
+		if (produtoId <= 0) {
+			return null;
+		}
+		return fornecedorProdutoDao.buscarPorProdutoId(produtoId);
+	}
+
+	public boolean validarDados(FornecedorProduto fornecedorProduto) {
+		if (fornecedorProduto == null) {
+			return false;
+		}
+		if (fornecedorProduto.getFornecedor() == null || fornecedorProduto.getFornecedor().getId() <= 0) {
+			return false;
+		}
+		if (fornecedorProduto.getProduto() == null || fornecedorProduto.getProduto().getId() <= 0) {
+			return false;
+		}
+		return true;
 	}
 }

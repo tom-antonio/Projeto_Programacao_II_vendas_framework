@@ -51,4 +51,14 @@ public class Produto {
 
     @OneToMany(mappedBy = "produto", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<CompraProduto> compraProduto = new ArrayList<>();
+
+    public Object getValor_compra() {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'getValor_compra'");
+    }
+
+    public Object getValor_venda() {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'getValor_venda'");
+    }
 }

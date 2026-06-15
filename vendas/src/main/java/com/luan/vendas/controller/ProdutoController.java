@@ -1,5 +1,7 @@
 package com.luan.vendas.controller;
 
+import java.util.List;
+
 import com.luan.vendas.dao.ProdutoDao;
 import com.luan.vendas.model.Produto;
 
@@ -49,12 +51,12 @@ public class ProdutoController {
 		}
 	}
 
-	public Produto pesquisarProduto(int id) {
-		if (id <= 0) {
-			return null;
+	public List<Produto> listarProdutosPorNome(String nome) {
+		if (nome == null || nome.trim().isEmpty()) {
+			return List.of();
 		}
 
-		return produtoDao.pesquisarHibernate(id);
+		return ProdutoDao.pesquisarHibernate(nome.trim());
 	}
 
 	public double buscarPrecoMedio(int idProduto) {

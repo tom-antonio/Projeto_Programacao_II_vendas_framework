@@ -76,7 +76,7 @@ public class ProdutoDao {
 		}
 	}
 
-	public List<Produto> pesquisarHibernate(String nome) {
+	public static List<Produto> pesquisarHibernate(String nome) {
 		try (Session session = Postgres.getSESSION_FACTORY().openSession()) {
 			return session.createQuery("FROM Produto p WHERE lower(p.nome) LIKE :nome order by p.nome", Produto.class)
 					.setParameter("nome", "%" + nome.toLowerCase() + "%")
