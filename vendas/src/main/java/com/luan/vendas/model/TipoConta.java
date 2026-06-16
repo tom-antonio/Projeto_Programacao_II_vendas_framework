@@ -20,6 +20,6 @@ public class TipoConta {
     private int id;
 
     @Column(nullable = false, length = 20)
-    private int descricao;
+    private String descricao;
 
 }
