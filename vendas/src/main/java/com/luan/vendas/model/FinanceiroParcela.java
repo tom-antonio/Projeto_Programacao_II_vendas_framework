@@ -31,10 +31,10 @@ public class FinanceiroParcela {
     @Column(nullable = false, length = 10)
     private double valor_original;
 
-    @Column(nullable = false, length = 10)
+    @Column(nullable = true, length = 10)
     private double desconto;
 
-    @Column(nullable = false, length = 10)
+    @Column(nullable = true, length = 10)
     private double acrescimo;
 
     @Column(nullable = false, length = 20)
