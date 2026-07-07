@@ -66,9 +66,9 @@ public class Postgres {
     }
 
     // Configuraões para conexão com JDBC
-    private static final String URL = "jdbc:postgresql://localhost:5432/vendas";
+    private static final String URL = "jdbc:postgresql://localhost:5432/SisCom_comercial_prog2_Luan";
     private static final String USER = "postgres";
-    private static final String PASSWORD = "123456";
+    private static final String PASSWORD = "201706279";
 
     private static Connection connection;
 
