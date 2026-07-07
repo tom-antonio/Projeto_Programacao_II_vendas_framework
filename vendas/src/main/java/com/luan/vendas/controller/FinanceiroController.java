@@ -10,7 +10,6 @@ import com.luan.vendas.dao.FornecedorDao;
 import com.luan.vendas.dao.TipoContaDao;
 import com.luan.vendas.model.Cliente;
 import com.luan.vendas.model.Financeiro;
-import com.luan.vendas.model.FinanceiroParcela;
 import com.luan.vendas.model.FormaPagamento;
 import com.luan.vendas.model.Fornecedor;
 import com.luan.vendas.model.TipoConta;
@@ -103,52 +102,7 @@ public class FinanceiroController {
 	}
 
 	public boolean validarDados(Financeiro financeiro) {
-		if (financeiro == null) {
-			return false;
-		}
-		if (financeiro.getData_conta() == null) {
-			return false;
-		}
-		if (financeiro.getPagar_ou_receber() < 0) {
-			return false;
-		}
-		if (financeiro.getFornecedor() == null && financeiro.getCliente() == null) {
-			return false;
-		}
-		if (financeiro.getTipoConta() == null || financeiro.getTipoConta().getId() <= 0) {
-			return false;
-		}
-		if (financeiro.getFormaPagamento() == null || financeiro.getFormaPagamento().getId() <= 0) {
-			return false;
-		}
-		if (financeiro.getFornecedor() != null && financeiro.getFornecedor().getId() <= 0) {
-			return false;
-		}
-		if (financeiro.getCliente() != null && financeiro.getCliente().getId() <= 0) {
-			return false;
-		}
-		List<FinanceiroParcela> parcelas = financeiro.getFinanceiroParcelas();
-		if (parcelas == null || parcelas.isEmpty()) {
-			return false;
-		}
-		for (FinanceiroParcela parcela : parcelas) {
-			if (parcela == null) {
-				return false;
-			}
-			if (parcela.getN_parcela() <= 0) {
-				return false;
-			}
-			if (parcela.getData_vencimento() == null) {
-				return false;
-			}
-			if (parcela.getValor_original() < 0) {
-				return false;
-			}
-			if (parcela.getValor_final() < 0) {
-				return false;
-			}
-		}
-		return true;
+		return financeiro != null;
 	}
 
 	private Financeiro prepararFinanceiro(Financeiro financeiro) {
@@ -189,21 +143,7 @@ public class FinanceiroController {
 		}
 		preparado.setFormaPagamento(formaPagamento);
 
-		List<FinanceiroParcela> parcelasPreparadas = new ArrayList<>();
-		for (FinanceiroParcela parcela : financeiro.getFinanceiroParcelas()) {
-			FinanceiroParcela parcelaPreparada = new FinanceiroParcela();
-			parcelaPreparada.setId(parcela.getId());
-			parcelaPreparada.setN_parcela(parcela.getN_parcela());
-			parcelaPreparada.setData_vencimento(parcela.getData_vencimento());
-			parcelaPreparada.setData_pagamento(parcela.getData_pagamento());
-			parcelaPreparada.setValor_original(parcela.getValor_original());
-			parcelaPreparada.setDesconto(parcela.getDesconto());
-			parcelaPreparada.setAcrescimo(parcela.getAcrescimo());
-			parcelaPreparada.setValor_final(parcela.getValor_final());
-			parcelaPreparada.setFinanceiro(preparado);
-			parcelasPreparadas.add(parcelaPreparada);
-		}
-		preparado.setFinanceiroParcelas(parcelasPreparadas);
+		preparado.setFinanceiroParcelas(new ArrayList<>());
 
 		return preparado;
 	}

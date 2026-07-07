@@ -39,7 +39,7 @@ public class FormCliente extends JFrame {
         inicializarComponentes();
 
         pack();
-        setMinimumSize(new Dimension(700, 240));
+        setMinimumSize(new Dimension(700, 320));
         setLocationRelativeTo(null);
         setVisible(true);
     }
@@ -173,7 +173,7 @@ public class FormCliente extends JFrame {
         painelBotoes.add(btnPesquisar);
 
         gbc.gridx = 0;
-        gbc.gridy = 3;
+        gbc.gridy = 5;
         gbc.gridwidth = 2;
         gbc.fill = GridBagConstraints.HORIZONTAL;
         painelPrincipal.add(painelBotoes, gbc);

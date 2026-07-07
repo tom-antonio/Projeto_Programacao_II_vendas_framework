@@ -16,10 +16,12 @@ import com.luan.vendas.model.Compra;
 import com.luan.vendas.model.CompraProduto;
 import com.luan.vendas.model.Financeiro;
 import com.luan.vendas.model.FinanceiroParcela;
+import com.luan.vendas.model.FormaPagamento;
 import com.luan.vendas.model.Fornecedor;
 import com.luan.vendas.model.FornecedorProduto;
 import com.luan.vendas.model.Produto;
 import com.luan.vendas.model.ProdutoVenda;
+import com.luan.vendas.model.TipoConta;
 import com.luan.vendas.model.Venda;
 
 public class Postgres {
@@ -43,6 +45,8 @@ public class Postgres {
             configuration.addAnnotatedClass(Cliente.class);
             configuration.addAnnotatedClass(Fornecedor.class);
             configuration.addAnnotatedClass(FornecedorProduto.class);
+            configuration.addAnnotatedClass(FormaPagamento.class);
+            configuration.addAnnotatedClass(TipoConta.class);
             configuration.addAnnotatedClass(Produto.class);
             configuration.addAnnotatedClass(Venda.class);
             configuration.addAnnotatedClass(Compra.class);
