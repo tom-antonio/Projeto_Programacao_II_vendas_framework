@@ -1,10 +1,7 @@
 package com.luan.vendas.dao;
 
-import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Locale;
-import java.util.stream.Collectors;
 
 import org.hibernate.Session;
 import org.hibernate.Transaction;
@@ -14,8 +11,6 @@ import com.luan.vendas.model.Compra;
 import jakarta.transaction.SystemException;
 
 public class CompraDao {
-
-	private static final DateTimeFormatter UI_DATE_FORMATTER = DateTimeFormatter.ofPattern("dd/MM/yyyy");
 
     public boolean salvarHibernate(Compra compra) throws IllegalStateException, SystemException {
 		Transaction transaction = null;
@@ -84,25 +79,19 @@ public class CompraDao {
 		}
 	}
 
-	public List<Compra> pesquisarHibernate(String nome) {
+    public List<Compra> pesquisarHibernate(String nome) {
 		List<Compra> compras = pesquisarHibernate();
 		if (nome == null || nome.trim().isEmpty()) {
 			return compras;
 		}
 
-		String textoBusca = nome.trim().toLowerCase(Locale.ROOT);
+		String textoBusca = nome.trim().toLowerCase();
 		return compras.stream()
 			.filter(compra -> {
-				String idTexto = String.valueOf(compra.getId());
-				String dataTexto = compra.getData_compra() != null ? compra.getData_compra().format(UI_DATE_FORMATTER) : "";
 				String fornecedorTexto = compra.getFornecedor() != null ? compra.getFornecedor().getNome_fantasia() : "";
-				String valorTexto = String.valueOf(compra.getValor_total());
-				return idTexto.contains(textoBusca)
-					|| dataTexto.contains(textoBusca)
-					|| fornecedorTexto.toLowerCase(Locale.ROOT).contains(textoBusca)
-					|| valorTexto.contains(textoBusca);
+				return fornecedorTexto.toLowerCase().contains(textoBusca);
 			})
-			.collect(Collectors.toList());
+			.toList();
 		}
 
 	public Compra pesquisarHibernate(int id) {

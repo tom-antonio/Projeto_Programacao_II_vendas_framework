@@ -48,7 +48,7 @@ public class FormFinanceiroParcela extends JFrame {
         inicializarComponentes();
 
         pack();
-        setMinimumSize(new Dimension(800, 420));
+        setMinimumSize(new Dimension(600, 420));
         setLocationRelativeTo(null);
         setVisible(true);
     }

@@ -64,7 +64,7 @@ public class FormVenda extends JFrame {
         carregarClientes();
 
         pack();
-        setMinimumSize(new Dimension(700, 380));
+        setMinimumSize(new Dimension(700, 300));
         setLocationRelativeTo(null);
         setVisible(true);
     }

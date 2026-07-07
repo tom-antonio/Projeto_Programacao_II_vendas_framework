@@ -26,7 +26,7 @@ import javax.swing.table.DefaultTableModel;
 import com.luan.vendas.controller.FornecedorController;
 import com.luan.vendas.model.Fornecedor;
 
-public class EscolherFornecedor extends JDialog {
+public class FormFornecedorProduto extends JDialog {
 
     private final JComboBox<Fornecedor> cmbFornecedores;
     private final JTable tabelaFornecedores;
@@ -35,7 +35,7 @@ public class EscolherFornecedor extends JDialog {
     private final List<Fornecedor> fornecedoresSelecionados;
     private boolean salvo;
 
-    public EscolherFornecedor(Frame parent, FornecedorController fornecedorController, List<Fornecedor> fornecedoresIniciais) {
+    public FormFornecedorProduto(Frame parent, FornecedorController fornecedorController, List<Fornecedor> fornecedoresIniciais) {
         super(parent, "Escolher Fornecedor", true);
         this.fornecedorController = fornecedorController;
         this.fornecedoresSelecionados = new ArrayList<>();

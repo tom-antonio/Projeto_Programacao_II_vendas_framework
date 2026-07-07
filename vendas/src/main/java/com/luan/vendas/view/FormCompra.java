@@ -23,10 +23,7 @@ import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import javax.swing.JTable;
 import javax.swing.JTextField;
-import javax.swing.table.DefaultTableModel;
 import javax.swing.text.MaskFormatter;
 
 import com.luan.vendas.controller.CompraController;
@@ -42,11 +39,8 @@ public class FormCompra extends JFrame {
     private JTextField txtDataCompra;
     private JTextField txtValorTotal;
     private JComboBox<Fornecedor> cmbFornecedor;
-    private JTable tabelaProdutos;
-    private DefaultTableModel modeloProdutos;
     private JButton btnEscolherProduto;
     private JButton btnPesquisar;
-    private JButton btnRemoverProduto;
     private JButton btnSalvar;
     private JButton btnAlterar;
     private JButton btnExcluir;
@@ -67,7 +61,7 @@ public class FormCompra extends JFrame {
         carregarFornecedores();
 
         pack();
-        setMinimumSize(new Dimension(980, 560));
+        setMinimumSize(new Dimension(700, 300));
         setLocationRelativeTo(null);
         setVisible(true);
     }
@@ -88,12 +82,13 @@ public class FormCompra extends JFrame {
         gbc.gridx = 1;
         gbc.fill = GridBagConstraints.HORIZONTAL;
         gbc.weightx = 1;
-        
+
         MaskFormatter mascaraData = new MaskFormatter("##/##/####");
         mascaraData.setPlaceholderCharacter('_');    
         txtDataCompra = new JFormattedTextField(mascaraData);
 
         ((JFormattedTextField) txtDataCompra).setColumns(28);
+        painelPrincipal.add(txtDataCompra, gbc);
 
         gbc.gridx = 0;
         gbc.gridy = 1;
@@ -120,19 +115,6 @@ public class FormCompra extends JFrame {
         txtValorTotal.setEditable(false);
         painelPrincipal.add(txtValorTotal, gbc);
 
-        btnEscolherProduto = new JButton("EscolherProduto");
-        btnPesquisar = new JButton("Pesquisar");
-        btnRemoverProduto = new JButton("Remover Selecionado");
-
-        btnEscolherProduto.addActionListener(e -> abrirFormCompraProduto());
-        btnPesquisar.addActionListener(e -> abrirPesquisaCompra());
-        btnRemoverProduto.addActionListener(e -> removerProdutoSelecionado());
-
-        JPanel painelAcoesProdutos = new JPanel(new FlowLayout(FlowLayout.LEFT, 10, 0));
-        painelAcoesProdutos.add(btnEscolherProduto);
-        painelAcoesProdutos.add(btnPesquisar);
-        painelAcoesProdutos.add(btnRemoverProduto);
-
         gbc.gridx = 0;
         gbc.gridy = 3;
         gbc.fill = GridBagConstraints.NONE;
@@ -142,39 +124,29 @@ public class FormCompra extends JFrame {
         gbc.gridx = 1;
         gbc.fill = GridBagConstraints.HORIZONTAL;
         gbc.weightx = 1;
-        painelPrincipal.add(painelAcoesProdutos, gbc);
+        btnEscolherProduto = new JButton("Escolher Produto");
+        btnEscolherProduto.addActionListener(e -> abrirFormCompraProduto());
 
-        modeloProdutos = new DefaultTableModel(new Object[] {"ID", "Produto", "Quantidade", "Valor Unitário", "Subtotal"}, 0) {
-            @Override
-            public boolean isCellEditable(int row, int column) {
-                return false;
-            }
-        };
-        tabelaProdutos = new JTable(modeloProdutos);
-        JScrollPane scrollProdutos = new JScrollPane(tabelaProdutos);
-        scrollProdutos.setPreferredSize(new Dimension(840, 190));
-
-        gbc.gridx = 1;
-        gbc.gridy = 4;
-        gbc.fill = GridBagConstraints.BOTH;
-        gbc.weightx = 1;
-        painelPrincipal.add(scrollProdutos, gbc);
+        painelPrincipal.add(btnEscolherProduto, gbc);
 
         JPanel painelBotoes = new JPanel(new FlowLayout(FlowLayout.CENTER, 10, 0));
         btnSalvar = new JButton("Salvar");
         btnAlterar = new JButton("Alterar");
         btnExcluir = new JButton("Excluir");
+        btnPesquisar = new JButton("Pesquisar");
 
         btnSalvar.addActionListener(e -> salvarCompra());
         btnAlterar.addActionListener(e -> alterarCompra());
         btnExcluir.addActionListener(e -> excluirCompra());
+        btnPesquisar.addActionListener(e -> abrirPesquisaCompra());
 
         painelBotoes.add(btnSalvar);
         painelBotoes.add(btnAlterar);
         painelBotoes.add(btnExcluir);
+        painelBotoes.add(btnPesquisar);
 
         gbc.gridx = 0;
-        gbc.gridy = 5;
+        gbc.gridy = 4;
         gbc.gridwidth = 2;
         gbc.fill = GridBagConstraints.HORIZONTAL;
         painelPrincipal.add(painelBotoes, gbc);
@@ -209,9 +181,10 @@ public class FormCompra extends JFrame {
         FormCompraProduto dialog = new FormCompraProduto(this);
         dialog.setVisible(true);
 
-        CompraProduto compraProduto = dialog.getCompraProdutoSelecionado();
-        if (compraProduto != null) {
-            adicionarOuAtualizarItem(compraProduto);
+        if (dialog.isSelecionado()) {
+            for (CompraProduto compraProduto : dialog.getCompraProdutosSelecionados()) {
+                adicionarOuAtualizarItem(compraProduto);
+            }
         }
     }
 
@@ -253,7 +226,7 @@ public class FormCompra extends JFrame {
             }
         }
 
-        atualizarTabelaProdutos();
+        atualizarValorTotal();
     }
 
     private void selecionarFornecedorPorId(int idFornecedor) {
@@ -273,41 +246,13 @@ public class FormCompra extends JFrame {
             if (itemAtual.getProduto() != null && compraProduto.getProduto() != null
                 && itemAtual.getProduto().getId() == compraProduto.getProduto().getId()) {
                 itensCompra.set(i, compraProduto);
-                atualizarTabelaProdutos();
                 atualizarValorTotal();
                 return;
             }
         }
 
         itensCompra.add(compraProduto);
-        atualizarTabelaProdutos();
         atualizarValorTotal();
-    }
-
-    private void removerProdutoSelecionado() {
-        int linha = tabelaProdutos.getSelectedRow();
-        if (linha == -1) {
-            JOptionPane.showMessageDialog(this, "Selecione um produto na tabela.", "Aviso", JOptionPane.WARNING_MESSAGE);
-            return;
-        }
-
-        itensCompra.remove(linha);
-        atualizarTabelaProdutos();
-        atualizarValorTotal();
-    }
-
-    private void atualizarTabelaProdutos() {
-        modeloProdutos.setRowCount(0);
-        for (CompraProduto item : itensCompra) {
-            double subtotal = item.getQtdeProduto() * item.getValorUnit();
-            modeloProdutos.addRow(new Object[] {
-                item.getProduto() != null ? item.getProduto().getId() : null,
-                item.getProduto() != null ? item.getProduto().getNome() : "",
-                item.getQtdeProduto(),
-                item.getValorUnit(),
-                subtotal
-            });
-        }
     }
 
     private void atualizarValorTotal() {
@@ -378,7 +323,23 @@ public class FormCompra extends JFrame {
         }
 
         JOptionPane.showMessageDialog(this, atualizando ? "Compra alterada com sucesso!" : "Compra salva com sucesso!", "Sucesso", JOptionPane.INFORMATION_MESSAGE);
+        if (!atualizando) {
+            abrirFormularioFinanceiro(compra);
+        }
         limparCampos();
+    }
+
+    private void abrirFormularioFinanceiro(Compra compra) {
+        try {
+            new FormFinanceiro(compra).setVisible(true);
+        } catch (ParseException e) {
+            JOptionPane.showMessageDialog(
+                this,
+                "Compra salva, mas não foi possível abrir o financeiro: " + e.getMessage(),
+                "Aviso",
+                JOptionPane.WARNING_MESSAGE
+            );
+        }
     }
 
     private Compra montarCompraAtual() {
@@ -439,7 +400,6 @@ public class FormCompra extends JFrame {
         txtValorTotal.setText("");
         cmbFornecedor.setSelectedIndex(0);
         itensCompra.clear();
-        atualizarTabelaProdutos();
         idCompraAtual = null;
         txtDataCompra.requestFocus();
     }

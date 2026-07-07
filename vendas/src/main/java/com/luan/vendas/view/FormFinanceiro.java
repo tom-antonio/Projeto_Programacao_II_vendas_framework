@@ -32,6 +32,7 @@ import com.luan.vendas.controller.FormaPagamentoController;
 import com.luan.vendas.controller.FornecedorController;
 import com.luan.vendas.controller.TipoContaController;
 import com.luan.vendas.model.Cliente;
+import com.luan.vendas.model.Compra;
 import com.luan.vendas.model.Financeiro;
 import com.luan.vendas.model.FormaPagamento;
 import com.luan.vendas.model.Fornecedor;
@@ -62,6 +63,10 @@ public class FormFinanceiro extends JFrame {
 	private Integer idFinanceiroAtual;
 
 	public FormFinanceiro() throws ParseException {
+		this(null);
+	}
+
+	public FormFinanceiro(Compra compraPreenchida) throws ParseException {
 		setTitle("Cadastro de Financeiro");
 		financeiroController = new FinanceiroController();
 		financeiroParcelaController = new FinanceiroParcelaController();
@@ -73,11 +78,13 @@ public class FormFinanceiro extends JFrame {
 
 		inicializarComponentes();
 		carregarCombosRelacionamentos();
+		if (compraPreenchida != null) {
+			preencherCamposCompra(compraPreenchida);
+		}
 
 		pack();
-		setMinimumSize(new Dimension(1000, 380));
+		setMinimumSize(new Dimension(700, 380));
 		setLocationRelativeTo(null);
-		setVisible(true);
 	}
 
 	private void inicializarComponentes() throws ParseException {
@@ -102,6 +109,7 @@ public class FormFinanceiro extends JFrame {
         txtDataConta = new JFormattedTextField(mascaraData);
 
         ((JFormattedTextField) txtDataConta).setColumns(28);
+		painelPrincipal.add(txtDataConta, gbc);
 
 		gbc.gridx = 0;
 		gbc.gridy = 1;
@@ -363,6 +371,20 @@ public class FormFinanceiro extends JFrame {
 		selecionarItemPorId(comboFormaPagamento, financeiro.getFormaPagamento() != null ? financeiro.getFormaPagamento().getId() : 0, FormaPagamento::getId);
 	}
 
+	private void preencherCamposCompra(Compra compra) {
+		if (compra.getData_compra() != null) {
+			txtDataConta.setText(compra.getData_compra().format(UI_DATE_FORMATTER));
+		}
+
+		comboPagarOuReceber.setSelectedIndex(0);
+
+		if (compra.getFornecedor() != null) {
+			selecionarItemPorId(comboFornecedor, compra.getFornecedor().getId(), Fornecedor::getId);
+		}
+
+		comboCliente.setSelectedIndex(0);
+	}
+
 	private void salvarFinanceiro() {
 		Financeiro financeiro = montarFinanceiroAtual();
 		if (financeiro == null) {
@@ -404,11 +426,6 @@ public class FormFinanceiro extends JFrame {
 		Cliente cliente = (Cliente) comboCliente.getSelectedItem();
 		TipoConta tipoConta = (TipoConta) comboTipoConta.getSelectedItem();
 		FormaPagamento formaPagamento = (FormaPagamento) comboFormaPagamento.getSelectedItem();
-
-		if (fornecedor == null && cliente == null) {
-			JOptionPane.showMessageDialog(this, "Informe um fornecedor ou um cliente para o financeiro.", "Aviso", JOptionPane.WARNING_MESSAGE);
-			return null;
-		}
 
 		if (tipoConta == null || tipoConta.getId() <= 0) {
 			JOptionPane.showMessageDialog(this, "Informe um Tipo de Conta válido.", "Aviso", JOptionPane.WARNING_MESSAGE);

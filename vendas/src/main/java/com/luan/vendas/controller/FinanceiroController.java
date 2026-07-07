@@ -115,21 +115,17 @@ public class FinanceiroController {
 		preparado.setData_conta(financeiro.getData_conta());
 		preparado.setPagar_ou_receber(financeiro.getPagar_ou_receber());
 
-		if (financeiro.getFornecedor() != null) {
-			Fornecedor fornecedor = fornecedorDao.pesquisarHibernate(financeiro.getFornecedor().getId());
-			if (fornecedor == null) {
-				return null;
-			}
-			preparado.setFornecedor(fornecedor);
+		Fornecedor fornecedor = resolverFornecedorOpcional(financeiro);
+		if (fornecedor == null && financeiro.getFornecedor() != null) {
+			return null;
 		}
+		preparado.setFornecedor(fornecedor);
 
-		if (financeiro.getCliente() != null) {
-			Cliente cliente = clienteDao.pesquisarHibernate(financeiro.getCliente().getId());
-			if (cliente == null) {
-				return null;
-			}
-			preparado.setCliente(cliente);
+		Cliente cliente = resolverClienteOpcional(financeiro);
+		if (cliente == null && financeiro.getCliente() != null) {
+			return null;
 		}
+		preparado.setCliente(cliente);
 
 		TipoConta tipoConta = tipoContaDao.pesquisarHibernate(financeiro.getTipoConta().getId());
 		if (tipoConta == null) {
@@ -146,5 +142,21 @@ public class FinanceiroController {
 		preparado.setFinanceiroParcelas(new ArrayList<>());
 
 		return preparado;
+	}
+
+	private Fornecedor resolverFornecedorOpcional(Financeiro financeiro) {
+		if (financeiro.getFornecedor() == null) {
+			return null;
+		}
+
+		return fornecedorDao.pesquisarHibernate(financeiro.getFornecedor().getId());
+	}
+
+	private Cliente resolverClienteOpcional(Financeiro financeiro) {
+		if (financeiro.getCliente() == null) {
+			return null;
+		}
+
+		return clienteDao.pesquisarHibernate(financeiro.getCliente().getId());
 	}
 }
