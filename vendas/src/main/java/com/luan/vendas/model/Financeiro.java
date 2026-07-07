@@ -1,6 +1,7 @@
 package com.luan.vendas.model;
 
 import java.time.LocalDate;
+import java.util.List;
 
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
@@ -9,10 +10,12 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.ManyToOne;
-import jakarta.persistence.OneToOne;
+import jakarta.persistence.OneToMany;
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
+import lombok.ToString;
 
 @AllArgsConstructor
 @NoArgsConstructor
@@ -33,7 +36,7 @@ public class Financeiro {
     private Fornecedor fornecedor;
 
     @ManyToOne
-    private Categoria cliente;
+    private Cliente cliente;
 
     @ManyToOne
     private TipoConta tipoConta;
@@ -41,6 +44,8 @@ public class Financeiro {
     @ManyToOne
     private FormaPagamento formaPagamento;
 
-    @OneToOne(mappedBy = "financeiro", cascade = CascadeType.ALL, orphanRemoval = true)
-    private FinanceiroParcela financeiroParcela;
+    @OneToMany(mappedBy = "financeiro", cascade = CascadeType.ALL, orphanRemoval = true)
+    @ToString.Exclude
+    @EqualsAndHashCode.Exclude
+    private List<FinanceiroParcela> financeiroParcelas;
 }

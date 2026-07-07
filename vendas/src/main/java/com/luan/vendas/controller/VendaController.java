@@ -92,7 +92,7 @@ public class VendaController {
 			produtoVenda.setVenda(venda);
 			produtoVenda.setProduto(produtoExistente);
 		}
-		venda.setProdutosVenda(produtosVenda);
+		venda.setProdutoVenda(produtosVenda);
 
 		boolean salvo;
 		try {
@@ -211,7 +211,7 @@ public class VendaController {
 			produtoVenda.setVenda(venda);
 			produtoVenda.setProduto(produtoExistente);
 		}
-		venda.setProdutosVenda(produtosVenda);
+		venda.setProdutoVenda(produtosVenda);
 
 		try {
 			return vendaDao.alterarHibernate(venda);
