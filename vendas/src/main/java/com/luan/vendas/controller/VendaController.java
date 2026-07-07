@@ -28,9 +28,6 @@ public class VendaController {
 	}
 
 	public boolean salvarVenda(int id, Date dataVenda, double valorTotal, int clienteId, List<ProdutoVenda> produtosVenda) {
-		if (id <= 0) {
-			return false;
-		}
 		if (dataVenda == null) {
 			return false;
 		}
@@ -238,5 +235,13 @@ public class VendaController {
 		}
 
 		return vendaDao.pesquisarHibernate(id);
+	}
+
+	public List<Venda> listarVendas() {
+		return vendaDao.pesquisarHibernate();
+	}
+
+	public List<Venda> listarVendasPorTermo(String termo) {
+		return vendaDao.pesquisarHibernate(termo);
 	}
 }

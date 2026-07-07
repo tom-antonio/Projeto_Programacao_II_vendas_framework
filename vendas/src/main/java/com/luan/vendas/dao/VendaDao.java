@@ -2,9 +2,12 @@ package com.luan.vendas.dao;
 
 import java.time.LocalDate;
 import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Locale;
+import java.util.stream.Collectors;
 
 import org.hibernate.Session;
 import org.hibernate.Transaction;
@@ -15,6 +18,8 @@ import com.luan.vendas.model.Venda;
 import jakarta.transaction.SystemException;
 
 public class VendaDao {
+
+	private static final DateTimeFormatter UI_DATE_FORMATTER = DateTimeFormatter.ofPattern("dd/MM/yyyy");
 
     public boolean salvarHibernate(Venda venda) throws IllegalStateException, SystemException {
 		Transaction transaction = null;
@@ -74,25 +79,42 @@ public class VendaDao {
 
 	public List<Venda> pesquisarHibernate() {
 		try (Session session = Postgres.getSESSION_FACTORY().openSession()) {
-			return session.createQuery("FROM Venda", Venda.class).list();
+			return session.createQuery(
+				"select distinct v from Venda v left join fetch v.cliente left join fetch v.produtoVenda pv left join fetch pv.produto order by v.id",
+				Venda.class
+			).list();
 		} catch (Exception e) {
 			return new ArrayList<>();
 		}
 	}
 
-	public List<Venda> pesquisarHibernate(String nome) {
-		try (Session session = Postgres.getSESSION_FACTORY().openSession()) {
-			return session.createQuery("FROM Venda v WHERE lower(v.nome) LIKE :nome order by v.nome", Venda.class)
-					.setParameter("nome", "%" + nome.toLowerCase() + "%")
-					.list();
-		} catch (Exception e) {
-			return new ArrayList<>();
+	public List<Venda> pesquisarHibernate(String termo) {
+		List<Venda> vendas = pesquisarHibernate();
+		if (termo == null || termo.trim().isEmpty()) {
+			return vendas;
 		}
+
+		String textoBusca = termo.trim().toLowerCase(Locale.ROOT);
+		return vendas.stream()
+			.filter(venda -> {
+				String idTexto = String.valueOf(venda.getId());
+				String dataTexto = venda.getData_venda() != null ? venda.getData_venda().format(UI_DATE_FORMATTER) : "";
+				String clienteTexto = venda.getCliente() != null ? venda.getCliente().getNome() : "";
+				String valorTexto = String.valueOf(venda.getValor_total());
+				return idTexto.contains(textoBusca)
+					|| dataTexto.contains(textoBusca)
+					|| clienteTexto.toLowerCase(Locale.ROOT).contains(textoBusca)
+					|| valorTexto.contains(textoBusca);
+			})
+			.collect(Collectors.toList());
 	}
 
 	public Venda pesquisarHibernate(int id) {
 		try (Session session = Postgres.getSESSION_FACTORY().openSession()) {
-			return session.find(Venda.class, id);
+			return session.createQuery(
+				"select distinct v from Venda v left join fetch v.cliente left join fetch v.produtoVenda pv left join fetch pv.produto where v.id = :id",
+				Venda.class
+			).setParameter("id", id).uniqueResult();
 		} catch (Exception e) {
 			return null;
 		}

@@ -59,6 +59,10 @@ public class ProdutoController {
 		return ProdutoDao.pesquisarHibernate(nome.trim());
 	}
 
+	public List<Produto> listarProdutos() {
+		return produtoDao.pesquisarHibernate();
+	}
+
 	public double buscarPrecoMedio(int idProduto) {
 		if (idProduto <= 0) {
 			return 0.0;

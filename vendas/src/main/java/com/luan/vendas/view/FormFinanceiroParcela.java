@@ -7,6 +7,7 @@ import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 
 import javax.swing.JButton;
@@ -21,6 +22,8 @@ import com.luan.vendas.model.Financeiro;
 import com.luan.vendas.model.FinanceiroParcela;
 
 public class FormFinanceiroParcela extends JFrame {
+
+	private static final DateTimeFormatter UI_DATE_FORMATTER = DateTimeFormatter.ofPattern("dd/MM/yyyy");
 
     private JTextField txtNParcela;
     private JTextField txtDataVencimento;
@@ -73,7 +76,7 @@ public class FormFinanceiroParcela extends JFrame {
         gbc.gridy = 1;
         gbc.fill = GridBagConstraints.NONE;
         gbc.weightx = 0;
-        painelPrincipal.add(new JLabel("Data de Vencimento (yyyy-MM-dd):"), gbc);
+        painelPrincipal.add(new JLabel("Data de Vencimento (DD/MM/YYYY):"), gbc);
 
         gbc.gridx = 1;
         gbc.fill = GridBagConstraints.HORIZONTAL;
@@ -85,7 +88,7 @@ public class FormFinanceiroParcela extends JFrame {
         gbc.gridy = 2;
         gbc.fill = GridBagConstraints.NONE;
         gbc.weightx = 0;
-        painelPrincipal.add(new JLabel("Data de Pagamento (yyyy-MM-dd):"), gbc);
+        painelPrincipal.add(new JLabel("Data de Pagamento (DD/MM/YYYY):"), gbc);
 
         gbc.gridx = 1;
         gbc.fill = GridBagConstraints.HORIZONTAL;
@@ -246,8 +249,8 @@ public class FormFinanceiroParcela extends JFrame {
     private void preencherCampos(FinanceiroParcela financeiroParcela) {
         idFinanceiroParcelaAtual = financeiroParcela.getId();
         txtNParcela.setText(String.valueOf(financeiroParcela.getN_parcela()));
-        txtDataVencimento.setText(financeiroParcela.getData_vencimento() != null ? financeiroParcela.getData_vencimento().toString() : "");
-        txtDataPagamento.setText(financeiroParcela.getData_pagamento() != null ? financeiroParcela.getData_pagamento().toString() : "");
+        txtDataVencimento.setText(financeiroParcela.getData_vencimento() != null ? financeiroParcela.getData_vencimento().format(UI_DATE_FORMATTER) : "");
+        txtDataPagamento.setText(financeiroParcela.getData_pagamento() != null ? financeiroParcela.getData_pagamento().format(UI_DATE_FORMATTER) : "");
         txtValorOriginal.setText(String.valueOf(financeiroParcela.getValor_original()));
         txtDesconto.setText(String.valueOf(financeiroParcela.getDesconto()));
         txtAcrescimo.setText(String.valueOf(financeiroParcela.getAcrescimo()));
@@ -301,9 +304,9 @@ public class FormFinanceiroParcela extends JFrame {
 
         LocalDate dataVencimento;
         try {
-            dataVencimento = LocalDate.parse(txtDataVencimento.getText().trim());
+            dataVencimento = LocalDate.parse(txtDataVencimento.getText().trim(), UI_DATE_FORMATTER);
         } catch (DateTimeParseException e) {
-            JOptionPane.showMessageDialog(this, "Informe uma data de vencimento válida no formato yyyy-MM-dd.", "Aviso", JOptionPane.WARNING_MESSAGE);
+            JOptionPane.showMessageDialog(this, "Informe uma data de vencimento válida no formato dd/MM/yyyy.", "Aviso", JOptionPane.WARNING_MESSAGE);
             return null;
         }
 
@@ -311,9 +314,9 @@ public class FormFinanceiroParcela extends JFrame {
         String textoDataPagamento = txtDataPagamento.getText().trim();
         if (!textoDataPagamento.isEmpty()) {
             try {
-                dataPagamento = LocalDate.parse(textoDataPagamento);
+                dataPagamento = LocalDate.parse(textoDataPagamento, UI_DATE_FORMATTER);
             } catch (DateTimeParseException e) {
-                JOptionPane.showMessageDialog(this, "Informe uma data de pagamento válida no formato yyyy-MM-dd.", "Aviso", JOptionPane.WARNING_MESSAGE);
+                JOptionPane.showMessageDialog(this, "Informe uma data de pagamento válida no formato dd/MM/yyyy.", "Aviso", JOptionPane.WARNING_MESSAGE);
                 return null;
             }
         }

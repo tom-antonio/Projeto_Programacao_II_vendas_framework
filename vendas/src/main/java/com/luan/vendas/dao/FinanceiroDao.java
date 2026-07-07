@@ -1,7 +1,10 @@
 package com.luan.vendas.dao;
 
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
+import java.util.stream.Collectors;
 
 import org.hibernate.Session;
 import org.hibernate.Transaction;
@@ -11,6 +14,8 @@ import com.luan.vendas.model.Financeiro;
 import jakarta.transaction.SystemException;
 
 public class FinanceiroDao {
+
+	private static final DateTimeFormatter UI_DATE_FORMATTER = DateTimeFormatter.ofPattern("dd/MM/yyyy");
 
     public boolean salvarHibernate(Financeiro financeiro) throws IllegalStateException, SystemException {
 		Transaction transaction = null;
@@ -70,36 +75,56 @@ public class FinanceiroDao {
 
 	public List<Financeiro> pesquisarHibernate() {
 		try (Session session = Postgres.getSESSION_FACTORY().openSession()) {
-			return session.createQuery("FROM Financeiro", Financeiro.class).list();
+			return session.createQuery(
+				"select distinct f from Financeiro f "
+					+ "left join fetch f.fornecedor "
+					+ "left join fetch f.cliente "
+					+ "left join fetch f.tipoConta "
+					+ "left join fetch f.formaPagamento "
+					+ "order by f.id",
+				Financeiro.class
+			).list();
 		} catch (Exception e) {
 			return new ArrayList<>();
 		}
 	}
 
 	public List<Financeiro> pesquisarHibernate(String termo) {
-		try (Session session = Postgres.getSESSION_FACTORY().openSession()) {
-			return session.createQuery(
-					"SELECT DISTINCT f FROM Financeiro f "
-						+ "LEFT JOIN f.cliente c "
-						+ "LEFT JOIN f.fornecedor fo "
-						+ "LEFT JOIN f.tipoConta tc "
-						+ "LEFT JOIN f.formaPagamento fp "
-						+ "WHERE lower(c.nome) LIKE :termo "
-						+ "OR lower(fo.nome) LIKE :termo "
-						+ "OR lower(tc.descricao) LIKE :termo "
-						+ "OR lower(fp.nome) LIKE :termo "
-						+ "ORDER BY f.id",
-						Financeiro.class)
-					.setParameter("termo", "%" + termo.toLowerCase() + "%")
-					.list();
-		} catch (Exception e) {
-			return new ArrayList<>();
+		List<Financeiro> financeiros = pesquisarHibernate();
+		if (termo == null || termo.trim().isEmpty()) {
+			return financeiros;
 		}
+
+		String textoBusca = termo.trim().toLowerCase(Locale.ROOT);
+		return financeiros.stream()
+			.filter(financeiro -> {
+				String idTexto = String.valueOf(financeiro.getId());
+				String dataTexto = financeiro.getData_conta() != null ? financeiro.getData_conta().format(UI_DATE_FORMATTER) : "";
+				String fornecedorTexto = financeiro.getFornecedor() != null ? financeiro.getFornecedor().getNome_fantasia() : "";
+				String clienteTexto = financeiro.getCliente() != null ? financeiro.getCliente().getNome() : "";
+				String tipoContaTexto = financeiro.getTipoConta() != null ? financeiro.getTipoConta().getDescricao() : "";
+				String formaPagamentoTexto = financeiro.getFormaPagamento() != null ? financeiro.getFormaPagamento().getNome() : "";
+				return idTexto.contains(textoBusca)
+					|| dataTexto.contains(textoBusca)
+					|| fornecedorTexto.toLowerCase(Locale.ROOT).contains(textoBusca)
+					|| clienteTexto.toLowerCase(Locale.ROOT).contains(textoBusca)
+					|| tipoContaTexto.toLowerCase(Locale.ROOT).contains(textoBusca)
+					|| formaPagamentoTexto.toLowerCase(Locale.ROOT).contains(textoBusca);
+			})
+			.collect(Collectors.toList());
 	}
 
 	public Financeiro pesquisarHibernate(int id) {
 		try (Session session = Postgres.getSESSION_FACTORY().openSession()) {
-			return session.find(Financeiro.class, id);
+			return session.createQuery(
+				"select distinct f from Financeiro f "
+					+ "left join fetch f.fornecedor "
+					+ "left join fetch f.cliente "
+					+ "left join fetch f.tipoConta "
+					+ "left join fetch f.formaPagamento "
+					+ "where f.id = :id",
+				Financeiro.class
+			).setParameter("id", id).uniqueResult();
 		} catch (Exception e) {
 			return null;
 		}

@@ -7,19 +7,23 @@ import java.awt.FlowLayout;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
+import java.text.ParseException;
 import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
 
 import javax.swing.DefaultListCellRenderer;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
+import javax.swing.JFormattedTextField;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
+import javax.swing.text.MaskFormatter;
 
 import com.luan.vendas.controller.ClienteController;
 import com.luan.vendas.controller.FinanceiroController;
@@ -34,6 +38,8 @@ import com.luan.vendas.model.Fornecedor;
 import com.luan.vendas.model.TipoConta;
 
 public class FormFinanceiro extends JFrame {
+
+	private static final DateTimeFormatter UI_DATE_FORMATTER = DateTimeFormatter.ofPattern("dd/MM/yyyy");
 
 	private JTextField txtDataConta;
 	private JComboBox<String> comboPagarOuReceber;
@@ -55,7 +61,7 @@ public class FormFinanceiro extends JFrame {
 	private final FormaPagamentoController formaPagamentoController;
 	private Integer idFinanceiroAtual;
 
-	public FormFinanceiro() {
+	public FormFinanceiro() throws ParseException {
 		setTitle("Cadastro de Financeiro");
 		financeiroController = new FinanceiroController();
 		financeiroParcelaController = new FinanceiroParcelaController();
@@ -74,7 +80,7 @@ public class FormFinanceiro extends JFrame {
 		setVisible(true);
 	}
 
-	private void inicializarComponentes() {
+	private void inicializarComponentes() throws ParseException {
 		JPanel painelPrincipal = new JPanel(new GridBagLayout());
 		GridBagConstraints gbc = new GridBagConstraints();
 
@@ -85,13 +91,17 @@ public class FormFinanceiro extends JFrame {
 		gbc.gridy = 0;
 		gbc.fill = GridBagConstraints.NONE;
 		gbc.weightx = 0;
-		painelPrincipal.add(new JLabel("Data da Conta (yyyy-MM-dd):"), gbc);
+		painelPrincipal.add(new JLabel("Data da Conta:"), gbc);
 
 		gbc.gridx = 1;
 		gbc.fill = GridBagConstraints.HORIZONTAL;
 		gbc.weightx = 1;
-		txtDataConta = new JTextField(30);
-		painelPrincipal.add(txtDataConta, gbc);
+
+        MaskFormatter mascaraData = new MaskFormatter("##/##/####");
+        mascaraData.setPlaceholderCharacter('_');    
+        txtDataConta = new JFormattedTextField(mascaraData);
+
+        ((JFormattedTextField) txtDataConta).setColumns(28);
 
 		gbc.gridx = 0;
 		gbc.gridy = 1;
@@ -345,7 +355,7 @@ public class FormFinanceiro extends JFrame {
 
 	private void preencherCampos(Financeiro financeiro) {
 		idFinanceiroAtual = financeiro.getId();
-		txtDataConta.setText(financeiro.getData_conta() != null ? financeiro.getData_conta().toString() : "");
+		txtDataConta.setText(financeiro.getData_conta() != null ? financeiro.getData_conta().format(UI_DATE_FORMATTER) : "");
 		comboPagarOuReceber.setSelectedIndex(financeiro.getPagar_ou_receber() == 1 ? 0 : 1);
 		selecionarItemPorId(comboFornecedor, financeiro.getFornecedor() != null ? financeiro.getFornecedor().getId() : 0, Fornecedor::getId);
 		selecionarItemPorId(comboCliente, financeiro.getCliente() != null ? financeiro.getCliente().getId() : 0, Cliente::getId);
@@ -383,9 +393,9 @@ public class FormFinanceiro extends JFrame {
 	private Financeiro montarFinanceiroAtual() {
 		LocalDate dataConta;
 		try {
-			dataConta = LocalDate.parse(txtDataConta.getText().trim());
+			dataConta = LocalDate.parse(txtDataConta.getText().trim(), UI_DATE_FORMATTER);
 		} catch (DateTimeParseException e) {
-			JOptionPane.showMessageDialog(this, "Informe uma data válida no formato yyyy-MM-dd.", "Aviso", JOptionPane.WARNING_MESSAGE);
+			JOptionPane.showMessageDialog(this, "Informe uma data válida no formato dd/MM/yyyy.", "Aviso", JOptionPane.WARNING_MESSAGE);
 			return null;
 		}
 

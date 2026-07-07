@@ -43,6 +43,7 @@
 /Users/luanmorais/GitHub/Projeto_Programacao_II_vendas_framework/vendas/src/main/java/com/luan/vendas/view/FormCategoria.java
 /Users/luanmorais/GitHub/Projeto_Programacao_II_vendas_framework/vendas/src/main/java/com/luan/vendas/view/FormCliente.java
 /Users/luanmorais/GitHub/Projeto_Programacao_II_vendas_framework/vendas/src/main/java/com/luan/vendas/view/FormCompra.java
+/Users/luanmorais/GitHub/Projeto_Programacao_II_vendas_framework/vendas/src/main/java/com/luan/vendas/view/FormCompraProduto.java
 /Users/luanmorais/GitHub/Projeto_Programacao_II_vendas_framework/vendas/src/main/java/com/luan/vendas/view/FormFinanceiro.java
 /Users/luanmorais/GitHub/Projeto_Programacao_II_vendas_framework/vendas/src/main/java/com/luan/vendas/view/FormFinanceiroParcela.java
 /Users/luanmorais/GitHub/Projeto_Programacao_II_vendas_framework/vendas/src/main/java/com/luan/vendas/view/FormFormaPagamento.java
@@ -51,11 +52,14 @@
 /Users/luanmorais/GitHub/Projeto_Programacao_II_vendas_framework/vendas/src/main/java/com/luan/vendas/view/FormTelaPrincipal.java
 /Users/luanmorais/GitHub/Projeto_Programacao_II_vendas_framework/vendas/src/main/java/com/luan/vendas/view/FormTipoConta.java
 /Users/luanmorais/GitHub/Projeto_Programacao_II_vendas_framework/vendas/src/main/java/com/luan/vendas/view/FormVenda.java
+/Users/luanmorais/GitHub/Projeto_Programacao_II_vendas_framework/vendas/src/main/java/com/luan/vendas/view/FormVendaProduto.java
 /Users/luanmorais/GitHub/Projeto_Programacao_II_vendas_framework/vendas/src/main/java/com/luan/vendas/view/PesquisaCategoria.java
 /Users/luanmorais/GitHub/Projeto_Programacao_II_vendas_framework/vendas/src/main/java/com/luan/vendas/view/PesquisaCliente.java
+/Users/luanmorais/GitHub/Projeto_Programacao_II_vendas_framework/vendas/src/main/java/com/luan/vendas/view/PesquisaCompra.java
 /Users/luanmorais/GitHub/Projeto_Programacao_II_vendas_framework/vendas/src/main/java/com/luan/vendas/view/PesquisaFinanceiro.java
 /Users/luanmorais/GitHub/Projeto_Programacao_II_vendas_framework/vendas/src/main/java/com/luan/vendas/view/PesquisaFinanceiroParcela.java
 /Users/luanmorais/GitHub/Projeto_Programacao_II_vendas_framework/vendas/src/main/java/com/luan/vendas/view/PesquisaFormaPagamento.java
 /Users/luanmorais/GitHub/Projeto_Programacao_II_vendas_framework/vendas/src/main/java/com/luan/vendas/view/PesquisaFornecedor.java
 /Users/luanmorais/GitHub/Projeto_Programacao_II_vendas_framework/vendas/src/main/java/com/luan/vendas/view/PesquisaProduto.java
 /Users/luanmorais/GitHub/Projeto_Programacao_II_vendas_framework/vendas/src/main/java/com/luan/vendas/view/PesquisaTipoConta.java
+/Users/luanmorais/GitHub/Projeto_Programacao_II_vendas_framework/vendas/src/main/java/com/luan/vendas/view/PesquisaVenda.java

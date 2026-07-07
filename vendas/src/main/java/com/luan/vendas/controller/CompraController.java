@@ -128,6 +128,29 @@ public class CompraController {
         return compraDao.pesquisarHibernate(id);
     }
 
+    public List<Compra> listarComprasPorTermo(String termo) {
+        List<Compra> compras = compraDao.pesquisarHibernate();
+        if (termo == null || termo.trim().isEmpty()) {
+            return compras;
+        }
+
+        String textoBusca = termo.trim().toLowerCase();
+        return compras.stream()
+            .filter(compra -> {
+                String idTexto = String.valueOf(compra.getId());
+                String dataTexto = compra.getData_compra() != null ? compra.getData_compra().toString() : "";
+                String fornecedorTexto = compra.getFornecedor() != null ? compra.getFornecedor().getNome_fantasia() : "";
+                String valorTexto = String.valueOf(compra.getValor_total());
+                return idTexto.contains(textoBusca)
+                    || dataTexto.contains(textoBusca)
+                    || fornecedorTexto.toLowerCase().contains(textoBusca)
+                    || valorTexto.contains(textoBusca);
+            })
+            .map(compra -> pesquisarCompra(compra.getId()))
+            .filter(compra -> compra != null)
+            .toList();
+    }
+
     private Compra prepararCompra(Compra compra) {
         if (!validarDadosCompra(compra)) {
             return null;
@@ -159,9 +182,6 @@ public class CompraController {
 
     private boolean validarDadosCompra(Compra compra) {
         if (compra == null) {
-            return false;
-        }
-        if (compra.getId() <= 0) {
             return false;
         }
         if (compra.getData_compra() == null) {

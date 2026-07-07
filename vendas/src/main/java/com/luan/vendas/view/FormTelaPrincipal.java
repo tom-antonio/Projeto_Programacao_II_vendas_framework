@@ -9,6 +9,7 @@ import java.awt.GridBagLayout;
 import java.awt.GridLayout;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
+import java.text.ParseException;
 
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
@@ -295,11 +296,35 @@ public class FormTelaPrincipal extends JFrame {
     }
 
     private void abrirFormularioVenda() {
-        SwingUtilities.invokeLater(FormVenda::new);
+        SwingUtilities.invokeLater(() -> {
+            try {
+                FormVenda formVenda = new FormVenda();
+                formVenda.setVisible(true);
+            } catch (ParseException e) {
+                JOptionPane.showMessageDialog(
+                    this,
+                    "Não foi possível abrir a tela de venda.",
+                    "Erro",
+                    JOptionPane.ERROR_MESSAGE
+                );
+            }
+        });
     }
 
     private void abrirFormularioCompra() {
-        SwingUtilities.invokeLater(FormCompra::new);
+        SwingUtilities.invokeLater(() -> {
+            try {
+                FormCompra formCompra = new FormCompra();
+                formCompra.setVisible(true);
+            } catch (ParseException e) {
+                JOptionPane.showMessageDialog(
+                    this,
+                    "Não foi possível abrir a tela de compra.",
+                    "Erro",
+                    JOptionPane.ERROR_MESSAGE
+                );
+            }
+        });
     }
 
     private void abrirFormularioFornecedor() {
@@ -315,7 +340,19 @@ public class FormTelaPrincipal extends JFrame {
     }
 
     private void abrirFormularioFinanceiro() {
-        SwingUtilities.invokeLater(FormFinanceiro::new);
+        SwingUtilities.invokeLater(() -> {
+            try {
+                FormFinanceiro formFinanceiro = new FormFinanceiro();
+                formFinanceiro.setVisible(true);
+            } catch (ParseException e) {
+                JOptionPane.showMessageDialog(
+                    this,
+                    "Não foi possível abrir a tela de financeiro.",
+                    "Erro",
+                    JOptionPane.ERROR_MESSAGE
+                );
+            }
+        });
     }
 
     private void abrirFormularioFormaPagamento() {
