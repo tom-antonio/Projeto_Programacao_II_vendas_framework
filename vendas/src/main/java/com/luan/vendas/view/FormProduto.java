@@ -7,6 +7,7 @@ import java.awt.FlowLayout;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.function.ToIntFunction;
 
@@ -18,7 +19,10 @@ import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JTable;
 import javax.swing.JTextField;
+import javax.swing.table.DefaultTableModel;
 
 import com.luan.vendas.controller.CategoriaController;
 import com.luan.vendas.controller.FornecedorController;
@@ -36,8 +40,11 @@ public class FormProduto extends JFrame {
     private JTextField txtPreco_medio;
     private JTextField txtValor_venda;
     private JTextField txtValor_compra;
-    private JComboBox<Fornecedor> cmbFornecedor;
     private JComboBox<Categoria> cmbCategoria;
+    private JTable tabelaFornecedores;
+    private DefaultTableModel modeloFornecedores;
+    private JButton btnEscolherFornecedor;
+    private JButton btnRemoverFornecedor;
     private JButton btnSalvar;
     private JButton btnAlterar;
     private JButton btnExcluir;
@@ -46,6 +53,7 @@ public class FormProduto extends JFrame {
     private final FornecedorController fornecedorController;
     private final FornecedorProdutoController fornecedorProdutoController;
     private final CategoriaController categoriaController;
+    private final List<Fornecedor> fornecedoresSelecionados;
     private Integer idProdutoAtual;
 
     public FormProduto() {
@@ -54,15 +62,15 @@ public class FormProduto extends JFrame {
         fornecedorController = new FornecedorController();
         fornecedorProdutoController = new FornecedorProdutoController();
         categoriaController = new CategoriaController();
+        fornecedoresSelecionados = new ArrayList<>();
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 
         inicializarComponentes();
         configurarRenderizadores();
-        carregarFornecedor();
         carregarCategoria();
 
         pack();
-        setMinimumSize(new Dimension(700, 240));
+        setMinimumSize(new Dimension(900, 560));
         setLocationRelativeTo(null);
         setVisible(true);
     }
@@ -109,17 +117,17 @@ public class FormProduto extends JFrame {
         gbc.weightx = 1;
         txtPreco_medio = new JTextField(50);
         txtPreco_medio.setEditable(false);
-        painelPrincipal.add(txtPreco_medio,	gbc);
+        painelPrincipal.add(txtPreco_medio, gbc);
 
         gbc.gridx = 0;
         gbc.gridy = 3;
         gbc.fill = GridBagConstraints.NONE;
-       	gbc.weightx = 0;
-        painelPrincipal.add(new JLabel("Valor de Venda:"),	gbc);
+        gbc.weightx = 0;
+        painelPrincipal.add(new JLabel("Valor de Venda:"), gbc);
 
         gbc.gridx = 1;
-		gbc.fill = GridBagConstraints.HORIZONTAL;
-		gbc.weightx	= 1;
+        gbc.fill = GridBagConstraints.HORIZONTAL;
+        gbc.weightx = 1;
         txtValor_venda = new JTextField(50);
         txtValor_venda.setEditable(false);
         painelPrincipal.add(txtValor_venda, gbc);
@@ -141,18 +149,6 @@ public class FormProduto extends JFrame {
         gbc.gridy = 5;
         gbc.fill = GridBagConstraints.NONE;
         gbc.weightx = 0;
-        painelPrincipal.add(new JLabel("Fornecedor:"), gbc);
-
-        gbc.gridx = 1;
-        gbc.fill = GridBagConstraints.HORIZONTAL;
-        gbc.weightx = 1;
-        cmbFornecedor = new JComboBox<>();
-        painelPrincipal.add(cmbFornecedor, gbc);
-
-        gbc.gridx = 0;
-        gbc.gridy = 6;
-        gbc.fill = GridBagConstraints.NONE;
-        gbc.weightx = 0;
         painelPrincipal.add(new JLabel("Categoria:"), gbc);
 
         gbc.gridx = 1;
@@ -160,6 +156,44 @@ public class FormProduto extends JFrame {
         gbc.weightx = 1;
         cmbCategoria = new JComboBox<>();
         painelPrincipal.add(cmbCategoria, gbc);
+
+        gbc.gridx = 0;
+        gbc.gridy = 6;
+        gbc.fill = GridBagConstraints.NONE;
+        gbc.weightx = 0;
+        painelPrincipal.add(new JLabel("Fornecedores do Produto:"), gbc);
+
+        btnEscolherFornecedor = new JButton("EscolherFornecedor");
+        btnRemoverFornecedor = new JButton("Remover Selecionado");
+
+        btnEscolherFornecedor.addActionListener(e -> abrirEscolherFornecedor());
+        btnRemoverFornecedor.addActionListener(e -> removerFornecedorSelecionado());
+
+        JPanel painelAcoesFornecedor = new JPanel(new FlowLayout(FlowLayout.LEFT, 10, 0));
+        painelAcoesFornecedor.add(btnEscolherFornecedor);
+        painelAcoesFornecedor.add(btnRemoverFornecedor);
+
+        gbc.gridx = 1;
+        gbc.fill = GridBagConstraints.HORIZONTAL;
+        gbc.weightx = 1;
+        painelPrincipal.add(painelAcoesFornecedor, gbc);
+
+        modeloFornecedores = new DefaultTableModel(new Object[] {"ID", "Nome Fantasia", "Razão Social"}, 0) {
+            @Override
+            public boolean isCellEditable(int row, int column) {
+                return false;
+            }
+        };
+
+        tabelaFornecedores = new JTable(modeloFornecedores);
+        JScrollPane scrollFornecedores = new JScrollPane(tabelaFornecedores);
+        scrollFornecedores.setPreferredSize(new Dimension(620, 120));
+
+        gbc.gridx = 1;
+        gbc.gridy = 7;
+        gbc.fill = GridBagConstraints.BOTH;
+        gbc.weightx = 1;
+        painelPrincipal.add(scrollFornecedores, gbc);
 
         JPanel painelBotoes = new JPanel(new FlowLayout(FlowLayout.CENTER, 10, 0));
 
@@ -206,7 +240,7 @@ public class FormProduto extends JFrame {
         painelBotoes.add(btnPesquisar);
 
         gbc.gridx = 0;
-        gbc.gridy = 3;
+        gbc.gridy = 8;
         gbc.gridwidth = 2;
         gbc.fill = GridBagConstraints.HORIZONTAL;
         painelPrincipal.add(painelBotoes, gbc);
@@ -215,19 +249,6 @@ public class FormProduto extends JFrame {
     }
 
     private void configurarRenderizadores() {
-        cmbFornecedor.setRenderer(new DefaultListCellRenderer() {
-            @Override
-            public Component getListCellRendererComponent(JList<?> list, Object value, int index, boolean isSelected, boolean cellHasFocus) {
-                super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
-                if (value == null) {
-                    setText("Selecione um Fornecedor");
-                } else if (value instanceof Fornecedor fornecedor) {
-                    setText(fornecedor.getNome_fantasia());
-                }
-                return this;
-            }
-        });
-
         cmbCategoria.setRenderer(new DefaultListCellRenderer() {
             @Override
             public Component getListCellRendererComponent(JList<?> list, Object value, int index, boolean isSelected, boolean cellHasFocus) {
@@ -242,15 +263,6 @@ public class FormProduto extends JFrame {
         });
     }
 
-    private void carregarFornecedor() {
-        List<Fornecedor> fornecedores = fornecedorController.listarFornecedores();
-        cmbFornecedor.removeAllItems();
-        cmbFornecedor.addItem(null);
-        for (Fornecedor fornecedor : fornecedores) {
-            cmbFornecedor.addItem(fornecedor);
-        }
-    }
-
     private void carregarCategoria() {
         List<Categoria> categorias = categoriaController.listarCategorias();
         cmbCategoria.removeAllItems();
@@ -258,6 +270,57 @@ public class FormProduto extends JFrame {
         for (Categoria categoria : categorias) {
             cmbCategoria.addItem(categoria);
         }
+    }
+
+    private void abrirEscolherFornecedor() {
+        EscolherFornecedor dialog = new EscolherFornecedor(this, fornecedorController);
+        dialog.setVisible(true);
+
+        Fornecedor fornecedorSelecionado = dialog.getFornecedorSelecionado();
+        if (fornecedorSelecionado != null) {
+            adicionarFornecedorSelecionado(fornecedorSelecionado);
+        }
+    }
+
+    private void adicionarFornecedorSelecionado(Fornecedor fornecedor) {
+        if (contemFornecedor(fornecedor.getId())) {
+            JOptionPane.showMessageDialog(this, "Fornecedor já adicionado.", "Aviso", JOptionPane.WARNING_MESSAGE);
+            return;
+        }
+
+        fornecedoresSelecionados.add(fornecedor);
+        atualizarTabelaFornecedores();
+    }
+
+    private void removerFornecedorSelecionado() {
+        int linha = tabelaFornecedores.getSelectedRow();
+        if (linha < 0) {
+            JOptionPane.showMessageDialog(this, "Selecione um fornecedor na tabela para remover.", "Aviso", JOptionPane.WARNING_MESSAGE);
+            return;
+        }
+
+        fornecedoresSelecionados.remove(linha);
+        atualizarTabelaFornecedores();
+    }
+
+    private void atualizarTabelaFornecedores() {
+        modeloFornecedores.setRowCount(0);
+        for (Fornecedor fornecedor : fornecedoresSelecionados) {
+            modeloFornecedores.addRow(new Object[] {
+                fornecedor.getId(),
+                fornecedor.getNome_fantasia(),
+                fornecedor.getRazao_social()
+            });
+        }
+    }
+
+    private boolean contemFornecedor(int idFornecedor) {
+        for (Fornecedor fornecedor : fornecedoresSelecionados) {
+            if (fornecedor.getId() == idFornecedor) {
+                return true;
+            }
+        }
+        return false;
     }
 
     private boolean precisaPesquisarProduto() {
@@ -279,10 +342,8 @@ public class FormProduto extends JFrame {
         idProdutoAtual = produto.getId();
         txtNome_produto.setText(produto.getNome());
         txtQtde_estoque.setText(String.valueOf(produto.getQtde_estoque()));
-        
         carregarValoresPrecosCalculados(produto.getId());
-        
-        carregarFornecedorAssociado(produto.getId());
+        carregarFornecedoresAssociados(produto.getId());
         carregarCategoriaAssociada(produto);
     }
 
@@ -290,19 +351,21 @@ public class FormProduto extends JFrame {
         double precoMedio = produtoController.buscarPrecoMedio(idProduto);
         double valorUltimaCompra = produtoController.buscarValorUltimaCompra(idProduto);
         double valorUltimaVenda = produtoController.buscarValorUltimaVenda(idProduto);
-        
+
         txtPreco_medio.setText(String.valueOf(precoMedio));
         txtValor_compra.setText(String.valueOf(valorUltimaCompra));
         txtValor_venda.setText(String.valueOf(valorUltimaVenda));
     }
 
-    private void carregarFornecedorAssociado(int idProduto) {
-        FornecedorProduto fp = fornecedorProdutoController.buscarFornecedorPorProduto(idProduto);
-        if (fp != null && fp.getFornecedor() != null) {
-            selecionarItemPorId(cmbFornecedor, fp.getFornecedor().getId(), Fornecedor::getId);
-            return;
+    private void carregarFornecedoresAssociados(int idProduto) {
+        fornecedoresSelecionados.clear();
+        List<FornecedorProduto> relacoes = fornecedorProdutoController.listarFornecedoresPorProduto(idProduto);
+        for (FornecedorProduto relacao : relacoes) {
+            if (relacao.getFornecedor() != null && !contemFornecedor(relacao.getFornecedor().getId())) {
+                fornecedoresSelecionados.add(relacao.getFornecedor());
+            }
         }
-        cmbFornecedor.setSelectedIndex(0);
+        atualizarTabelaFornecedores();
     }
 
     private void carregarCategoriaAssociada(Produto produto) {
@@ -328,11 +391,10 @@ public class FormProduto extends JFrame {
     }
 
     private void persistirProduto(boolean atualizando) {
-        Fornecedor fornecedorSelecionado = obterFornecedorSelecionado();
         Categoria categoriaSelecionada = obterCategoriaSelecionada();
 
-        if (fornecedorSelecionado == null) {
-            JOptionPane.showMessageDialog(this, "Selecione um fornecedor válido.", "Aviso", JOptionPane.WARNING_MESSAGE);
+        if (fornecedoresSelecionados.isEmpty()) {
+            JOptionPane.showMessageDialog(this, "Adicione pelo menos um fornecedor.", "Aviso", JOptionPane.WARNING_MESSAGE);
             return;
         }
 
@@ -351,9 +413,8 @@ public class FormProduto extends JFrame {
             return;
         }
 
-        boolean fornecedorAssociado = associarFornecedorProduto(produto, fornecedorSelecionado);
-        if (!fornecedorAssociado) {
-            JOptionPane.showMessageDialog(this, "Produto salvo, mas não foi possível associar o fornecedor.", "Erro", JOptionPane.ERROR_MESSAGE);
+        if (!sincronizarFornecedoresProduto(produto)) {
+            JOptionPane.showMessageDialog(this, "Produto salvo, mas ocorreu erro ao sincronizar fornecedores.", "Erro", JOptionPane.ERROR_MESSAGE);
             return;
         }
 
@@ -361,19 +422,42 @@ public class FormProduto extends JFrame {
         limparCampos();
     }
 
-    private boolean associarFornecedorProduto(Produto produto, Fornecedor fornecedorSelecionado) {
-        FornecedorProduto fpExistente = fornecedorProdutoController.buscarFornecedorPorProduto(produto.getId());
-        
-        if (fpExistente != null) {
-            fpExistente.setFornecedor(fornecedorSelecionado);
-            fpExistente.setProduto(produto);
-            return fornecedorProdutoController.alterarFornecedorProduto(fpExistente);
-        } else {
-            FornecedorProduto novoFP = new FornecedorProduto();
-            novoFP.setFornecedor(fornecedorSelecionado);
-            novoFP.setProduto(produto);
-            return fornecedorProdutoController.salvarFornecedorProduto(novoFP);
+    private boolean sincronizarFornecedoresProduto(Produto produto) {
+        List<FornecedorProduto> relacoesExistentes = fornecedorProdutoController.listarFornecedoresPorProduto(produto.getId());
+
+        for (FornecedorProduto relacao : relacoesExistentes) {
+            if (relacao.getFornecedor() == null) {
+                continue;
+            }
+            int idFornecedor = relacao.getFornecedor().getId();
+            if (!contemFornecedor(idFornecedor)) {
+                if (!fornecedorProdutoController.excluirFornecedorProduto(relacao.getId())) {
+                    return false;
+                }
+            }
         }
+
+        for (Fornecedor fornecedorSelecionado : fornecedoresSelecionados) {
+            if (!existeRelacao(relacoesExistentes, fornecedorSelecionado.getId())) {
+                FornecedorProduto novaRelacao = new FornecedorProduto();
+                novaRelacao.setFornecedor(fornecedorSelecionado);
+                novaRelacao.setProduto(produto);
+                if (!fornecedorProdutoController.salvarFornecedorProduto(novaRelacao)) {
+                    return false;
+                }
+            }
+        }
+
+        return true;
+    }
+
+    private boolean existeRelacao(List<FornecedorProduto> relacoes, int idFornecedor) {
+        for (FornecedorProduto relacao : relacoes) {
+            if (relacao.getFornecedor() != null && relacao.getFornecedor().getId() == idFornecedor) {
+                return true;
+            }
+        }
+        return false;
     }
 
     private void limparCampos() {
@@ -382,8 +466,9 @@ public class FormProduto extends JFrame {
         txtPreco_medio.setText("");
         txtValor_venda.setText("");
         txtValor_compra.setText("");
-        cmbFornecedor.setSelectedIndex(0);
         cmbCategoria.setSelectedIndex(0);
+        fornecedoresSelecionados.clear();
+        atualizarTabelaFornecedores();
         idProdutoAtual = null;
         txtNome_produto.requestFocus();
     }
@@ -400,12 +485,8 @@ public class FormProduto extends JFrame {
         if (categoriaSelecionada != null) {
             produto.setCategoria(categoriaSelecionada);
         }
-        
-        return produto;
-    }
 
-    private Fornecedor obterFornecedorSelecionado() {
-        return (Fornecedor) cmbFornecedor.getSelectedItem();
+        return produto;
     }
 
     private Categoria obterCategoriaSelecionada() {

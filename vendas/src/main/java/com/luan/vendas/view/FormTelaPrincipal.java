@@ -86,11 +86,24 @@ public class FormTelaPrincipal extends JFrame {
         menuAjuda.add(menuItemSobre);
 
         JMenu menuFinanceiro = new JMenu("Financeiro");
+        
         JMenuItem itemFinanceiro = new JMenuItem("Financeiro");
         itemFinanceiro.addActionListener((ActionEvent e) -> {
             abrirFormularioFinanceiro();
         });
         menuFinanceiro.add(itemFinanceiro);
+
+        JMenuItem itemFormaPagamento = new JMenuItem("Forma de Pagamento");
+        itemFormaPagamento.addActionListener((ActionEvent e) -> {
+            abrirFormularioFormaPagamento();
+        });
+        menuFinanceiro.add(itemFormaPagamento);
+
+        JMenuItem itemTipoConta = new JMenuItem("Tipo de Conta");
+        itemTipoConta.addActionListener((ActionEvent e) -> {
+            abrirFormularioTipoConta();
+        });
+        menuFinanceiro.add(itemTipoConta);
 
         menuBar.add(menuCadastros);
         menuBar.add(menuAjuda);
@@ -303,5 +316,13 @@ public class FormTelaPrincipal extends JFrame {
 
     private void abrirFormularioFinanceiro() {
         SwingUtilities.invokeLater(FormFinanceiro::new);
+    }
+
+    private void abrirFormularioFormaPagamento() {
+        SwingUtilities.invokeLater(FormFormaPagamento::new);
+    }
+
+    private void abrirFormularioTipoConta() {
+        SwingUtilities.invokeLater(FormTipoConta::new);
     }
 }

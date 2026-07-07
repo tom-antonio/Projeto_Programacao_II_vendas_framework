@@ -95,4 +95,15 @@ public class FornecedorProdutoDao {
 			return null;
 		}
 	}
+
+	public List<FornecedorProduto> buscarListaPorProdutoId(int produtoId) {
+		try (Session session = Postgres.getSESSION_FACTORY().openSession()) {
+			String hql = "FROM FornecedorProduto WHERE produto.id = :produtoId";
+			return session.createQuery(hql, FornecedorProduto.class)
+				.setParameter("produtoId", produtoId)
+				.list();
+		} catch (Exception e) {
+			return new ArrayList<>();
+		}
+	}
 }

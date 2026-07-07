@@ -74,16 +74,18 @@ public class FornecedorProdutoController {
 		return fornecedorProdutoDao.buscarPorProdutoId(produtoId);
 	}
 
+	public List<FornecedorProduto> listarFornecedoresPorProduto(int produtoId) {
+		if (produtoId <= 0) {
+			return List.of();
+		}
+		return fornecedorProdutoDao.buscarListaPorProdutoId(produtoId);
+	}
+
 	public boolean validarDados(FornecedorProduto fornecedorProduto) {
-		if (fornecedorProduto == null) {
-			return false;
-		}
-		if (fornecedorProduto.getFornecedor() == null || fornecedorProduto.getFornecedor().getId() <= 0) {
-			return false;
-		}
-		if (fornecedorProduto.getProduto() == null || fornecedorProduto.getProduto().getId() <= 0) {
-			return false;
-		}
-		return true;
+		return fornecedorProduto != null
+			&& fornecedorProduto.getFornecedor() != null
+			&& fornecedorProduto.getFornecedor().getId() > 0
+			&& fornecedorProduto.getProduto() != null
+			&& fornecedorProduto.getProduto().getId() > 0;
 	}
 }
