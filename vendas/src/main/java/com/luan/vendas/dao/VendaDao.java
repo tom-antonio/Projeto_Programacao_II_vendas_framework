@@ -2,7 +2,6 @@ package com.luan.vendas.dao;
 
 import java.time.LocalDate;
 import java.time.ZoneId;
-import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -18,8 +17,6 @@ import com.luan.vendas.model.Venda;
 import jakarta.transaction.SystemException;
 
 public class VendaDao {
-
-	private static final DateTimeFormatter UI_DATE_FORMATTER = DateTimeFormatter.ofPattern("dd/MM/yyyy");
 
     public boolean salvarHibernate(Venda venda) throws IllegalStateException, SystemException {
 		Transaction transaction = null;
@@ -97,14 +94,8 @@ public class VendaDao {
 		String textoBusca = termo.trim().toLowerCase(Locale.ROOT);
 		return vendas.stream()
 			.filter(venda -> {
-				String idTexto = String.valueOf(venda.getId());
-				String dataTexto = venda.getData_venda() != null ? venda.getData_venda().format(UI_DATE_FORMATTER) : "";
 				String clienteTexto = venda.getCliente() != null ? venda.getCliente().getNome() : "";
-				String valorTexto = String.valueOf(venda.getValor_total());
-				return idTexto.contains(textoBusca)
-					|| dataTexto.contains(textoBusca)
-					|| clienteTexto.toLowerCase(Locale.ROOT).contains(textoBusca)
-					|| valorTexto.contains(textoBusca);
+			return clienteTexto.toLowerCase(Locale.ROOT).contains(textoBusca);
 			})
 			.collect(Collectors.toList());
 	}

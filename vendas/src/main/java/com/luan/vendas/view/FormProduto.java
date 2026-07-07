@@ -9,7 +9,6 @@ import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.function.ToIntFunction;
 
 import javax.swing.DefaultListCellRenderer;
 import javax.swing.JButton;
@@ -19,10 +18,7 @@ import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import javax.swing.JTable;
 import javax.swing.JTextField;
-import javax.swing.table.DefaultTableModel;
 
 import com.luan.vendas.controller.CategoriaController;
 import com.luan.vendas.controller.FornecedorController;
@@ -35,20 +31,17 @@ import com.luan.vendas.model.Produto;
 
 public class FormProduto extends JFrame {
 
-    private JTextField txtNome_produto;
-    private JTextField txtQtde_estoque;
-    private JTextField txtPreco_medio;
-    private JTextField txtValor_venda;
-    private JTextField txtValor_compra;
-    private JComboBox<Categoria> cmbCategoria;
-    private JTable tabelaFornecedores;
-    private DefaultTableModel modeloFornecedores;
-    private JButton btnEscolherFornecedor;
-    private JButton btnRemoverFornecedor;
-    private JButton btnSalvar;
-    private JButton btnAlterar;
-    private JButton btnExcluir;
-    private JButton btnPesquisar;
+    private final JTextField txtNomeProduto;
+    private final JTextField txtQtdeEstoque;
+    private final JTextField txtPrecoMedio;
+    private final JTextField txtValorVenda;
+    private final JTextField txtValorCompra;
+    private final JComboBox<Categoria> cmbCategoria;
+    private final JButton btnEscolherFornecedor;
+    private final JButton btnSalvar;
+    private final JButton btnAlterar;
+    private final JButton btnExcluir;
+    private final JButton btnPesquisar;
     private final ProdutoController produtoController;
     private final FornecedorController fornecedorController;
     private final FornecedorProdutoController fornecedorProdutoController;
@@ -58,145 +51,119 @@ public class FormProduto extends JFrame {
 
     public FormProduto() {
         setTitle("Cadastro de Produto");
+        setSize(700, 430);
+        setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+
         produtoController = new ProdutoController();
         fornecedorController = new FornecedorController();
         fornecedorProdutoController = new FornecedorProdutoController();
         categoriaController = new CategoriaController();
         fornecedoresSelecionados = new ArrayList<>();
-        setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 
-        inicializarComponentes();
-        configurarRenderizadores();
-        carregarCategoria();
-
-        pack();
-        setMinimumSize(new Dimension(900, 560));
-        setLocationRelativeTo(null);
-        setVisible(true);
-    }
-
-    private void inicializarComponentes() {
         JPanel painelPrincipal = new JPanel(new GridBagLayout());
         GridBagConstraints gbc = new GridBagConstraints();
-
         gbc.insets = new Insets(5, 5, 5, 5);
-        gbc.fill = GridBagConstraints.WEST;
+        gbc.fill = GridBagConstraints.HORIZONTAL;
+        gbc.weightx = 1;
 
         gbc.gridx = 0;
         gbc.gridy = 0;
-        gbc.fill = GridBagConstraints.NONE;
         gbc.weightx = 0;
+        gbc.fill = GridBagConstraints.NONE;
         painelPrincipal.add(new JLabel("Nome do Produto:"), gbc);
 
         gbc.gridx = 1;
-        gbc.fill = GridBagConstraints.HORIZONTAL;
         gbc.weightx = 1;
-        txtNome_produto = new JTextField(50);
-        painelPrincipal.add(txtNome_produto, gbc);
+        gbc.fill = GridBagConstraints.HORIZONTAL;
+        txtNomeProduto = new JTextField(40);
+        painelPrincipal.add(txtNomeProduto, gbc);
 
         gbc.gridx = 0;
         gbc.gridy = 1;
-        gbc.fill = GridBagConstraints.NONE;
         gbc.weightx = 0;
+        gbc.fill = GridBagConstraints.NONE;
         painelPrincipal.add(new JLabel("Quantidade:"), gbc);
 
         gbc.gridx = 1;
-        gbc.fill = GridBagConstraints.HORIZONTAL;
         gbc.weightx = 1;
-        txtQtde_estoque = new JTextField(50);
-        painelPrincipal.add(txtQtde_estoque, gbc);
+        gbc.fill = GridBagConstraints.HORIZONTAL;
+        txtQtdeEstoque = new JTextField(40);
+        painelPrincipal.add(txtQtdeEstoque, gbc);
 
         gbc.gridx = 0;
         gbc.gridy = 2;
-        gbc.fill = GridBagConstraints.NONE;
         gbc.weightx = 0;
+        gbc.fill = GridBagConstraints.NONE;
         painelPrincipal.add(new JLabel("Preço Médio:"), gbc);
 
         gbc.gridx = 1;
-        gbc.fill = GridBagConstraints.HORIZONTAL;
         gbc.weightx = 1;
-        txtPreco_medio = new JTextField(50);
-        txtPreco_medio.setEditable(false);
-        painelPrincipal.add(txtPreco_medio, gbc);
+        gbc.fill = GridBagConstraints.HORIZONTAL;
+        txtPrecoMedio = new JTextField(40);
+        txtPrecoMedio.setEditable(false);
+        txtPrecoMedio.setText("0.0");
+        painelPrincipal.add(txtPrecoMedio, gbc);
 
         gbc.gridx = 0;
         gbc.gridy = 3;
-        gbc.fill = GridBagConstraints.NONE;
         gbc.weightx = 0;
+        gbc.fill = GridBagConstraints.NONE;
         painelPrincipal.add(new JLabel("Valor de Venda:"), gbc);
 
         gbc.gridx = 1;
-        gbc.fill = GridBagConstraints.HORIZONTAL;
         gbc.weightx = 1;
-        txtValor_venda = new JTextField(50);
-        txtValor_venda.setEditable(false);
-        painelPrincipal.add(txtValor_venda, gbc);
+        gbc.fill = GridBagConstraints.HORIZONTAL;
+        txtValorVenda = new JTextField(40);
+        txtValorVenda.setEditable(false);
+        txtValorVenda.setText("0.0");
+        painelPrincipal.add(txtValorVenda, gbc);
 
         gbc.gridx = 0;
         gbc.gridy = 4;
-        gbc.fill = GridBagConstraints.NONE;
         gbc.weightx = 0;
+        gbc.fill = GridBagConstraints.NONE;
         painelPrincipal.add(new JLabel("Valor de Compra:"), gbc);
 
         gbc.gridx = 1;
-        gbc.fill = GridBagConstraints.HORIZONTAL;
         gbc.weightx = 1;
-        txtValor_compra = new JTextField(50);
-        txtValor_compra.setEditable(false);
-        painelPrincipal.add(txtValor_compra, gbc);
+        gbc.fill = GridBagConstraints.HORIZONTAL;
+        txtValorCompra = new JTextField(40);
+        txtValorCompra.setEditable(false);
+        txtValorCompra.setText("0.0");
+        painelPrincipal.add(txtValorCompra, gbc);
 
         gbc.gridx = 0;
         gbc.gridy = 5;
-        gbc.fill = GridBagConstraints.NONE;
         gbc.weightx = 0;
+        gbc.fill = GridBagConstraints.NONE;
         painelPrincipal.add(new JLabel("Categoria:"), gbc);
 
         gbc.gridx = 1;
-        gbc.fill = GridBagConstraints.HORIZONTAL;
         gbc.weightx = 1;
+        gbc.fill = GridBagConstraints.HORIZONTAL;
         cmbCategoria = new JComboBox<>();
         painelPrincipal.add(cmbCategoria, gbc);
 
         gbc.gridx = 0;
         gbc.gridy = 6;
-        gbc.fill = GridBagConstraints.NONE;
         gbc.weightx = 0;
-        painelPrincipal.add(new JLabel("Fornecedores do Produto:"), gbc);
-
-        btnEscolherFornecedor = new JButton("EscolherFornecedor");
-        btnRemoverFornecedor = new JButton("Remover Selecionado");
-
-        btnEscolherFornecedor.addActionListener(e -> abrirEscolherFornecedor());
-        btnRemoverFornecedor.addActionListener(e -> removerFornecedorSelecionado());
-
-        JPanel painelAcoesFornecedor = new JPanel(new FlowLayout(FlowLayout.LEFT, 10, 0));
-        painelAcoesFornecedor.add(btnEscolherFornecedor);
-        painelAcoesFornecedor.add(btnRemoverFornecedor);
+        gbc.fill = GridBagConstraints.NONE;
+        painelPrincipal.add(new JLabel("Fornecedores:"), gbc);
 
         gbc.gridx = 1;
+        gbc.gridy = 6;
+        gbc.weightx = 1;
         gbc.fill = GridBagConstraints.HORIZONTAL;
-        gbc.weightx = 1;
-        painelPrincipal.add(painelAcoesFornecedor, gbc);
+        btnEscolherFornecedor = new JButton("Escolher Fornecedor");
+        btnEscolherFornecedor.addActionListener(e -> abrirEscolherFornecedor());
+        painelPrincipal.add(btnEscolherFornecedor, gbc);
 
-        modeloFornecedores = new DefaultTableModel(new Object[] {"ID", "Nome Fantasia", "Razão Social"}, 0) {
-            @Override
-            public boolean isCellEditable(int row, int column) {
-                return false;
-            }
-        };
-
-        tabelaFornecedores = new JTable(modeloFornecedores);
-        JScrollPane scrollFornecedores = new JScrollPane(tabelaFornecedores);
-        scrollFornecedores.setPreferredSize(new Dimension(620, 120));
-
-        gbc.gridx = 1;
+        gbc.gridx = 0;
         gbc.gridy = 7;
-        gbc.fill = GridBagConstraints.BOTH;
-        gbc.weightx = 1;
-        painelPrincipal.add(scrollFornecedores, gbc);
-
-        JPanel painelBotoes = new JPanel(new FlowLayout(FlowLayout.CENTER, 10, 0));
-
+        gbc.gridwidth = 2;
+        gbc.weighty = 0;
+        gbc.fill = GridBagConstraints.HORIZONTAL;
+        JPanel painelAcoes = new JPanel(new FlowLayout(FlowLayout.CENTER, 10, 0));
         btnSalvar = new JButton("Salvar");
         btnAlterar = new JButton("Alterar");
         btnExcluir = new JButton("Excluir");
@@ -204,51 +171,18 @@ public class FormProduto extends JFrame {
 
         btnSalvar.addActionListener(e -> salvarProduto());
         btnAlterar.addActionListener(e -> alterarProduto());
-
-        btnExcluir.addActionListener(e -> {
-            if (precisaPesquisarProduto()) {
-                JOptionPane.showMessageDialog(this, "Informe o produto antes de excluir.", "Aviso", JOptionPane.WARNING_MESSAGE);
-                return;
-            }
-
-            int confirmacao = JOptionPane.showConfirmDialog(
-                this,
-                "Tem certeza que deseja excluir este produto?",
-                "Confirmar Exclusão",
-                JOptionPane.YES_NO_OPTION
-            );
-
-            if (confirmacao != JOptionPane.YES_OPTION) {
-                return;
-            }
-
-            boolean excluido = produtoController.excluirProduto(idProdutoAtual);
-
-            if (!excluido) {
-                JOptionPane.showMessageDialog(this, "Não foi possível excluir o produto.", "Erro", JOptionPane.ERROR_MESSAGE);
-            } else {
-                JOptionPane.showMessageDialog(this, "Produto excluído com sucesso!", "Sucesso", JOptionPane.INFORMATION_MESSAGE);
-                limparCampos();
-            }
-        });
-
+        btnExcluir.addActionListener(e -> excluirProduto());
         btnPesquisar.addActionListener(e -> abrirPesquisaProduto());
 
-        painelBotoes.add(btnSalvar);
-        painelBotoes.add(btnAlterar);
-        painelBotoes.add(btnExcluir);
-        painelBotoes.add(btnPesquisar);
+        painelAcoes.add(btnSalvar);
+        painelAcoes.add(btnAlterar);
+        painelAcoes.add(btnExcluir);
+        painelAcoes.add(btnPesquisar);
 
-        gbc.gridx = 0;
-        gbc.gridy = 8;
-        gbc.gridwidth = 2;
-        gbc.fill = GridBagConstraints.HORIZONTAL;
-        painelPrincipal.add(painelBotoes, gbc);
+        JPanel painelSalvar = new JPanel(new FlowLayout(FlowLayout.CENTER));
+        painelSalvar.add(painelAcoes);
+        painelPrincipal.add(painelSalvar, gbc);
 
-        add(painelPrincipal, BorderLayout.CENTER);
-    }
-
-    private void configurarRenderizadores() {
         cmbCategoria.setRenderer(new DefaultListCellRenderer() {
             @Override
             public Component getListCellRendererComponent(JList<?> list, Object value, int index, boolean isSelected, boolean cellHasFocus) {
@@ -261,71 +195,32 @@ public class FormProduto extends JFrame {
                 return this;
             }
         });
+
+        carregarCategorias();
+
+        add(painelPrincipal, BorderLayout.CENTER);
+        pack();
+        setMinimumSize(new Dimension(700, 380));
+        setLocationRelativeTo(null);
+        setVisible(true);
     }
 
-    private void carregarCategoria() {
-        List<Categoria> categorias = categoriaController.listarCategorias();
+    private void carregarCategorias() {
         cmbCategoria.removeAllItems();
         cmbCategoria.addItem(null);
-        for (Categoria categoria : categorias) {
+        for (Categoria categoria : categoriaController.listarCategorias()) {
             cmbCategoria.addItem(categoria);
         }
     }
 
     private void abrirEscolherFornecedor() {
-        EscolherFornecedor dialog = new EscolherFornecedor(this, fornecedorController);
+        EscolherFornecedor dialog = new EscolherFornecedor(this, fornecedorController, fornecedoresSelecionados);
         dialog.setVisible(true);
 
-        Fornecedor fornecedorSelecionado = dialog.getFornecedorSelecionado();
-        if (fornecedorSelecionado != null) {
-            adicionarFornecedorSelecionado(fornecedorSelecionado);
+        if (dialog.isSalvo()) {
+            fornecedoresSelecionados.clear();
+            fornecedoresSelecionados.addAll(dialog.getFornecedoresSelecionados());
         }
-    }
-
-    private void adicionarFornecedorSelecionado(Fornecedor fornecedor) {
-        if (contemFornecedor(fornecedor.getId())) {
-            JOptionPane.showMessageDialog(this, "Fornecedor já adicionado.", "Aviso", JOptionPane.WARNING_MESSAGE);
-            return;
-        }
-
-        fornecedoresSelecionados.add(fornecedor);
-        atualizarTabelaFornecedores();
-    }
-
-    private void removerFornecedorSelecionado() {
-        int linha = tabelaFornecedores.getSelectedRow();
-        if (linha < 0) {
-            JOptionPane.showMessageDialog(this, "Selecione um fornecedor na tabela para remover.", "Aviso", JOptionPane.WARNING_MESSAGE);
-            return;
-        }
-
-        fornecedoresSelecionados.remove(linha);
-        atualizarTabelaFornecedores();
-    }
-
-    private void atualizarTabelaFornecedores() {
-        modeloFornecedores.setRowCount(0);
-        for (Fornecedor fornecedor : fornecedoresSelecionados) {
-            modeloFornecedores.addRow(new Object[] {
-                fornecedor.getId(),
-                fornecedor.getNome_fantasia(),
-                fornecedor.getRazao_social()
-            });
-        }
-    }
-
-    private boolean contemFornecedor(int idFornecedor) {
-        for (Fornecedor fornecedor : fornecedoresSelecionados) {
-            if (fornecedor.getId() == idFornecedor) {
-                return true;
-            }
-        }
-        return false;
-    }
-
-    private boolean precisaPesquisarProduto() {
-        return idProdutoAtual == null
-            && txtNome_produto.getText().trim().isEmpty();
     }
 
     private void abrirPesquisaProduto() {
@@ -340,21 +235,24 @@ public class FormProduto extends JFrame {
 
     private void preencherCampos(Produto produto) {
         idProdutoAtual = produto.getId();
-        txtNome_produto.setText(produto.getNome());
-        txtQtde_estoque.setText(String.valueOf(produto.getQtde_estoque()));
-        carregarValoresPrecosCalculados(produto.getId());
+        txtNomeProduto.setText(produto.getNome());
+        txtQtdeEstoque.setText(String.valueOf(produto.getQtde_estoque()));
+        txtPrecoMedio.setText(String.valueOf(produto.getPreco_medio()));
+        txtValorVenda.setText(String.valueOf(produto.getValor_ultima_venda()));
+        txtValorCompra.setText(String.valueOf(produto.getValor_ultima_compra()));
+        selecionarCategoriaPorId(produto.getCategoria() != null ? produto.getCategoria().getId() : 0);
         carregarFornecedoresAssociados(produto.getId());
-        carregarCategoriaAssociada(produto);
     }
 
-    private void carregarValoresPrecosCalculados(int idProduto) {
-        double precoMedio = produtoController.buscarPrecoMedio(idProduto);
-        double valorUltimaCompra = produtoController.buscarValorUltimaCompra(idProduto);
-        double valorUltimaVenda = produtoController.buscarValorUltimaVenda(idProduto);
-
-        txtPreco_medio.setText(String.valueOf(precoMedio));
-        txtValor_compra.setText(String.valueOf(valorUltimaCompra));
-        txtValor_venda.setText(String.valueOf(valorUltimaVenda));
+    private void selecionarCategoriaPorId(int idCategoria) {
+        for (int i = 0; i < cmbCategoria.getItemCount(); i++) {
+            Categoria categoria = cmbCategoria.getItemAt(i);
+            if (categoria != null && categoria.getId() == idCategoria) {
+                cmbCategoria.setSelectedIndex(i);
+                return;
+            }
+        }
+        cmbCategoria.setSelectedIndex(0);
     }
 
     private void carregarFornecedoresAssociados(int idProduto) {
@@ -365,84 +263,150 @@ public class FormProduto extends JFrame {
                 fornecedoresSelecionados.add(relacao.getFornecedor());
             }
         }
-        atualizarTabelaFornecedores();
-    }
-
-    private void carregarCategoriaAssociada(Produto produto) {
-        if (produto.getCategoria() == null) {
-            cmbCategoria.setSelectedIndex(0);
-            return;
-        }
-
-        selecionarItemPorId(cmbCategoria, produto.getCategoria().getId(), Categoria::getId);
-    }
-
-    private void salvarProduto() {
-        persistirProduto(false);
     }
 
     private void alterarProduto() {
-        if (precisaPesquisarProduto()) {
-            JOptionPane.showMessageDialog(this, "Informe o produto antes de alterar.", "Aviso", JOptionPane.WARNING_MESSAGE);
+        if (idProdutoAtual == null || idProdutoAtual <= 0) {
+            JOptionPane.showMessageDialog(this, "Informe um produto carregado antes de alterar.", "Aviso", JOptionPane.WARNING_MESSAGE);
             return;
         }
 
-        persistirProduto(true);
+        if (!validarCampos()) {
+            return;
+        }
+
+        Produto produto = montarProduto();
+        produto.setId(idProdutoAtual);
+
+        boolean alterado = produtoController.alterarProduto(produto);
+        if (!alterado) {
+            JOptionPane.showMessageDialog(this, "Não foi possível alterar o produto.", "Erro", JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+
+        if (!sincronizarFornecedoresProduto(produto)) {
+            JOptionPane.showMessageDialog(this, "Produto alterado, mas não foi possível sincronizar os fornecedores.", "Erro", JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+
+        JOptionPane.showMessageDialog(this, "Produto alterado com sucesso!", "Sucesso", JOptionPane.INFORMATION_MESSAGE);
+        limparCampos();
     }
 
-    private void persistirProduto(boolean atualizando) {
-        Categoria categoriaSelecionada = obterCategoriaSelecionada();
-
-        if (fornecedoresSelecionados.isEmpty()) {
-            JOptionPane.showMessageDialog(this, "Adicione pelo menos um fornecedor.", "Aviso", JOptionPane.WARNING_MESSAGE);
+    private void excluirProduto() {
+        if (idProdutoAtual == null || idProdutoAtual <= 0) {
+            JOptionPane.showMessageDialog(this, "Informe um produto carregado antes de excluir.", "Aviso", JOptionPane.WARNING_MESSAGE);
             return;
         }
 
-        if (categoriaSelecionada == null) {
-            JOptionPane.showMessageDialog(this, "Selecione uma categoria válida.", "Aviso", JOptionPane.WARNING_MESSAGE);
+        int confirmacao = JOptionPane.showConfirmDialog(this, "Tem certeza que deseja excluir este produto?", "Confirmar Exclusão", JOptionPane.YES_NO_OPTION);
+        if (confirmacao != JOptionPane.YES_OPTION) {
             return;
         }
 
-        Produto produto = montarProdutoAtual();
-        boolean persistido = atualizando
-            ? produtoController.alterarProduto(produto)
-            : produtoController.salvarProduto(produto);
+        boolean excluido = produtoController.excluirProduto(idProdutoAtual);
+        if (!excluido) {
+            JOptionPane.showMessageDialog(this, "Não foi possível excluir o produto.", "Erro", JOptionPane.ERROR_MESSAGE);
+            return;
+        }
 
-        if (!persistido) {
+        JOptionPane.showMessageDialog(this, "Produto excluído com sucesso!", "Sucesso", JOptionPane.INFORMATION_MESSAGE);
+        limparCampos();
+    }
+
+    private void salvarProduto() {
+        if (!validarCampos()) {
+            return;
+        }
+
+        Produto produto = montarProduto();
+        boolean salvo = produtoController.salvarProduto(produto);
+        if (!salvo) {
             JOptionPane.showMessageDialog(this, "Não foi possível salvar o produto.", "Erro", JOptionPane.ERROR_MESSAGE);
             return;
         }
 
         if (!sincronizarFornecedoresProduto(produto)) {
-            JOptionPane.showMessageDialog(this, "Produto salvo, mas ocorreu erro ao sincronizar fornecedores.", "Erro", JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(this, "Produto salvo, mas não foi possível salvar os relacionamentos com fornecedor.", "Erro", JOptionPane.ERROR_MESSAGE);
             return;
         }
 
-        JOptionPane.showMessageDialog(this, atualizando ? "Produto alterado com sucesso!" : "Produto salvo com sucesso!", "Sucesso", JOptionPane.INFORMATION_MESSAGE);
+        JOptionPane.showMessageDialog(this, "Produto salvo com sucesso!", "Sucesso", JOptionPane.INFORMATION_MESSAGE);
         limparCampos();
+    }
+
+    private boolean validarCampos() {
+        if (txtNomeProduto.getText().trim().isEmpty()) {
+            JOptionPane.showMessageDialog(this, "Informe o nome do produto.", "Aviso", JOptionPane.WARNING_MESSAGE);
+            return false;
+        }
+
+        double quantidade;
+        try {
+            quantidade = Double.parseDouble(txtQtdeEstoque.getText().trim().replace(",", "."));
+        } catch (NumberFormatException e) {
+            JOptionPane.showMessageDialog(this, "Informe uma quantidade válida.", "Aviso", JOptionPane.WARNING_MESSAGE);
+            return false;
+        }
+
+        if (quantidade < 0) {
+            JOptionPane.showMessageDialog(this, "A quantidade não pode ser negativa.", "Aviso", JOptionPane.WARNING_MESSAGE);
+            return false;
+        }
+
+        if (obterCategoriaSelecionada() == null) {
+            JOptionPane.showMessageDialog(this, "Selecione uma categoria.", "Aviso", JOptionPane.WARNING_MESSAGE);
+            return false;
+        }
+
+        if (fornecedoresSelecionados.isEmpty()) {
+            JOptionPane.showMessageDialog(this, "Escolha pelo menos um fornecedor.", "Aviso", JOptionPane.WARNING_MESSAGE);
+            return false;
+        }
+
+        return true;
+    }
+
+    private Produto montarProduto() {
+        Produto produto = new Produto();
+        produto.setNome(txtNomeProduto.getText().trim());
+        produto.setQtde_estoque(Double.parseDouble(txtQtdeEstoque.getText().trim().replace(",", ".")));
+        produto.setPreco_medio(parseDoubleOrZero(txtPrecoMedio.getText()));
+        produto.setValor_ultima_venda(parseDoubleOrZero(txtValorVenda.getText()));
+        produto.setValor_ultima_compra(parseDoubleOrZero(txtValorCompra.getText()));
+        produto.setCategoria(obterCategoriaSelecionada());
+        return produto;
+    }
+
+    private double parseDoubleOrZero(String texto) {
+        if (texto == null || texto.trim().isEmpty()) {
+            return 0.0;
+        }
+
+        try {
+            return Double.parseDouble(texto.trim().replace(",", "."));
+        } catch (NumberFormatException e) {
+            return 0.0;
+        }
     }
 
     private boolean sincronizarFornecedoresProduto(Produto produto) {
         List<FornecedorProduto> relacoesExistentes = fornecedorProdutoController.listarFornecedoresPorProduto(produto.getId());
 
         for (FornecedorProduto relacao : relacoesExistentes) {
-            if (relacao.getFornecedor() == null) {
-                continue;
-            }
-            int idFornecedor = relacao.getFornecedor().getId();
-            if (!contemFornecedor(idFornecedor)) {
+            if (relacao.getId() > 0 && !contemFornecedor(relacao.getFornecedor().getId())) {
                 if (!fornecedorProdutoController.excluirFornecedorProduto(relacao.getId())) {
                     return false;
                 }
             }
         }
 
-        for (Fornecedor fornecedorSelecionado : fornecedoresSelecionados) {
-            if (!existeRelacao(relacoesExistentes, fornecedorSelecionado.getId())) {
-                FornecedorProduto novaRelacao = new FornecedorProduto();
-                novaRelacao.setFornecedor(fornecedorSelecionado);
-                novaRelacao.setProduto(produto);
-                if (!fornecedorProdutoController.salvarFornecedorProduto(novaRelacao)) {
+        for (Fornecedor fornecedor : fornecedoresSelecionados) {
+            if (!existeRelacao(relacoesExistentes, fornecedor.getId())) {
+                FornecedorProduto relacao = new FornecedorProduto();
+                relacao.setFornecedor(fornecedor);
+                relacao.setProduto(produto);
+                if (!fornecedorProdutoController.salvarFornecedorProduto(relacao)) {
                     return false;
                 }
             }
@@ -460,47 +424,28 @@ public class FormProduto extends JFrame {
         return false;
     }
 
-    private void limparCampos() {
-        txtNome_produto.setText("");
-        txtQtde_estoque.setText("");
-        txtPreco_medio.setText("");
-        txtValor_venda.setText("");
-        txtValor_compra.setText("");
-        cmbCategoria.setSelectedIndex(0);
-        fornecedoresSelecionados.clear();
-        atualizarTabelaFornecedores();
-        idProdutoAtual = null;
-        txtNome_produto.requestFocus();
-    }
-
-    private Produto montarProdutoAtual() {
-        Produto produto = new Produto();
-        if (idProdutoAtual != null) {
-            produto.setId(idProdutoAtual);
+    private boolean contemFornecedor(int idFornecedor) {
+        for (Fornecedor fornecedor : fornecedoresSelecionados) {
+            if (fornecedor.getId() == idFornecedor) {
+                return true;
+            }
         }
-        produto.setNome(txtNome_produto.getText().trim());
-        produto.setQtde_estoque(Double.parseDouble(txtQtde_estoque.getText().trim()));
-
-        Categoria categoriaSelecionada = obterCategoriaSelecionada();
-        if (categoriaSelecionada != null) {
-            produto.setCategoria(categoriaSelecionada);
-        }
-
-        return produto;
+        return false;
     }
 
     private Categoria obterCategoriaSelecionada() {
         return (Categoria) cmbCategoria.getSelectedItem();
     }
 
-    private <T> void selecionarItemPorId(JComboBox<T> comboBox, int id, ToIntFunction<T> idExtractor) {
-        for (int i = 0; i < comboBox.getItemCount(); i++) {
-            T item = comboBox.getItemAt(i);
-            if (item != null && idExtractor.applyAsInt(item) == id) {
-                comboBox.setSelectedIndex(i);
-                return;
-            }
-        }
-        comboBox.setSelectedIndex(0);
+    private void limparCampos() {
+        txtNomeProduto.setText("");
+        txtQtdeEstoque.setText("");
+        txtPrecoMedio.setText("0.0");
+        txtValorVenda.setText("0.0");
+        txtValorCompra.setText("0.0");
+        cmbCategoria.setSelectedIndex(0);
+        fornecedoresSelecionados.clear();
+        txtNomeProduto.requestFocus();
+        idProdutoAtual = null;
     }
 }

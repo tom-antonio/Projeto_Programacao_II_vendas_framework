@@ -24,8 +24,6 @@ import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import javax.swing.JTable;
 import javax.swing.JTextField;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.text.MaskFormatter;
@@ -43,11 +41,9 @@ public class FormVenda extends JFrame {
     private JTextField txtDataVenda;
     private JTextField txtValorTotal;
     private JComboBox<Cliente> cmbCliente;
-    private JTable tabelaProdutos;
     private DefaultTableModel modeloProdutos;
     private JButton btnEscolherProduto;
     private JButton btnPesquisar;
-    private JButton btnRemoverProduto;
     private JButton btnSalvar;
     private JButton btnAlterar;
     private JButton btnExcluir;
@@ -68,7 +64,7 @@ public class FormVenda extends JFrame {
         carregarClientes();
 
         pack();
-        setMinimumSize(new Dimension(980, 560));
+        setMinimumSize(new Dimension(700, 380));
         setLocationRelativeTo(null);
         setVisible(true);
     }
@@ -124,19 +120,6 @@ public class FormVenda extends JFrame {
         txtValorTotal.setEditable(false);
         painelPrincipal.add(txtValorTotal, gbc);
 
-        btnEscolherProduto = new JButton("EscolherProduto");
-        btnPesquisar = new JButton("Pesquisar");
-        btnRemoverProduto = new JButton("Remover Selecionado");
-
-        btnEscolherProduto.addActionListener(e -> abrirFormVendaProduto());
-        btnPesquisar.addActionListener(e -> abrirPesquisaVenda());
-        btnRemoverProduto.addActionListener(e -> removerProdutoSelecionado());
-
-        JPanel painelAcoesProdutos = new JPanel(new FlowLayout(FlowLayout.LEFT, 10, 0));
-        painelAcoesProdutos.add(btnEscolherProduto);
-        painelAcoesProdutos.add(btnPesquisar);
-        painelAcoesProdutos.add(btnRemoverProduto);
-
         gbc.gridx = 0;
         gbc.gridy = 3;
         gbc.fill = GridBagConstraints.NONE;
@@ -144,38 +127,29 @@ public class FormVenda extends JFrame {
         painelPrincipal.add(new JLabel("Produtos da Venda:"), gbc);
 
         gbc.gridx = 1;
+        gbc.gridy = 3;
+        gbc.weightx = 1;
+
         gbc.fill = GridBagConstraints.HORIZONTAL;
-        gbc.weightx = 1;
-        painelPrincipal.add(painelAcoesProdutos, gbc);
-
-        modeloProdutos = new DefaultTableModel(new Object[] {"ID", "Produto", "Quantidade", "Valor Unitário", "Subtotal"}, 0) {
-            @Override
-            public boolean isCellEditable(int row, int column) {
-                return false;
-            }
-        };
-        tabelaProdutos = new JTable(modeloProdutos);
-        JScrollPane scrollProdutos = new JScrollPane(tabelaProdutos);
-        scrollProdutos.setPreferredSize(new Dimension(840, 190));
-
-        gbc.gridx = 1;
-        gbc.gridy = 4;
-        gbc.fill = GridBagConstraints.BOTH;
-        gbc.weightx = 1;
-        painelPrincipal.add(scrollProdutos, gbc);
+        btnEscolherProduto = new JButton("Escolher Produto");
+        btnEscolherProduto.addActionListener(e -> abrirFormVendaProduto());
+        painelPrincipal.add(btnEscolherProduto, gbc);
 
         JPanel painelBotoes = new JPanel(new FlowLayout(FlowLayout.CENTER, 10, 0));
         btnSalvar = new JButton("Salvar");
         btnAlterar = new JButton("Alterar");
         btnExcluir = new JButton("Excluir");
+        btnPesquisar = new JButton("Pesquisar");
 
         btnSalvar.addActionListener(e -> salvarVenda());
         btnAlterar.addActionListener(e -> alterarVenda());
         btnExcluir.addActionListener(e -> excluirVenda());
+        btnPesquisar.addActionListener(e -> abrirPesquisaVenda());
 
         painelBotoes.add(btnSalvar);
         painelBotoes.add(btnAlterar);
         painelBotoes.add(btnExcluir);
+        painelBotoes.add(btnPesquisar);
 
         gbc.gridx = 0;
         gbc.gridy = 5;
@@ -213,9 +187,10 @@ public class FormVenda extends JFrame {
         FormVendaProduto dialog = new FormVendaProduto(this);
         dialog.setVisible(true);
 
-        ProdutoVenda produtoVenda = dialog.getProdutoVendaSelecionado();
-        if (produtoVenda != null) {
-            adicionarOuAtualizarItem(produtoVenda);
+        if (dialog.isSelecionado()) {
+            for (ProdutoVenda produtoVenda : dialog.getProdutosVendaSelecionados()) {
+                adicionarOuAtualizarItem(produtoVenda);
+            }
         }
     }
 
@@ -284,18 +259,6 @@ public class FormVenda extends JFrame {
         }
 
         itensVenda.add(produtoVenda);
-        atualizarTabelaProdutos();
-        atualizarValorTotal();
-    }
-
-    private void removerProdutoSelecionado() {
-        int linha = tabelaProdutos.getSelectedRow();
-        if (linha == -1) {
-            JOptionPane.showMessageDialog(this, "Selecione um produto na tabela.", "Aviso", JOptionPane.WARNING_MESSAGE);
-            return;
-        }
-
-        itensVenda.remove(linha);
         atualizarTabelaProdutos();
         atualizarValorTotal();
     }

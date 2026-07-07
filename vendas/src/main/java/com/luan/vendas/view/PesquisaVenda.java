@@ -33,14 +33,14 @@ public class PesquisaVenda extends JDialog {
         this.vendaController = vendaController;
         this.vendasEncontradas = new ArrayList<>();
 
-        setSize(920, 440);
+        setSize(700, 380);
         setLocationRelativeTo(parent);
         setLayout(new BorderLayout(10, 10));
 
         JPanel painelTopo = new JPanel(new FlowLayout(FlowLayout.LEFT));
         txtPesquisa = new JTextField(30);
         JButton btnBuscar = new JButton("Buscar");
-        painelTopo.add(new JLabel("Pesquisar por ID, data, cliente ou valor:"));
+        painelTopo.add(new JLabel("Nome do cliente:"));
         painelTopo.add(txtPesquisa);
         painelTopo.add(btnBuscar);
         add(painelTopo, BorderLayout.NORTH);
