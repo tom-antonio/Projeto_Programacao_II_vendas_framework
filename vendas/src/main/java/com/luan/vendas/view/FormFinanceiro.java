@@ -146,7 +146,6 @@ public class FormFinanceiro extends JFrame {
 		gbc.gridy = 0;
 		gbc.fill = GridBagConstraints.NONE;
 		gbc.weightx = 0;
-		comboBoxparcelamento.addActionListener(e -> atualizarVisibilidadeFinanceiroParcela());
 		painelPrincipal.add(new JLabel("Data da Conta:"), gbc);
 
 		gbc.gridx = 1;

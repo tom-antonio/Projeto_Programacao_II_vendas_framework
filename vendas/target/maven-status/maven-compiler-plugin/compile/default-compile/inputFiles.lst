@@ -11,6 +11,7 @@
 /Users/luanmorais/GitHub/Projeto_Programacao_II_vendas_framework/vendas/src/main/java/com/luan/vendas/controller/ProdutoController.java
 /Users/luanmorais/GitHub/Projeto_Programacao_II_vendas_framework/vendas/src/main/java/com/luan/vendas/controller/ProdutoVendaController.java
 /Users/luanmorais/GitHub/Projeto_Programacao_II_vendas_framework/vendas/src/main/java/com/luan/vendas/controller/TipoContaController.java
+/Users/luanmorais/GitHub/Projeto_Programacao_II_vendas_framework/vendas/src/main/java/com/luan/vendas/controller/UsuarioController.java
 /Users/luanmorais/GitHub/Projeto_Programacao_II_vendas_framework/vendas/src/main/java/com/luan/vendas/controller/VendaController.java
 /Users/luanmorais/GitHub/Projeto_Programacao_II_vendas_framework/vendas/src/main/java/com/luan/vendas/dao/CategoriaDao.java
 /Users/luanmorais/GitHub/Projeto_Programacao_II_vendas_framework/vendas/src/main/java/com/luan/vendas/dao/ClienteDao.java
@@ -25,6 +26,7 @@
 /Users/luanmorais/GitHub/Projeto_Programacao_II_vendas_framework/vendas/src/main/java/com/luan/vendas/dao/ProdutoDao.java
 /Users/luanmorais/GitHub/Projeto_Programacao_II_vendas_framework/vendas/src/main/java/com/luan/vendas/dao/ProdutoVendaDao.java
 /Users/luanmorais/GitHub/Projeto_Programacao_II_vendas_framework/vendas/src/main/java/com/luan/vendas/dao/TipoContaDao.java
+/Users/luanmorais/GitHub/Projeto_Programacao_II_vendas_framework/vendas/src/main/java/com/luan/vendas/dao/UsuarioDao.java
 /Users/luanmorais/GitHub/Projeto_Programacao_II_vendas_framework/vendas/src/main/java/com/luan/vendas/dao/VendaDao.java
 /Users/luanmorais/GitHub/Projeto_Programacao_II_vendas_framework/vendas/src/main/java/com/luan/vendas/model/Categoria.java
 /Users/luanmorais/GitHub/Projeto_Programacao_II_vendas_framework/vendas/src/main/java/com/luan/vendas/model/Cliente.java
@@ -38,6 +40,7 @@
 /Users/luanmorais/GitHub/Projeto_Programacao_II_vendas_framework/vendas/src/main/java/com/luan/vendas/model/Produto.java
 /Users/luanmorais/GitHub/Projeto_Programacao_II_vendas_framework/vendas/src/main/java/com/luan/vendas/model/ProdutoVenda.java
 /Users/luanmorais/GitHub/Projeto_Programacao_II_vendas_framework/vendas/src/main/java/com/luan/vendas/model/TipoConta.java
+/Users/luanmorais/GitHub/Projeto_Programacao_II_vendas_framework/vendas/src/main/java/com/luan/vendas/model/Usuario.java
 /Users/luanmorais/GitHub/Projeto_Programacao_II_vendas_framework/vendas/src/main/java/com/luan/vendas/model/Venda.java
 /Users/luanmorais/GitHub/Projeto_Programacao_II_vendas_framework/vendas/src/main/java/com/luan/vendas/view/FormCategoria.java
 /Users/luanmorais/GitHub/Projeto_Programacao_II_vendas_framework/vendas/src/main/java/com/luan/vendas/view/FormCliente.java
@@ -48,9 +51,11 @@
 /Users/luanmorais/GitHub/Projeto_Programacao_II_vendas_framework/vendas/src/main/java/com/luan/vendas/view/FormFormaPagamento.java
 /Users/luanmorais/GitHub/Projeto_Programacao_II_vendas_framework/vendas/src/main/java/com/luan/vendas/view/FormFornecedor.java
 /Users/luanmorais/GitHub/Projeto_Programacao_II_vendas_framework/vendas/src/main/java/com/luan/vendas/view/FormFornecedorProduto.java
+/Users/luanmorais/GitHub/Projeto_Programacao_II_vendas_framework/vendas/src/main/java/com/luan/vendas/view/FormLogin.java
 /Users/luanmorais/GitHub/Projeto_Programacao_II_vendas_framework/vendas/src/main/java/com/luan/vendas/view/FormProduto.java
 /Users/luanmorais/GitHub/Projeto_Programacao_II_vendas_framework/vendas/src/main/java/com/luan/vendas/view/FormTelaPrincipal.java
 /Users/luanmorais/GitHub/Projeto_Programacao_II_vendas_framework/vendas/src/main/java/com/luan/vendas/view/FormTipoConta.java
+/Users/luanmorais/GitHub/Projeto_Programacao_II_vendas_framework/vendas/src/main/java/com/luan/vendas/view/FormUsuario.java
 /Users/luanmorais/GitHub/Projeto_Programacao_II_vendas_framework/vendas/src/main/java/com/luan/vendas/view/FormVenda.java
 /Users/luanmorais/GitHub/Projeto_Programacao_II_vendas_framework/vendas/src/main/java/com/luan/vendas/view/FormVendaProduto.java
 /Users/luanmorais/GitHub/Projeto_Programacao_II_vendas_framework/vendas/src/main/java/com/luan/vendas/view/PesquisaCategoria.java

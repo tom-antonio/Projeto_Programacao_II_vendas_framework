@@ -22,6 +22,7 @@ import com.luan.vendas.model.FornecedorProduto;
 import com.luan.vendas.model.Produto;
 import com.luan.vendas.model.ProdutoVenda;
 import com.luan.vendas.model.TipoConta;
+import com.luan.vendas.model.Usuario;
 import com.luan.vendas.model.Venda;
 
 public class Postgres {
@@ -54,6 +55,7 @@ public class Postgres {
             configuration.addAnnotatedClass(FinanceiroParcela.class);
             configuration.addAnnotatedClass(ProdutoVenda.class);
             configuration.addAnnotatedClass(CompraProduto.class);
+            configuration.addAnnotatedClass(Usuario.class);
 
             return configuration.buildSessionFactory();
         } catch (IOException | RuntimeException e) {

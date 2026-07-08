@@ -106,9 +106,17 @@ public class FormTelaPrincipal extends JFrame {
         });
         menuFinanceiro.add(itemTipoConta);
 
+        JMenu menuUsuario = new JMenu("Usuário");
+        JMenuItem itemUsuario = new JMenuItem("Gerenciar Usuários");
+        itemUsuario.addActionListener((ActionEvent e) -> {
+            abrirFormularioUsuario();
+        });
+        menuUsuario.add(itemUsuario);
+
         menuBar.add(menuCadastros);
         menuBar.add(menuAjuda);
         menuBar.add(menuFinanceiro);
+        menuBar.add(menuUsuario);
         setJMenuBar(menuBar);
     }
 
@@ -361,5 +369,9 @@ public class FormTelaPrincipal extends JFrame {
 
     private void abrirFormularioTipoConta() {
         SwingUtilities.invokeLater(FormTipoConta::new);
+    }
+
+    private void abrirFormularioUsuario() {
+        SwingUtilities.invokeLater(FormUsuario::new);
     }
 }
