@@ -106,6 +106,12 @@ public class FormTelaPrincipal extends JFrame {
         });
         menuFinanceiro.add(itemTipoConta);
 
+        JMenuItem itemRelatorio = new JMenuItem("Relatório");
+        itemRelatorio.addActionListener((ActionEvent e) -> {
+            abrirFormularioRelatorio();
+        });
+        menuFinanceiro.add(itemRelatorio);
+
         JMenu menuUsuario = new JMenu("Usuário");
         JMenuItem itemUsuario = new JMenuItem("Gerenciar Usuários");
         itemUsuario.addActionListener((ActionEvent e) -> {
@@ -373,5 +379,21 @@ public class FormTelaPrincipal extends JFrame {
 
     private void abrirFormularioUsuario() {
         SwingUtilities.invokeLater(FormUsuario::new);
+    }
+
+    private void abrirFormularioRelatorio() {
+        SwingUtilities.invokeLater(() -> {
+            try {
+                FormRelatorio formRelatorio = new FormRelatorio();
+                formRelatorio.setVisible(true);
+            } catch (Throwable e) {
+                JOptionPane.showMessageDialog(
+                    this,
+                    "Não foi possível abrir a tela de relatório.\n\n" + e.getMessage(),
+                    "Erro",
+                    JOptionPane.ERROR_MESSAGE
+                );
+            }
+        });
     }
 }

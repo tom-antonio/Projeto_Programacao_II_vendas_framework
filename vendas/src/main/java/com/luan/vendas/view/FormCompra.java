@@ -41,6 +41,7 @@ public class FormCompra extends JFrame {
     private JComboBox<Fornecedor> cmbFornecedor;
     private JButton btnEscolherProduto;
     private JButton btnPesquisar;
+    private JButton btnFinanceiro;
     private JButton btnSalvar;
     private JButton btnAlterar;
     private JButton btnExcluir;
@@ -106,6 +107,19 @@ public class FormCompra extends JFrame {
         gbc.gridy = 2;
         gbc.fill = GridBagConstraints.NONE;
         gbc.weightx = 0;
+        painelPrincipal.add(new JLabel("Produtos da Compra:"), gbc);
+
+        gbc.gridx = 1;
+        gbc.fill = GridBagConstraints.HORIZONTAL;
+        gbc.weightx = 1;
+        btnEscolherProduto = new JButton("Escolher Produto");
+        btnEscolherProduto.addActionListener(e -> abrirFormCompraProduto());
+        painelPrincipal.add(btnEscolherProduto, gbc);
+
+        gbc.gridx = 0;
+        gbc.gridy = 3;
+        gbc.fill = GridBagConstraints.NONE;
+        gbc.weightx = 0;
         painelPrincipal.add(new JLabel("Valor Total:"), gbc);
 
         gbc.gridx = 1;
@@ -117,18 +131,19 @@ public class FormCompra extends JFrame {
         painelPrincipal.add(txtValorTotal, gbc);
 
         gbc.gridx = 0;
-        gbc.gridy = 3;
+        gbc.gridy = 4;
         gbc.fill = GridBagConstraints.NONE;
         gbc.weightx = 0;
-        painelPrincipal.add(new JLabel("Produtos da Compra:"), gbc);
+        painelPrincipal.add(new JLabel("Pagamento:"), gbc);
 
         gbc.gridx = 1;
-        gbc.fill = GridBagConstraints.HORIZONTAL;
+        gbc.gridy = 4;
         gbc.weightx = 1;
-        btnEscolherProduto = new JButton("Escolher Produto");
-        btnEscolherProduto.addActionListener(e -> abrirFormCompraProduto());
 
-        painelPrincipal.add(btnEscolherProduto, gbc);
+        gbc.fill = GridBagConstraints.HORIZONTAL;
+        btnFinanceiro = new JButton("Financeiro");
+        btnFinanceiro.addActionListener(e -> abrirFormularioFinanceiro());
+        painelPrincipal.add(btnFinanceiro, gbc);
 
         JPanel painelBotoes = new JPanel(new FlowLayout(FlowLayout.CENTER, 10, 0));
         btnSalvar = new JButton("Salvar");
@@ -156,6 +171,7 @@ public class FormCompra extends JFrame {
         gbc.gridx = 0;
         gbc.gridy = 4;
         gbc.gridwidth = 2;
+        gbc.gridy = 5;
         gbc.fill = GridBagConstraints.HORIZONTAL;
         painelPrincipal.add(painelBotoes, gbc);
 
@@ -342,22 +358,19 @@ public class FormCompra extends JFrame {
             return;
         }
 
-        JOptionPane.showMessageDialog(this, atualizando ? "Compra alterada com sucesso!" : "Compra salva com sucesso!", "Sucesso", JOptionPane.INFORMATION_MESSAGE);
-        if (!atualizando) {
-            abrirFormularioFinanceiro(compra);
-        }
         limparCampos();
     }
 
-    private void abrirFormularioFinanceiro(Compra compra) {
+
+    private void abrirFormularioFinanceiro() {
         try {
-            FormFinanceiro formFinanceiro = new FormFinanceiro(this, compra);
+            FormFinanceiro formFinanceiro = new FormFinanceiro(this, (Compra) null);
             formFinanceiro.setVisible(true);
             formFinanceiro.toFront();
         } catch (ParseException e) {
             JOptionPane.showMessageDialog(
                 this,
-                "Compra salva, mas não foi possível abrir o financeiro: " + e.getMessage(),
+                "Não foi possível abrir o financeiro: " + e.getMessage(),
                 "Aviso",
                 JOptionPane.WARNING_MESSAGE
             );

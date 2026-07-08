@@ -15,6 +15,13 @@
 
 <dependencies>
 
+    <!-- JasperReports -->
+    <dependency>
+      <groupId>net.sf.jasperreports</groupId>
+      <artifactId>jasperreports</artifactId>
+      <version>6.20.6</version>
+    </dependency>
+
     <!-- JavaFX para interface gráfica -->
     <dependency>
       <groupId>org.openjfx</groupId>
