@@ -8,9 +8,11 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import com.luan.vendas.dao.ClienteDao;
+import com.luan.vendas.dao.FinanceiroDao;
 import com.luan.vendas.dao.ProdutoDao;
 import com.luan.vendas.dao.VendaDao;
 import com.luan.vendas.model.Cliente;
+import com.luan.vendas.model.Financeiro;
 import com.luan.vendas.model.Produto;
 import com.luan.vendas.model.ProdutoVenda;
 import com.luan.vendas.model.Venda;
@@ -24,11 +26,13 @@ public class VendaController {
 	private final VendaDao vendaDao;
 	private final ProdutoDao produtoDao;
 	private final ClienteDao clienteDao;
+	private final FinanceiroDao financeiroDao;
 
 	public VendaController() {
 		this.vendaDao = new VendaDao();
 		this.produtoDao = new ProdutoDao();
 		this.clienteDao = new ClienteDao();
+		this.financeiroDao = new FinanceiroDao();
 	}
 
 	public double calcularValorTotalVenda(List<ProdutoVenda> itensVenda) {
@@ -56,6 +60,12 @@ public class VendaController {
 		Cliente clienteExistente = clienteDao.pesquisarHibernate(venda.getCliente().getId());
 		if (clienteExistente == null) {
 			logger.warn("Cliente não encontrado com ID: {}", venda.getCliente().getId());
+			return false;
+		}
+
+		Financeiro financeiroExistente = financeiroDao.pesquisarHibernate(venda.getFinanceiro().getId());
+		if (financeiroExistente == null) {
+			logger.warn("Financeiro não encontrado com ID: {}", venda.getFinanceiro().getId());
 			return false;
 		}
 
@@ -92,6 +102,7 @@ public class VendaController {
 		}
 
 		venda.setCliente(clienteExistente);
+		venda.setFinanceiro(financeiroExistente);
 		for (ProdutoVenda item : venda.getProdutoVenda()) {
 			Produto produtoExistente = produtoDao.pesquisarHibernate(item.getProduto().getId());
 			if (produtoExistente == null) {
@@ -198,6 +209,12 @@ public class VendaController {
 			return false;
 		}
 
+		Financeiro financeiroExistente = financeiroDao.pesquisarHibernate(venda.getFinanceiro().getId());
+		if (financeiroExistente == null) {
+			logger.warn("Financeiro não encontrado para a venda com ID: {}", venda.getId());
+			return false;
+		}
+
 		for (ProdutoVenda item : venda.getProdutoVenda()) {
 			if (item.getProduto() == null || item.getProduto().getId() <= 0) {
 				logger.warn("Produto inválido para o item da venda: {}", item);
@@ -210,6 +227,7 @@ public class VendaController {
 		}
 
 		venda.setCliente(clienteExistente);
+		venda.setFinanceiro(financeiroExistente);
 		for (ProdutoVenda item : venda.getProdutoVenda()) {
 			Produto produtoExistente = produtoDao.pesquisarHibernate(item.getProduto().getId());
 			if (produtoExistente == null) {
@@ -244,6 +262,10 @@ public class VendaController {
 		}
 		if (venda.getCliente() == null || venda.getCliente().getId() <= 0) {
 			logger.warn("Cliente inválido para a venda: {}", venda.getId());
+			return false;
+		}
+		if (venda.getFinanceiro() == null || venda.getFinanceiro().getId() <= 0) {
+			logger.warn("Financeiro inválido para a venda: {}", venda.getId());
 			return false;
 		}
 		if (venda.getProdutoVenda() == null || venda.getProdutoVenda().isEmpty()) {

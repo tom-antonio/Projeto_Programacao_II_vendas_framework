@@ -29,6 +29,7 @@ import javax.swing.text.MaskFormatter;
 import com.luan.vendas.controller.ClienteController;
 import com.luan.vendas.controller.VendaController;
 import com.luan.vendas.model.Cliente;
+import com.luan.vendas.model.Financeiro;
 import com.luan.vendas.model.ProdutoVenda;
 import com.luan.vendas.model.Venda;
 
@@ -48,6 +49,7 @@ public class FormVenda extends JFrame {
     private final VendaController vendaController;
     private final ClienteController clienteController;
     private final List<ProdutoVenda> itensVenda;
+    private Financeiro financeiroAssociado;
     private Integer idVendaAtual;
 
     public FormVenda() throws ParseException {
@@ -254,6 +256,7 @@ public class FormVenda extends JFrame {
         idVendaAtual = venda.getId();
         txtDataVenda.setText(venda.getData_venda() != null ? venda.getData_venda().format(UI_DATE_FORMATTER) : "");
         txtValorTotal.setText(String.valueOf(venda.getValor_total()));
+        financeiroAssociado = venda.getFinanceiro();
 
         if (venda.getCliente() != null) {
             selecionarClientePorId(venda.getCliente().getId());
@@ -416,6 +419,11 @@ public class FormVenda extends JFrame {
             return null;
         }
 
+        if (financeiroAssociado == null || financeiroAssociado.getId() <= 0) {
+            JOptionPane.showMessageDialog(this, "Informe e salve o financeiro antes de salvar a venda.", "Aviso", JOptionPane.WARNING_MESSAGE);
+            return null;
+        }
+
         Venda venda = new Venda();
         int idVenda = 0;
         if (idVendaAtual != null) {
@@ -425,6 +433,7 @@ public class FormVenda extends JFrame {
         venda.setData_venda(dataVenda);
         venda.setValor_total(calcularValorTotal());
         venda.setCliente(cliente);
+        venda.setFinanceiro(financeiroAssociado);
 
         List<ProdutoVenda> itensPreparados = new ArrayList<>();
         for (ProdutoVenda item : itensVenda) {
@@ -453,8 +462,13 @@ public class FormVenda extends JFrame {
         txtValorTotal.setText("");
         cmbCliente.setSelectedIndex(0);
         itensVenda.clear();
+        financeiroAssociado = null;
         idVendaAtual = null;
         txtDataVenda.requestFocus();
+    }
+
+    public void definirFinanceiroAssociado(Financeiro financeiro) {
+        this.financeiroAssociado = financeiro;
     }
 
 }

@@ -497,7 +497,14 @@ public class FormFinanceiro extends JFrame {
 			return;
 		}
 
+		if (janelaPai instanceof FormVenda formVenda) {
+			formVenda.definirFinanceiroAssociado(financeiro);
+		} else if (janelaPai instanceof FormCompra formCompra) {
+			formCompra.definirFinanceiroAssociado(financeiro);
+		}
+
 		JOptionPane.showMessageDialog(this, "Financeiro salvo com sucesso!", "Sucesso", JOptionPane.INFORMATION_MESSAGE);
+		dispose();
 		limparCampos();
 	}
 

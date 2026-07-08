@@ -6,10 +6,12 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import com.luan.vendas.dao.CompraDao;
+import com.luan.vendas.dao.FinanceiroDao;
 import com.luan.vendas.dao.FornecedorDao;
 import com.luan.vendas.dao.ProdutoDao;
 import com.luan.vendas.model.Compra;
 import com.luan.vendas.model.CompraProduto;
+import com.luan.vendas.model.Financeiro;
 import com.luan.vendas.model.Fornecedor;
 import com.luan.vendas.model.Produto;
 
@@ -22,11 +24,13 @@ public class CompraController {
     private final CompraDao compraDao;
     private final ProdutoDao produtoDao;
     private final FornecedorDao fornecedorDao;
+    private final FinanceiroDao financeiroDao;
 
     public CompraController() {
         this.compraDao = new CompraDao();
         this.produtoDao = new ProdutoDao();
         this.fornecedorDao = new FornecedorDao();
+        this.financeiroDao = new FinanceiroDao();
     }
 
     public double calcularValorTotalCompra(List<CompraProduto> itensCompra) {
@@ -78,6 +82,7 @@ public class CompraController {
         }
 
         atualizarPrecosCompra(preparada.getCompraProduto());
+        
         return true;
     }
 
@@ -208,11 +213,18 @@ public class CompraController {
             return null;
         }
 
+		Financeiro financeiro = financeiroDao.pesquisarHibernate(compra.getFinanceiro().getId());
+		if (financeiro == null) {
+			logger.warn("Financeiro não encontrado para a compra: {}", compra.getId());
+			return null;
+		}
+
         Compra preparada = new Compra();
         preparada.setId(compra.getId());
         preparada.setData_compra(compra.getData_compra());
         preparada.setValor_total(compra.getValor_total());
         preparada.setFornecedor(fornecedor);
+        preparada.setFinanceiro(financeiro);
         preparada.setCompraProduto(compra.getCompraProduto());
 
         for (CompraProduto compraProduto : preparada.getCompraProduto()) {
@@ -239,6 +251,9 @@ public class CompraController {
             return false;
         }
         if (compra.getFornecedor() == null || compra.getFornecedor().getId() <= 0) {
+            return false;
+        }
+        if (compra.getFinanceiro() == null || compra.getFinanceiro().getId() <= 0) {
             return false;
         }
         if (compra.getCompraProduto() == null || compra.getCompraProduto().isEmpty()) {

@@ -45,7 +45,11 @@ public class FinanceiroController {
 
 		if (preparado.getId() > 0) {
 			try {
-				return financeiroDao.alterarHibernate(preparado);
+				boolean alterado = financeiroDao.alterarHibernate(preparado);
+				if (alterado) {
+					financeiro.setId(preparado.getId());
+				}
+				return alterado;
 			} catch (IllegalStateException | SystemException e) {
 				logger.error("Erro ao alterar financeiro com ID: {}", financeiro.getId(), e);
 				return false;
@@ -53,7 +57,11 @@ public class FinanceiroController {
 		}
 
 		try {
-			return financeiroDao.salvarHibernate(preparado);
+			boolean salvo = financeiroDao.salvarHibernate(preparado);
+			if (salvo) {
+				financeiro.setId(preparado.getId());
+			}
+			return salvo;
 		} catch (IllegalStateException | SystemException e) {
 			logger.error("Erro ao salvar financeiro com ID: {}", financeiro.getId(), e);
 			return false;
@@ -68,7 +76,11 @@ public class FinanceiroController {
 		}
 
 		try {
-			return financeiroDao.alterarHibernate(preparado);
+			boolean alterado = financeiroDao.alterarHibernate(preparado);
+			if (alterado) {
+				financeiro.setId(preparado.getId());
+			}
+			return alterado;
 		} catch (IllegalStateException | SystemException e) {
 			logger.error("Erro ao alterar financeiro com ID: {}", financeiro.getId(), e);
 			return false;

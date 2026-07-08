@@ -71,7 +71,7 @@ public class CompraDao {
 	public List<Compra> pesquisarHibernate() {
 		try (Session session = Postgres.getSESSION_FACTORY().openSession()) {
 			return session.createQuery(
-				"select distinct c from Compra c left join fetch c.fornecedor left join fetch c.compraProduto cp left join fetch cp.produto order by c.id",
+				"select distinct c from Compra c left join fetch c.fornecedor left join fetch c.financeiro left join fetch c.compraProduto cp left join fetch cp.produto order by c.id",
 				Compra.class
 			).list();
 		} catch (Exception e) {
@@ -97,7 +97,7 @@ public class CompraDao {
 	public Compra pesquisarHibernate(int id) {
 		try (Session session = Postgres.getSESSION_FACTORY().openSession()) {
 			return session.createQuery(
-				"select distinct c from Compra c left join fetch c.fornecedor left join fetch c.compraProduto cp left join fetch cp.produto where c.id = :id",
+				"select distinct c from Compra c left join fetch c.fornecedor left join fetch c.financeiro left join fetch c.compraProduto cp left join fetch cp.produto where c.id = :id",
 				Compra.class
 			).setParameter("id", id).uniqueResult();
 		} catch (Exception e) {

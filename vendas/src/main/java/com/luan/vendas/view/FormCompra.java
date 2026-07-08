@@ -30,6 +30,7 @@ import com.luan.vendas.controller.CompraController;
 import com.luan.vendas.controller.FornecedorController;
 import com.luan.vendas.model.Compra;
 import com.luan.vendas.model.CompraProduto;
+import com.luan.vendas.model.Financeiro;
 import com.luan.vendas.model.Fornecedor;
 
 public class FormCompra extends JFrame {
@@ -48,6 +49,7 @@ public class FormCompra extends JFrame {
     private final CompraController compraController;
     private final FornecedorController fornecedorController;
     private final List<CompraProduto> itensCompra;
+    private Financeiro financeiroAssociado;
     private Integer idCompraAtual;
 
     public FormCompra() throws ParseException {
@@ -234,6 +236,7 @@ public class FormCompra extends JFrame {
         idCompraAtual = compra.getId();
         txtDataCompra.setText(compra.getData_compra() != null ? compra.getData_compra().format(UI_DATE_FORMATTER) : "");
         txtValorTotal.setText(String.valueOf(compra.getValor_total()));
+        financeiroAssociado = compra.getFinanceiro();
 
         if (compra.getFornecedor() != null) {
             selecionarFornecedorPorId(compra.getFornecedor().getId());
@@ -397,6 +400,11 @@ public class FormCompra extends JFrame {
             return null;
         }
 
+        if (financeiroAssociado == null || financeiroAssociado.getId() <= 0) {
+            JOptionPane.showMessageDialog(this, "Informe e salve o financeiro antes de salvar a compra.", "Aviso", JOptionPane.WARNING_MESSAGE);
+            return null;
+        }
+
         Compra compra = new Compra();
         int idCompra = 0;
         if (idCompraAtual != null) {
@@ -406,6 +414,7 @@ public class FormCompra extends JFrame {
         compra.setData_compra(dataCompra);
         compra.setFornecedor(fornecedor);
         compra.setValor_total(calcularValorTotal());
+        compra.setFinanceiro(financeiroAssociado);
 
         List<CompraProduto> itensPreparados = new ArrayList<>();
         for (CompraProduto item : itensCompra) {
@@ -435,7 +444,12 @@ public class FormCompra extends JFrame {
         txtValorTotal.setText("");
         cmbFornecedor.setSelectedIndex(0);
         itensCompra.clear();
+        financeiroAssociado = null;
         idCompraAtual = null;
         txtDataCompra.requestFocus();
+    }
+
+    public void definirFinanceiroAssociado(Financeiro financeiro) {
+        this.financeiroAssociado = financeiro;
     }
 }

@@ -12,8 +12,8 @@
 	produto.nome AS produto_nome
 FROM compra
 	LEFT JOIN fornecedor ON compra.fornecedor_id = fornecedor.id
-	LEFT JOIN compraproduto ON compraproduto.compra_id = compra.id
-	LEFT JOIN produto ON compraproduto.produto_id = produto.id
+	LEFT JOIN compraproduto ON compraproduto.id_compra = compra.id
+	LEFT JOIN produto ON compraproduto.id_produto = produto.id
 WHERE compra.data_compra BETWEEN $P{dataInicial} AND $P{dataFinal}
 	AND ($P{fornecedorId} IS NULL OR fornecedor.id = $P{fornecedorId})
 ORDER BY compra.id, compraproduto.id]]></queryString>
