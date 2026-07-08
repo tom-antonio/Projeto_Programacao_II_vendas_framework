@@ -2,6 +2,9 @@ package com.luan.vendas.controller;
 
 import java.util.List;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import com.luan.vendas.dao.FinanceiroDao;
 import com.luan.vendas.dao.FinanceiroParcelaDao;
 import com.luan.vendas.model.Financeiro;
@@ -11,6 +14,7 @@ import jakarta.transaction.SystemException;
 
 public class FinanceiroParcelaController {
 
+	private static final Logger logger = LogManager.getLogger(FinanceiroParcelaController.class);
 	private final FinanceiroParcelaDao financeiroParcelaDao;
 	private final FinanceiroDao financeiroDao;
 
@@ -20,6 +24,7 @@ public class FinanceiroParcelaController {
 	}
 
 	public boolean salvarFinanceiroParcela(FinanceiroParcela financeiroParcela) {
+		logger.info("Salvando parcela financeira com ID: {}", financeiroParcela.getId());
 		FinanceiroParcela preparada = prepararFinanceiroParcela(financeiroParcela);
 		if (preparada == null) {
 			return false;
@@ -29,6 +34,7 @@ public class FinanceiroParcelaController {
 			try {
 				return financeiroParcelaDao.alterarHibernate(preparada);
 			} catch (IllegalStateException | SystemException e) {
+				logger.error("Erro ao alterar parcela financeira com ID: {}", financeiroParcela.getId(), e);
 				return false;
 			}
 		}
@@ -36,11 +42,13 @@ public class FinanceiroParcelaController {
 		try {
 			return financeiroParcelaDao.salvarHibernate(preparada);
 		} catch (IllegalStateException | SystemException e) {
+			logger.error("Erro ao salvar parcela financeira com ID: {}", financeiroParcela.getId(), e);
 			return false;
 		}
 	}
 
 	public boolean alterarFinanceiroParcela(FinanceiroParcela financeiroParcela) {
+		logger.info("Alterando parcela financeira com ID: {}", financeiroParcela.getId());
 		FinanceiroParcela preparada = prepararFinanceiroParcela(financeiroParcela);
 		if (preparada == null) {
 			return false;
@@ -49,11 +57,13 @@ public class FinanceiroParcelaController {
 		try {
 			return financeiroParcelaDao.alterarHibernate(preparada);
 		} catch (IllegalStateException | SystemException e) {
+			logger.error("Erro ao alterar parcela financeira com ID: {}", financeiroParcela.getId(), e);
 			return false;
 		}
 	}
 
 	public boolean excluirFinanceiroParcela(Integer id) {
+		logger.info("Excluindo parcela financeira com ID: {}", id);
 		if (id == null || id <= 0) {
 			return false;
 		}
@@ -64,16 +74,20 @@ public class FinanceiroParcelaController {
 		try {
 			return financeiroParcelaDao.excluirHibernate(financeiroParcela);
 		} catch (IllegalStateException | SystemException e) {
+			logger.error("Erro ao excluir parcela financeira com ID: {}", id, e);
 			return false;
 		}
 	}
 
 	public List<FinanceiroParcela> listarFinanceiroParcelas() {
+		logger.info("Listando todas as parcelas financeiras");
 		return financeiroParcelaDao.pesquisarHibernate();
 	}
 
 	public List<FinanceiroParcela> listarFinanceiroParcelasPorFinanceiro(Integer financeiroId) {
+		logger.info("Listando parcelas financeiras para o financeiro com ID: {}", financeiroId);
 		if (financeiroId == null || financeiroId <= 0) {
+			logger.warn("ID inválido para listar parcelas financeiras: {}", financeiroId);
 			return List.of();
 		}
 
@@ -81,7 +95,9 @@ public class FinanceiroParcelaController {
 	}
 
 	public FinanceiroParcela pesquisarFinanceiroParcela(Integer id) {
+		logger.info("Pesquisando parcela financeira com ID: {}", id);
 		if (id == null || id <= 0) {
+			logger.warn("ID inválido para pesquisa de parcela financeira: {}", id);
 			return null;
 		}
 
@@ -89,6 +105,7 @@ public class FinanceiroParcelaController {
 	}
 
 	public boolean validarDados(FinanceiroParcela financeiroParcela) {
+		logger.info("Validando dados da parcela financeira com ID: {}", financeiroParcela.getId());
 		return financeiroParcela != null
 			&& financeiroParcela.getN_parcela() > 0
 			&& financeiroParcela.getData_vencimento() != null
@@ -99,12 +116,14 @@ public class FinanceiroParcelaController {
 	}
 
 	private FinanceiroParcela prepararFinanceiroParcela(FinanceiroParcela financeiroParcela) {
+		logger.info("Preparando parcela financeira com ID: {}", financeiroParcela.getId());
 		if (!validarDados(financeiroParcela)) {
 			return null;
 		}
 
 		Financeiro financeiro = financeiroDao.pesquisarHibernate(financeiroParcela.getFinanceiro().getId());
 		if (financeiro == null) {
+			logger.warn("Financeiro não encontrado para a parcela com ID: {}", financeiroParcela.getId());
 			return null;
 		}
 

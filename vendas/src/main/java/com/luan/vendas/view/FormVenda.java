@@ -9,6 +9,7 @@ import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.text.ParseException;
 import java.time.LocalDate;
+import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
@@ -330,14 +331,14 @@ public class FormVenda extends JFrame {
     }
 
     private void persistirVenda(boolean atualizando) {
-        PersistenciaVenda dados = montarDadosVenda();
-        if (dados == null) {
+        Venda venda = montarVenda();
+        if (venda == null) {
             return;
         }
 
         boolean persistido = atualizando
-            ? vendaController.alterarVenda(dados.idVenda, dados.dataVenda, dados.valorTotal, dados.clienteId, dados.itensVenda)
-            : vendaController.salvarVenda(dados.idVenda, dados.dataVenda, dados.valorTotal, dados.clienteId, dados.itensVenda);
+            ? vendaController.alterarVenda(venda)
+            : vendaController.salvarVenda(venda);
 
         if (!persistido) {
             JOptionPane.showMessageDialog(this, "Não foi possível salvar a venda.", "Erro", JOptionPane.ERROR_MESSAGE);
@@ -348,7 +349,7 @@ public class FormVenda extends JFrame {
         limparCampos();
     }
 
-    private PersistenciaVenda montarDadosVenda() {
+    private Venda montarVenda() {
         Date dataVenda;
         try {
             dataVenda = java.sql.Date.valueOf(LocalDate.parse(txtDataVenda.getText().trim(), UI_DATE_FORMATTER));
@@ -368,6 +369,16 @@ public class FormVenda extends JFrame {
             return null;
         }
 
+        Venda venda = new Venda();
+        int idVenda = 0;
+        if (idVendaAtual != null) {
+            idVenda = idVendaAtual;
+        }
+        venda.setId(idVenda);
+        venda.setData_venda(dataVenda.toInstant().atZone(ZoneId.systemDefault()).toLocalDate());
+        venda.setValor_total(calcularValorTotal());
+        venda.setCliente(cliente);
+
         List<ProdutoVenda> itensPreparados = new ArrayList<>();
         for (ProdutoVenda item : itensVenda) {
             ProdutoVenda preparado = new ProdutoVenda();
@@ -378,11 +389,8 @@ public class FormVenda extends JFrame {
             itensPreparados.add(preparado);
         }
 
-        int idVenda = 0;
-        if (idVendaAtual != null) {
-            idVenda = idVendaAtual;
-        }
-        return new PersistenciaVenda(idVenda, dataVenda, calcularValorTotal(), cliente.getId(), itensPreparados);
+        venda.setProdutoVenda(itensPreparados);
+        return venda;
     }
 
     private double calcularValorTotal() {
@@ -403,19 +411,4 @@ public class FormVenda extends JFrame {
         txtDataVenda.requestFocus();
     }
 
-    private static class PersistenciaVenda {
-        private final int idVenda;
-        private final Date dataVenda;
-        private final double valorTotal;
-        private final int clienteId;
-        private final List<ProdutoVenda> itensVenda;
-
-        private PersistenciaVenda(int idVenda, Date dataVenda, double valorTotal, int clienteId, List<ProdutoVenda> itensVenda) {
-            this.idVenda = idVenda;
-            this.dataVenda = dataVenda;
-            this.valorTotal = valorTotal;
-            this.clienteId = clienteId;
-            this.itensVenda = itensVenda;
-        }
-    }
 }

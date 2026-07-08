@@ -12,11 +12,20 @@ import jakarta.transaction.SystemException;
 
 public class CategoriaDao {
 
+	private void sincronizarEstruturaCategoria(Session session) {
+		try {
+			session.createNativeMutationQuery("alter table if exists categoria drop column if exists descricao").executeUpdate();
+		} catch (Exception e) {
+			System.out.println("Aviso: nao foi possivel sincronizar a estrutura da tabela categoria: " + e.getMessage());
+		}
+	}
+
     public boolean salvarHibernate(Categoria categoria) throws IllegalStateException, SystemException {
 		Transaction transaction = null;
 
 		try (Session session = Postgres.getSESSION_FACTORY().openSession()) {
 			transaction = (Transaction) session.beginTransaction();
+			sincronizarEstruturaCategoria(session);
 			session.persist(categoria);
 			transaction.commit();
 			return true;
@@ -33,6 +42,7 @@ public class CategoriaDao {
 
 		try (Session session = Postgres.getSESSION_FACTORY().openSession()) {
 			transaction = (Transaction) session.beginTransaction();
+			sincronizarEstruturaCategoria(session);
 			session.merge(categoria);
 			transaction.commit();
 			return true;
@@ -78,8 +88,9 @@ public class CategoriaDao {
 
 	public List<Categoria> pesquisarHibernate(String nome) {
 		try (Session session = Postgres.getSESSION_FACTORY().openSession()) {
+			String nomeBusca = nome == null ? "" : nome.trim().toLowerCase();
 			return session.createQuery("FROM Categoria c WHERE lower(c.nome) LIKE :nome order by c.nome", Categoria.class)
-					.setParameter("nome", "%" + nome.toLowerCase() + "%")
+					.setParameter("nome", "%" + nomeBusca + "%")
 					.list();
 		} catch (Exception e) {
 			return new ArrayList<>();

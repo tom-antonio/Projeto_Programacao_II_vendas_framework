@@ -35,7 +35,7 @@ public class FormCategoria extends JFrame {
         inicializarComponentes();
 
         pack();
-        setMinimumSize(new Dimension(700, 240));
+        setMinimumSize(new Dimension(600, 240));
         setLocationRelativeTo(null);
         setVisible(true);
     }
@@ -152,10 +152,27 @@ public class FormCategoria extends JFrame {
 
     private void salvarCategoria() {
         Categoria categoria = montarCategoriaAtual();
-        boolean salvo = categoriaController.salvarCategoria(categoria);
+        boolean salvo;
+
+        try {
+            salvo = categoriaController.salvarCategoria(categoria);
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(
+                this,
+                "Erro ao salvar a categoria: " + e.getMessage(),
+                "Erro",
+                JOptionPane.ERROR_MESSAGE
+            );
+            return;
+        }
 
         if (!salvo) {
-            JOptionPane.showMessageDialog(this, "Não foi possível salvar a categoria.", "Erro", JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(
+                this,
+                "Não foi possível salvar a categoria. Verifique se o nome foi informado corretamente.",
+                "Erro",
+                JOptionPane.ERROR_MESSAGE
+            );
             return;
         }
 
@@ -171,7 +188,11 @@ public class FormCategoria extends JFrame {
 
     private Categoria montarCategoriaAtual() {
         Categoria categoria = new Categoria();
-        categoria.setId(idCategoriaAtual);
+        int idCategoria = 0;
+        if (idCategoriaAtual != null) {
+            idCategoria = idCategoriaAtual;
+        }
+        categoria.setId(idCategoria);
         categoria.setNome(txtNome_categoria.getText().trim());
         return categoria;
     }

@@ -179,10 +179,27 @@ public class FormFornecedor extends JFrame {
 
     private void salvarFornecedor() {
         Fornecedor fornecedor = montarFornecedorAtual();
-        boolean salvo = fornecedorController.salvarFornecedor(fornecedor);
+        boolean salvo;
+
+        try {
+            salvo = fornecedorController.salvarFornecedor(fornecedor);
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(
+                this,
+                "Erro ao salvar o fornecedor: " + e.getMessage(),
+                "Erro",
+                JOptionPane.ERROR_MESSAGE
+            );
+            return;
+        }
 
         if (!salvo) {
-            JOptionPane.showMessageDialog(this, "Não foi possível salvar o fornecedor.", "Erro", JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(
+                this,
+                "Não foi possível salvar o fornecedor. Verifique se nome, razão social e CNPJ foram informados corretamente.",
+                "Erro",
+                JOptionPane.ERROR_MESSAGE
+            );
             return;
         }
 
@@ -200,7 +217,11 @@ public class FormFornecedor extends JFrame {
 
     private Fornecedor montarFornecedorAtual() {
         Fornecedor fornecedor = new Fornecedor();
-        fornecedor.setId(idFornecedorAtual);
+        int idFornecedor = 0;
+        if (idFornecedorAtual != null) {
+            idFornecedor = idFornecedorAtual;
+        }
+        fornecedor.setId(idFornecedor);
         fornecedor.setNome_fantasia(txtNome_fornecedor.getText().trim());
         fornecedor.setRazao_social(txtRazaoSocial.getText().trim());
         fornecedor.setCnpj(txtCNPJ.getText().trim());

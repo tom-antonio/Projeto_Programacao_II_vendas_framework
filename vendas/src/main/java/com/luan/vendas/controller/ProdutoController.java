@@ -2,12 +2,17 @@ package com.luan.vendas.controller;
 
 import java.util.List;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import com.luan.vendas.dao.ProdutoDao;
 import com.luan.vendas.model.Produto;
 
 import jakarta.transaction.SystemException;
 
 public class ProdutoController {
+
+	private static final Logger logger = LogManager.getLogger(ProdutoController.class);
 
 	private final ProdutoDao produtoDao;
 
@@ -100,12 +105,12 @@ public class ProdutoController {
 	public boolean verificarEstoque(Produto produto, int qtde_produto) {
 		Produto produtoExistente = produtoDao.pesquisarHibernate(produto.getId());
 		if (produtoExistente == null) {
-			System.out.println("Produto não encontrado para verificar estoque.");
+			logger.warn("Produto não encontrado para verificar estoque. ID: {}", produto.getId());
 			return false;
 		}
 
 		if (produtoExistente.getQtde_estoque() + qtde_produto >= 1) {
-			System.out.println("Quantidade em estoque não pode ser negativa.");
+			logger.warn("Quantidade em estoque não pode ser negativa. ID: {}, quantidade solicitada: {}", produto.getId(), qtde_produto);
 			return true;
 		} else {
 			return false;
