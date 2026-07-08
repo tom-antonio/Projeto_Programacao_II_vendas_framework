@@ -105,9 +105,13 @@ public class FinanceiroParcelaController {
 	}
 
 	public boolean validarDados(FinanceiroParcela financeiroParcela) {
+		if (financeiroParcela == null) {
+			logger.warn("Parcela financeira nula na validação");
+			return false;
+		}
+
 		logger.info("Validando dados da parcela financeira com ID: {}", financeiroParcela.getId());
-		return financeiroParcela != null
-			&& financeiroParcela.getN_parcela() > 0
+		return financeiroParcela.getN_parcela() > 0
 			&& financeiroParcela.getData_vencimento() != null
 			&& financeiroParcela.getValor_original() >= 0
 			&& financeiroParcela.getValor_final() >= 0

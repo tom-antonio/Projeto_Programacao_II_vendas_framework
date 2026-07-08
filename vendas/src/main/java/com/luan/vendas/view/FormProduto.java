@@ -214,7 +214,7 @@ public class FormProduto extends JFrame {
     }
 
     private void abrirEscolherFornecedor() {
-        FormFornecedorProduto dialog = new FormFornecedorProduto(this, fornecedorController, fornecedoresSelecionados);
+        EscolherFornecedor dialog = new EscolherFornecedor(this, fornecedorController, fornecedoresSelecionados);
         dialog.setVisible(true);
 
         if (dialog.isSalvo()) {
