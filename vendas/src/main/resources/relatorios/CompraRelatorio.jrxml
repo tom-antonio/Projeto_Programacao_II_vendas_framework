@@ -1,0 +1,129 @@
+<!-- Created for the vendas project based on VendaRelatorio.jrxml -->
+<jasperReport name="CompraRelatorio" language="java" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20">
+	<parameter name="dataInicial" class="java.sql.Date"/>
+	<parameter name="dataFinal" class="java.sql.Date"/>
+	<parameter name="fornecedorId" class="java.lang.Integer"/>
+	<queryString language="SQL"><![CDATA[SELECT compra.id,
+	compra.data_compra,
+	compra.valor_total,
+	fornecedor.nome_fantasia AS fornecedor_nome,
+	compraproduto.qtdeproduto,
+	compraproduto.valorunit,
+	produto.nome AS produto_nome
+FROM compra
+	LEFT JOIN fornecedor ON compra.fornecedor_id = fornecedor.id
+	LEFT JOIN compraproduto ON compraproduto.compra_id = compra.id
+	LEFT JOIN produto ON compraproduto.produto_id = produto.id
+WHERE compra.data_compra BETWEEN $P{dataInicial} AND $P{dataFinal}
+	AND ($P{fornecedorId} IS NULL OR fornecedor.id = $P{fornecedorId})
+ORDER BY compra.id, compraproduto.id]]></queryString>
+	<field name="id" class="java.lang.Integer"/>
+	<field name="data_compra" class="java.sql.Date"/>
+	<field name="valor_total" class="java.lang.Double"/>
+	<field name="fornecedor_nome" class="java.lang.String"/>
+	<field name="qtdeproduto" class="java.lang.Integer"/>
+	<field name="valorunit" class="java.lang.Double"/>
+	<field name="produto_nome" class="java.lang.String"/>
+	<background/>
+	<title>
+		<band height="40">
+			<staticText>
+				<reportElement x="0" y="0" width="555" height="30"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="18" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Relatório de Compras]]></text>
+			</staticText>
+		</band>
+	</title>
+	<pageHeader>
+		<band height="20"/>
+	</pageHeader>
+	<columnHeader>
+		<band height="24">
+			<staticText>
+				<reportElement x="0" y="0" width="40" height="20"/>
+				<textElement><font isBold="true"/></textElement>
+				<text><![CDATA[ID]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="40" y="0" width="120" height="20"/>
+				<textElement><font isBold="true"/></textElement>
+				<text><![CDATA[Fornecedor]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="160" y="0" width="80" height="20"/>
+				<textElement><font isBold="true"/></textElement>
+				<text><![CDATA[Data Compra]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="240" y="0" width="40" height="20"/>
+				<textElement><font isBold="true"/></textElement>
+				<text><![CDATA[Qtd]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="280" y="0" width="90" height="20"/>
+				<textElement><font isBold="true"/></textElement>
+				<text><![CDATA[Valor Unit]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="370" y="0" width="90" height="20"/>
+				<textElement><font isBold="true"/></textElement>
+				<text><![CDATA[Valor Total]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="460" y="0" width="95" height="20"/>
+				<textElement><font isBold="true"/></textElement>
+				<text><![CDATA[Produto]]></text>
+			</staticText>
+		</band>
+	</columnHeader>
+	<detail>
+		<band height="22">
+			<textField>
+				<reportElement x="0" y="0" width="40" height="20"/>
+				<textElement/>
+				<textFieldExpression><![CDATA[$F{id}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="40" y="0" width="120" height="20"/>
+				<textElement/>
+				<textFieldExpression><![CDATA[$F{fornecedor_nome} == null ? "" : $F{fornecedor_nome}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="160" y="0" width="80" height="20"/>
+				<textElement/>
+				<textFieldExpression><![CDATA[$F{data_compra} == null ? "" : new java.text.SimpleDateFormat("dd/MM/yyyy").format($F{data_compra})]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="240" y="0" width="40" height="20"/>
+				<textElement/>
+				<textFieldExpression><![CDATA[$F{qtdeproduto}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="280" y="0" width="90" height="20"/>
+				<textElement/>
+				<textFieldExpression><![CDATA[$F{valorunit} == null ? "" : String.format(java.util.Locale.US, "$ %,.2f", $F{valorunit})]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="370" y="0" width="90" height="20"/>
+				<textElement/>
+				<textFieldExpression><![CDATA[$F{valor_total} == null ? "" : String.format(java.util.Locale.US, "$ %,.2f", $F{valor_total})]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="460" y="0" width="95" height="20"/>
+				<textElement/>
+				<textFieldExpression><![CDATA[$F{produto_nome} == null ? "" : $F{produto_nome}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+	<columnFooter>
+		<band height="10"/>
+	</columnFooter>
+	<pageFooter>
+		<band height="20"/>
+	</pageFooter>
+	<summary>
+		<band height="10"/>
+	</summary>
+</jasperReport>

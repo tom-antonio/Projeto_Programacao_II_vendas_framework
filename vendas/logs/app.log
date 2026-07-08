@@ -600,3 +600,155 @@
 2026-07-08 11:45:36 INFO  com.luan.vendas.controller.FormaPagamentoController - Listando todas as formas de pagamento
 2026-07-08 11:45:40 INFO  com.luan.vendas.controller.ClienteController - Listando todos os clientes
 2026-07-08 11:45:40 INFO  com.luan.vendas.controller.FornecedorController - Listando todos os fornecedores
+2026-07-08 13:29:16 INFO  com.luan.vendas.controller.UsuarioController - Autenticando usuario: admin
+2026-07-08 13:29:16 INFO  org.hibernate.Version - HHH000412: Hibernate ORM core version 6.5.2.Final
+2026-07-08 13:29:16 INFO  org.hibernate.cfg.Environment - HHH000205: Loaded properties from resource hibernate.properties: {hibernate.connection.driver_class=org.postgresql.Driver, hibernate.format_sql=true, hibernate.use_sql_comments=true, hibernate.hbm2ddl.auto=update, hibernate.dialect=org.hibernate.dialect.PostgreSQLDialect, hibernate.connection.password=****, hibernate.connection.username=postgres, hibernate.connection.url=jdbc:postgresql://localhost:5432/SisCom_comercial_prog2_Luan, hibernate.max_fetch_depth=3, hibernate.show_sql=false, hibernate.connection.pool_size=5, hibernate.generate_statistics=false}
+2026-07-08 13:29:16 INFO  org.hibernate.cache.internal.RegionFactoryInitiator - HHH000026: Second-level cache disabled
+2026-07-08 13:29:16 WARN  org.hibernate.orm.connections.pooling - HHH10001002: Using built-in connection pool (not intended for production use)
+2026-07-08 13:29:16 INFO  org.hibernate.orm.connections.pooling - HHH10001005: Loaded JDBC driver class: org.postgresql.Driver
+2026-07-08 13:29:16 INFO  org.hibernate.orm.connections.pooling - HHH10001012: Connecting with JDBC URL [jdbc:postgresql://localhost:5432/SisCom_comercial_prog2_Luan]
+2026-07-08 13:29:16 INFO  org.hibernate.orm.connections.pooling - HHH10001001: Connection properties: {user=postgres, password=****}
+2026-07-08 13:29:16 INFO  org.hibernate.orm.connections.pooling - HHH10001003: Autocommit mode: false
+2026-07-08 13:29:16 INFO  org.hibernate.orm.connections.pooling - HHH10001115: Connection pool size: 5 (min=1)
+2026-07-08 13:29:16 WARN  org.hibernate.orm.deprecation - HHH90000025: PostgreSQLDialect does not need to be specified explicitly using 'hibernate.dialect' (remove the property setting and it will be selected by default)
+2026-07-08 13:29:17 INFO  org.hibernate.engine.transaction.jta.platform.internal.JtaPlatformInitiator - HHH000489: No JTA platform available (set 'hibernate.transaction.jta.platform' to enable JTA platform integration)
+2026-07-08 13:29:17 INFO  org.hibernate.orm.connections.access - HHH10001501: Connection obtained from JdbcConnectionAccess [org.hibernate.engine.jdbc.env.internal.JdbcEnvironmentInitiator$ConnectionProviderJdbcConnectionAccess@665ae160] for (non-JTA) DDL execution was not in auto-commit mode; the Connection 'local transaction' will be committed and the Connection will be set into auto-commit mode.
+2026-07-08 13:29:22 INFO  com.luan.vendas.controller.ClienteController - Listando todos os clientes
+2026-07-08 13:29:22 INFO  com.luan.vendas.controller.FornecedorController - Listando todos os fornecedores
+2026-07-08 13:33:49 INFO  com.luan.vendas.controller.UsuarioController - Autenticando usuario: admin
+2026-07-08 13:33:49 INFO  org.hibernate.Version - HHH000412: Hibernate ORM core version 6.5.2.Final
+2026-07-08 13:33:49 INFO  org.hibernate.cfg.Environment - HHH000205: Loaded properties from resource hibernate.properties: {hibernate.connection.driver_class=org.postgresql.Driver, hibernate.format_sql=true, hibernate.use_sql_comments=true, hibernate.hbm2ddl.auto=update, hibernate.dialect=org.hibernate.dialect.PostgreSQLDialect, hibernate.connection.password=****, hibernate.connection.username=postgres, hibernate.connection.url=jdbc:postgresql://localhost:5432/SisCom_comercial_prog2_Luan, hibernate.max_fetch_depth=3, hibernate.show_sql=false, hibernate.connection.pool_size=5, hibernate.generate_statistics=false}
+2026-07-08 13:33:49 INFO  org.hibernate.cache.internal.RegionFactoryInitiator - HHH000026: Second-level cache disabled
+2026-07-08 13:33:49 WARN  org.hibernate.orm.connections.pooling - HHH10001002: Using built-in connection pool (not intended for production use)
+2026-07-08 13:33:49 INFO  org.hibernate.orm.connections.pooling - HHH10001005: Loaded JDBC driver class: org.postgresql.Driver
+2026-07-08 13:33:49 INFO  org.hibernate.orm.connections.pooling - HHH10001012: Connecting with JDBC URL [jdbc:postgresql://localhost:5432/SisCom_comercial_prog2_Luan]
+2026-07-08 13:33:49 INFO  org.hibernate.orm.connections.pooling - HHH10001001: Connection properties: {user=postgres, password=****}
+2026-07-08 13:33:49 INFO  org.hibernate.orm.connections.pooling - HHH10001003: Autocommit mode: false
+2026-07-08 13:33:49 INFO  org.hibernate.orm.connections.pooling - HHH10001115: Connection pool size: 5 (min=1)
+2026-07-08 13:33:49 WARN  org.hibernate.orm.deprecation - HHH90000025: PostgreSQLDialect does not need to be specified explicitly using 'hibernate.dialect' (remove the property setting and it will be selected by default)
+2026-07-08 13:33:50 INFO  org.hibernate.engine.transaction.jta.platform.internal.JtaPlatformInitiator - HHH000489: No JTA platform available (set 'hibernate.transaction.jta.platform' to enable JTA platform integration)
+2026-07-08 13:33:50 INFO  org.hibernate.orm.connections.access - HHH10001501: Connection obtained from JdbcConnectionAccess [org.hibernate.engine.jdbc.env.internal.JdbcEnvironmentInitiator$ConnectionProviderJdbcConnectionAccess@611b86f0] for (non-JTA) DDL execution was not in auto-commit mode; the Connection 'local transaction' will be committed and the Connection will be set into auto-commit mode.
+2026-07-08 13:33:54 INFO  com.luan.vendas.controller.ClienteController - Listando todos os clientes
+2026-07-08 13:33:54 INFO  com.luan.vendas.controller.FornecedorController - Listando todos os fornecedores
+2026-07-08 13:38:27 INFO  com.luan.vendas.controller.UsuarioController - Autenticando usuario: admin
+2026-07-08 13:38:27 INFO  org.hibernate.Version - HHH000412: Hibernate ORM core version 6.5.2.Final
+2026-07-08 13:38:27 INFO  org.hibernate.cfg.Environment - HHH000205: Loaded properties from resource hibernate.properties: {hibernate.connection.driver_class=org.postgresql.Driver, hibernate.format_sql=true, hibernate.use_sql_comments=true, hibernate.hbm2ddl.auto=update, hibernate.dialect=org.hibernate.dialect.PostgreSQLDialect, hibernate.connection.password=****, hibernate.connection.username=postgres, hibernate.connection.url=jdbc:postgresql://localhost:5432/SisCom_comercial_prog2_Luan, hibernate.max_fetch_depth=3, hibernate.show_sql=false, hibernate.connection.pool_size=5, hibernate.generate_statistics=false}
+2026-07-08 13:38:27 INFO  org.hibernate.cache.internal.RegionFactoryInitiator - HHH000026: Second-level cache disabled
+2026-07-08 13:38:27 WARN  org.hibernate.orm.connections.pooling - HHH10001002: Using built-in connection pool (not intended for production use)
+2026-07-08 13:38:27 INFO  org.hibernate.orm.connections.pooling - HHH10001005: Loaded JDBC driver class: org.postgresql.Driver
+2026-07-08 13:38:27 INFO  org.hibernate.orm.connections.pooling - HHH10001012: Connecting with JDBC URL [jdbc:postgresql://localhost:5432/SisCom_comercial_prog2_Luan]
+2026-07-08 13:38:27 INFO  org.hibernate.orm.connections.pooling - HHH10001001: Connection properties: {user=postgres, password=****}
+2026-07-08 13:38:27 INFO  org.hibernate.orm.connections.pooling - HHH10001003: Autocommit mode: false
+2026-07-08 13:38:27 INFO  org.hibernate.orm.connections.pooling - HHH10001115: Connection pool size: 5 (min=1)
+2026-07-08 13:38:27 WARN  org.hibernate.orm.deprecation - HHH90000025: PostgreSQLDialect does not need to be specified explicitly using 'hibernate.dialect' (remove the property setting and it will be selected by default)
+2026-07-08 13:38:27 INFO  org.hibernate.engine.transaction.jta.platform.internal.JtaPlatformInitiator - HHH000489: No JTA platform available (set 'hibernate.transaction.jta.platform' to enable JTA platform integration)
+2026-07-08 13:38:27 INFO  org.hibernate.orm.connections.access - HHH10001501: Connection obtained from JdbcConnectionAccess [org.hibernate.engine.jdbc.env.internal.JdbcEnvironmentInitiator$ConnectionProviderJdbcConnectionAccess@665ae160] for (non-JTA) DDL execution was not in auto-commit mode; the Connection 'local transaction' will be committed and the Connection will be set into auto-commit mode.
+2026-07-08 13:38:31 INFO  com.luan.vendas.controller.ClienteController - Listando todos os clientes
+2026-07-08 13:38:31 INFO  com.luan.vendas.controller.FornecedorController - Listando todos os fornecedores
+2026-07-08 13:43:40 INFO  com.luan.vendas.controller.UsuarioController - Autenticando usuario: admin
+2026-07-08 13:43:40 INFO  org.hibernate.Version - HHH000412: Hibernate ORM core version 6.5.2.Final
+2026-07-08 13:43:40 INFO  org.hibernate.cfg.Environment - HHH000205: Loaded properties from resource hibernate.properties: {hibernate.connection.driver_class=org.postgresql.Driver, hibernate.format_sql=true, hibernate.use_sql_comments=true, hibernate.hbm2ddl.auto=update, hibernate.dialect=org.hibernate.dialect.PostgreSQLDialect, hibernate.connection.password=****, hibernate.connection.username=postgres, hibernate.connection.url=jdbc:postgresql://localhost:5432/SisCom_comercial_prog2_Luan, hibernate.max_fetch_depth=3, hibernate.show_sql=false, hibernate.connection.pool_size=5, hibernate.generate_statistics=false}
+2026-07-08 13:43:40 INFO  org.hibernate.cache.internal.RegionFactoryInitiator - HHH000026: Second-level cache disabled
+2026-07-08 13:43:40 WARN  org.hibernate.orm.connections.pooling - HHH10001002: Using built-in connection pool (not intended for production use)
+2026-07-08 13:43:40 INFO  org.hibernate.orm.connections.pooling - HHH10001005: Loaded JDBC driver class: org.postgresql.Driver
+2026-07-08 13:43:40 INFO  org.hibernate.orm.connections.pooling - HHH10001012: Connecting with JDBC URL [jdbc:postgresql://localhost:5432/SisCom_comercial_prog2_Luan]
+2026-07-08 13:43:40 INFO  org.hibernate.orm.connections.pooling - HHH10001001: Connection properties: {user=postgres, password=****}
+2026-07-08 13:43:40 INFO  org.hibernate.orm.connections.pooling - HHH10001003: Autocommit mode: false
+2026-07-08 13:43:40 INFO  org.hibernate.orm.connections.pooling - HHH10001115: Connection pool size: 5 (min=1)
+2026-07-08 13:43:41 WARN  org.hibernate.orm.deprecation - HHH90000025: PostgreSQLDialect does not need to be specified explicitly using 'hibernate.dialect' (remove the property setting and it will be selected by default)
+2026-07-08 13:43:41 INFO  org.hibernate.engine.transaction.jta.platform.internal.JtaPlatformInitiator - HHH000489: No JTA platform available (set 'hibernate.transaction.jta.platform' to enable JTA platform integration)
+2026-07-08 13:43:41 INFO  org.hibernate.orm.connections.access - HHH10001501: Connection obtained from JdbcConnectionAccess [org.hibernate.engine.jdbc.env.internal.JdbcEnvironmentInitiator$ConnectionProviderJdbcConnectionAccess@665ae160] for (non-JTA) DDL execution was not in auto-commit mode; the Connection 'local transaction' will be committed and the Connection will be set into auto-commit mode.
+2026-07-08 13:43:46 INFO  com.luan.vendas.controller.ClienteController - Listando todos os clientes
+2026-07-08 13:43:46 INFO  com.luan.vendas.controller.FornecedorController - Listando todos os fornecedores
+2026-07-08 13:46:16 INFO  com.luan.vendas.controller.UsuarioController - Autenticando usuario: admin
+2026-07-08 13:46:16 INFO  org.hibernate.Version - HHH000412: Hibernate ORM core version 6.5.2.Final
+2026-07-08 13:46:16 INFO  org.hibernate.cfg.Environment - HHH000205: Loaded properties from resource hibernate.properties: {hibernate.connection.driver_class=org.postgresql.Driver, hibernate.format_sql=true, hibernate.use_sql_comments=true, hibernate.hbm2ddl.auto=update, hibernate.dialect=org.hibernate.dialect.PostgreSQLDialect, hibernate.connection.password=****, hibernate.connection.username=postgres, hibernate.connection.url=jdbc:postgresql://localhost:5432/SisCom_comercial_prog2_Luan, hibernate.max_fetch_depth=3, hibernate.show_sql=false, hibernate.connection.pool_size=5, hibernate.generate_statistics=false}
+2026-07-08 13:46:16 INFO  org.hibernate.cache.internal.RegionFactoryInitiator - HHH000026: Second-level cache disabled
+2026-07-08 13:46:17 WARN  org.hibernate.orm.connections.pooling - HHH10001002: Using built-in connection pool (not intended for production use)
+2026-07-08 13:46:17 INFO  org.hibernate.orm.connections.pooling - HHH10001005: Loaded JDBC driver class: org.postgresql.Driver
+2026-07-08 13:46:17 INFO  org.hibernate.orm.connections.pooling - HHH10001012: Connecting with JDBC URL [jdbc:postgresql://localhost:5432/SisCom_comercial_prog2_Luan]
+2026-07-08 13:46:17 INFO  org.hibernate.orm.connections.pooling - HHH10001001: Connection properties: {user=postgres, password=****}
+2026-07-08 13:46:17 INFO  org.hibernate.orm.connections.pooling - HHH10001003: Autocommit mode: false
+2026-07-08 13:46:17 INFO  org.hibernate.orm.connections.pooling - HHH10001115: Connection pool size: 5 (min=1)
+2026-07-08 13:46:17 WARN  org.hibernate.orm.deprecation - HHH90000025: PostgreSQLDialect does not need to be specified explicitly using 'hibernate.dialect' (remove the property setting and it will be selected by default)
+2026-07-08 13:46:17 INFO  org.hibernate.engine.transaction.jta.platform.internal.JtaPlatformInitiator - HHH000489: No JTA platform available (set 'hibernate.transaction.jta.platform' to enable JTA platform integration)
+2026-07-08 13:46:17 INFO  org.hibernate.orm.connections.access - HHH10001501: Connection obtained from JdbcConnectionAccess [org.hibernate.engine.jdbc.env.internal.JdbcEnvironmentInitiator$ConnectionProviderJdbcConnectionAccess@3cc0d84a] for (non-JTA) DDL execution was not in auto-commit mode; the Connection 'local transaction' will be committed and the Connection will be set into auto-commit mode.
+2026-07-08 13:46:20 INFO  com.luan.vendas.controller.ClienteController - Listando todos os clientes
+2026-07-08 13:46:20 INFO  com.luan.vendas.controller.FornecedorController - Listando todos os fornecedores
+2026-07-08 13:48:27 INFO  com.luan.vendas.controller.UsuarioController - Autenticando usuario: admin
+2026-07-08 13:48:27 INFO  org.hibernate.Version - HHH000412: Hibernate ORM core version 6.5.2.Final
+2026-07-08 13:48:27 INFO  org.hibernate.cfg.Environment - HHH000205: Loaded properties from resource hibernate.properties: {hibernate.connection.driver_class=org.postgresql.Driver, hibernate.format_sql=true, hibernate.use_sql_comments=true, hibernate.hbm2ddl.auto=update, hibernate.dialect=org.hibernate.dialect.PostgreSQLDialect, hibernate.connection.password=****, hibernate.connection.username=postgres, hibernate.connection.url=jdbc:postgresql://localhost:5432/SisCom_comercial_prog2_Luan, hibernate.max_fetch_depth=3, hibernate.show_sql=false, hibernate.connection.pool_size=5, hibernate.generate_statistics=false}
+2026-07-08 13:48:27 INFO  org.hibernate.cache.internal.RegionFactoryInitiator - HHH000026: Second-level cache disabled
+2026-07-08 13:48:27 WARN  org.hibernate.orm.connections.pooling - HHH10001002: Using built-in connection pool (not intended for production use)
+2026-07-08 13:48:27 INFO  org.hibernate.orm.connections.pooling - HHH10001005: Loaded JDBC driver class: org.postgresql.Driver
+2026-07-08 13:48:27 INFO  org.hibernate.orm.connections.pooling - HHH10001012: Connecting with JDBC URL [jdbc:postgresql://localhost:5432/SisCom_comercial_prog2_Luan]
+2026-07-08 13:48:27 INFO  org.hibernate.orm.connections.pooling - HHH10001001: Connection properties: {user=postgres, password=****}
+2026-07-08 13:48:27 INFO  org.hibernate.orm.connections.pooling - HHH10001003: Autocommit mode: false
+2026-07-08 13:48:27 INFO  org.hibernate.orm.connections.pooling - HHH10001115: Connection pool size: 5 (min=1)
+2026-07-08 13:48:27 WARN  org.hibernate.orm.deprecation - HHH90000025: PostgreSQLDialect does not need to be specified explicitly using 'hibernate.dialect' (remove the property setting and it will be selected by default)
+2026-07-08 13:48:27 INFO  org.hibernate.engine.transaction.jta.platform.internal.JtaPlatformInitiator - HHH000489: No JTA platform available (set 'hibernate.transaction.jta.platform' to enable JTA platform integration)
+2026-07-08 13:48:27 INFO  org.hibernate.orm.connections.access - HHH10001501: Connection obtained from JdbcConnectionAccess [org.hibernate.engine.jdbc.env.internal.JdbcEnvironmentInitiator$ConnectionProviderJdbcConnectionAccess@611b86f0] for (non-JTA) DDL execution was not in auto-commit mode; the Connection 'local transaction' will be committed and the Connection will be set into auto-commit mode.
+2026-07-08 13:48:31 INFO  com.luan.vendas.controller.ClienteController - Listando todos os clientes
+2026-07-08 13:48:31 INFO  com.luan.vendas.controller.FornecedorController - Listando todos os fornecedores
+2026-07-08 13:50:28 INFO  com.luan.vendas.controller.UsuarioController - Autenticando usuario: admin
+2026-07-08 13:50:28 INFO  org.hibernate.Version - HHH000412: Hibernate ORM core version 6.5.2.Final
+2026-07-08 13:50:28 INFO  org.hibernate.cfg.Environment - HHH000205: Loaded properties from resource hibernate.properties: {hibernate.connection.driver_class=org.postgresql.Driver, hibernate.format_sql=true, hibernate.use_sql_comments=true, hibernate.hbm2ddl.auto=update, hibernate.dialect=org.hibernate.dialect.PostgreSQLDialect, hibernate.connection.password=****, hibernate.connection.username=postgres, hibernate.connection.url=jdbc:postgresql://localhost:5432/SisCom_comercial_prog2_Luan, hibernate.max_fetch_depth=3, hibernate.show_sql=false, hibernate.connection.pool_size=5, hibernate.generate_statistics=false}
+2026-07-08 13:50:28 INFO  org.hibernate.cache.internal.RegionFactoryInitiator - HHH000026: Second-level cache disabled
+2026-07-08 13:50:28 WARN  org.hibernate.orm.connections.pooling - HHH10001002: Using built-in connection pool (not intended for production use)
+2026-07-08 13:50:28 INFO  org.hibernate.orm.connections.pooling - HHH10001005: Loaded JDBC driver class: org.postgresql.Driver
+2026-07-08 13:50:28 INFO  org.hibernate.orm.connections.pooling - HHH10001012: Connecting with JDBC URL [jdbc:postgresql://localhost:5432/SisCom_comercial_prog2_Luan]
+2026-07-08 13:50:28 INFO  org.hibernate.orm.connections.pooling - HHH10001001: Connection properties: {user=postgres, password=****}
+2026-07-08 13:50:28 INFO  org.hibernate.orm.connections.pooling - HHH10001003: Autocommit mode: false
+2026-07-08 13:50:28 INFO  org.hibernate.orm.connections.pooling - HHH10001115: Connection pool size: 5 (min=1)
+2026-07-08 13:50:28 WARN  org.hibernate.orm.deprecation - HHH90000025: PostgreSQLDialect does not need to be specified explicitly using 'hibernate.dialect' (remove the property setting and it will be selected by default)
+2026-07-08 13:50:28 INFO  org.hibernate.engine.transaction.jta.platform.internal.JtaPlatformInitiator - HHH000489: No JTA platform available (set 'hibernate.transaction.jta.platform' to enable JTA platform integration)
+2026-07-08 13:50:28 INFO  org.hibernate.orm.connections.access - HHH10001501: Connection obtained from JdbcConnectionAccess [org.hibernate.engine.jdbc.env.internal.JdbcEnvironmentInitiator$ConnectionProviderJdbcConnectionAccess@665ae160] for (non-JTA) DDL execution was not in auto-commit mode; the Connection 'local transaction' will be committed and the Connection will be set into auto-commit mode.
+2026-07-08 13:50:33 INFO  com.luan.vendas.controller.ClienteController - Listando todos os clientes
+2026-07-08 13:50:33 INFO  com.luan.vendas.controller.FornecedorController - Listando todos os fornecedores
+2026-07-08 13:54:35 INFO  com.luan.vendas.controller.UsuarioController - Autenticando usuario: admin
+2026-07-08 13:54:35 INFO  org.hibernate.Version - HHH000412: Hibernate ORM core version 6.5.2.Final
+2026-07-08 13:54:35 INFO  org.hibernate.cfg.Environment - HHH000205: Loaded properties from resource hibernate.properties: {hibernate.connection.driver_class=org.postgresql.Driver, hibernate.format_sql=true, hibernate.use_sql_comments=true, hibernate.hbm2ddl.auto=update, hibernate.dialect=org.hibernate.dialect.PostgreSQLDialect, hibernate.connection.password=****, hibernate.connection.username=postgres, hibernate.connection.url=jdbc:postgresql://localhost:5432/SisCom_comercial_prog2_Luan, hibernate.max_fetch_depth=3, hibernate.show_sql=false, hibernate.connection.pool_size=5, hibernate.generate_statistics=false}
+2026-07-08 13:54:35 INFO  org.hibernate.cache.internal.RegionFactoryInitiator - HHH000026: Second-level cache disabled
+2026-07-08 13:54:35 WARN  org.hibernate.orm.connections.pooling - HHH10001002: Using built-in connection pool (not intended for production use)
+2026-07-08 13:54:35 INFO  org.hibernate.orm.connections.pooling - HHH10001005: Loaded JDBC driver class: org.postgresql.Driver
+2026-07-08 13:54:35 INFO  org.hibernate.orm.connections.pooling - HHH10001012: Connecting with JDBC URL [jdbc:postgresql://localhost:5432/SisCom_comercial_prog2_Luan]
+2026-07-08 13:54:35 INFO  org.hibernate.orm.connections.pooling - HHH10001001: Connection properties: {user=postgres, password=****}
+2026-07-08 13:54:35 INFO  org.hibernate.orm.connections.pooling - HHH10001003: Autocommit mode: false
+2026-07-08 13:54:35 INFO  org.hibernate.orm.connections.pooling - HHH10001115: Connection pool size: 5 (min=1)
+2026-07-08 13:54:35 WARN  org.hibernate.orm.deprecation - HHH90000025: PostgreSQLDialect does not need to be specified explicitly using 'hibernate.dialect' (remove the property setting and it will be selected by default)
+2026-07-08 13:54:36 INFO  org.hibernate.engine.transaction.jta.platform.internal.JtaPlatformInitiator - HHH000489: No JTA platform available (set 'hibernate.transaction.jta.platform' to enable JTA platform integration)
+2026-07-08 13:54:36 INFO  org.hibernate.orm.connections.access - HHH10001501: Connection obtained from JdbcConnectionAccess [org.hibernate.engine.jdbc.env.internal.JdbcEnvironmentInitiator$ConnectionProviderJdbcConnectionAccess@611b86f0] for (non-JTA) DDL execution was not in auto-commit mode; the Connection 'local transaction' will be committed and the Connection will be set into auto-commit mode.
+2026-07-08 13:54:39 INFO  com.luan.vendas.controller.ClienteController - Listando todos os clientes
+2026-07-08 13:54:39 INFO  com.luan.vendas.controller.FornecedorController - Listando todos os fornecedores
+2026-07-08 13:57:11 INFO  com.luan.vendas.controller.UsuarioController - Autenticando usuario: admin
+2026-07-08 13:57:11 INFO  org.hibernate.Version - HHH000412: Hibernate ORM core version 6.5.2.Final
+2026-07-08 13:57:11 INFO  org.hibernate.cfg.Environment - HHH000205: Loaded properties from resource hibernate.properties: {hibernate.connection.driver_class=org.postgresql.Driver, hibernate.format_sql=true, hibernate.use_sql_comments=true, hibernate.hbm2ddl.auto=update, hibernate.dialect=org.hibernate.dialect.PostgreSQLDialect, hibernate.connection.password=****, hibernate.connection.username=postgres, hibernate.connection.url=jdbc:postgresql://localhost:5432/SisCom_comercial_prog2_Luan, hibernate.max_fetch_depth=3, hibernate.show_sql=false, hibernate.connection.pool_size=5, hibernate.generate_statistics=false}
+2026-07-08 13:57:11 INFO  org.hibernate.cache.internal.RegionFactoryInitiator - HHH000026: Second-level cache disabled
+2026-07-08 13:57:11 WARN  org.hibernate.orm.connections.pooling - HHH10001002: Using built-in connection pool (not intended for production use)
+2026-07-08 13:57:11 INFO  org.hibernate.orm.connections.pooling - HHH10001005: Loaded JDBC driver class: org.postgresql.Driver
+2026-07-08 13:57:11 INFO  org.hibernate.orm.connections.pooling - HHH10001012: Connecting with JDBC URL [jdbc:postgresql://localhost:5432/SisCom_comercial_prog2_Luan]
+2026-07-08 13:57:11 INFO  org.hibernate.orm.connections.pooling - HHH10001001: Connection properties: {user=postgres, password=****}
+2026-07-08 13:57:11 INFO  org.hibernate.orm.connections.pooling - HHH10001003: Autocommit mode: false
+2026-07-08 13:57:11 INFO  org.hibernate.orm.connections.pooling - HHH10001115: Connection pool size: 5 (min=1)
+2026-07-08 13:57:12 WARN  org.hibernate.orm.deprecation - HHH90000025: PostgreSQLDialect does not need to be specified explicitly using 'hibernate.dialect' (remove the property setting and it will be selected by default)
+2026-07-08 13:57:12 INFO  org.hibernate.engine.transaction.jta.platform.internal.JtaPlatformInitiator - HHH000489: No JTA platform available (set 'hibernate.transaction.jta.platform' to enable JTA platform integration)
+2026-07-08 13:57:12 INFO  org.hibernate.orm.connections.access - HHH10001501: Connection obtained from JdbcConnectionAccess [org.hibernate.engine.jdbc.env.internal.JdbcEnvironmentInitiator$ConnectionProviderJdbcConnectionAccess@779cd9f0] for (non-JTA) DDL execution was not in auto-commit mode; the Connection 'local transaction' will be committed and the Connection will be set into auto-commit mode.
+2026-07-08 13:57:15 INFO  com.luan.vendas.controller.ClienteController - Listando todos os clientes
+2026-07-08 13:57:15 INFO  com.luan.vendas.controller.FornecedorController - Listando todos os fornecedores
+2026-07-08 14:00:37 INFO  com.luan.vendas.controller.ClienteController - Listando todos os clientes
+2026-07-08 14:00:37 INFO  com.luan.vendas.controller.FornecedorController - Listando todos os fornecedores
+2026-07-08 14:06:23 INFO  com.luan.vendas.controller.UsuarioController - Autenticando usuario: admin
+2026-07-08 14:06:23 INFO  org.hibernate.Version - HHH000412: Hibernate ORM core version 6.5.2.Final
+2026-07-08 14:06:23 INFO  org.hibernate.cfg.Environment - HHH000205: Loaded properties from resource hibernate.properties: {hibernate.connection.driver_class=org.postgresql.Driver, hibernate.format_sql=true, hibernate.use_sql_comments=true, hibernate.hbm2ddl.auto=update, hibernate.dialect=org.hibernate.dialect.PostgreSQLDialect, hibernate.connection.password=****, hibernate.connection.username=postgres, hibernate.connection.url=jdbc:postgresql://localhost:5432/SisCom_comercial_prog2_Luan, hibernate.max_fetch_depth=3, hibernate.show_sql=false, hibernate.connection.pool_size=5, hibernate.generate_statistics=false}
+2026-07-08 14:06:23 INFO  org.hibernate.cache.internal.RegionFactoryInitiator - HHH000026: Second-level cache disabled
+2026-07-08 14:06:23 WARN  org.hibernate.orm.connections.pooling - HHH10001002: Using built-in connection pool (not intended for production use)
+2026-07-08 14:06:23 INFO  org.hibernate.orm.connections.pooling - HHH10001005: Loaded JDBC driver class: org.postgresql.Driver
+2026-07-08 14:06:23 INFO  org.hibernate.orm.connections.pooling - HHH10001012: Connecting with JDBC URL [jdbc:postgresql://localhost:5432/SisCom_comercial_prog2_Luan]
+2026-07-08 14:06:23 INFO  org.hibernate.orm.connections.pooling - HHH10001001: Connection properties: {user=postgres, password=****}
+2026-07-08 14:06:23 INFO  org.hibernate.orm.connections.pooling - HHH10001003: Autocommit mode: false
+2026-07-08 14:06:23 INFO  org.hibernate.orm.connections.pooling - HHH10001115: Connection pool size: 5 (min=1)
+2026-07-08 14:06:23 WARN  org.hibernate.orm.deprecation - HHH90000025: PostgreSQLDialect does not need to be specified explicitly using 'hibernate.dialect' (remove the property setting and it will be selected by default)
+2026-07-08 14:06:24 INFO  org.hibernate.engine.transaction.jta.platform.internal.JtaPlatformInitiator - HHH000489: No JTA platform available (set 'hibernate.transaction.jta.platform' to enable JTA platform integration)
+2026-07-08 14:06:24 INFO  org.hibernate.orm.connections.access - HHH10001501: Connection obtained from JdbcConnectionAccess [org.hibernate.engine.jdbc.env.internal.JdbcEnvironmentInitiator$ConnectionProviderJdbcConnectionAccess@29173809] for (non-JTA) DDL execution was not in auto-commit mode; the Connection 'local transaction' will be committed and the Connection will be set into auto-commit mode.
+2026-07-08 14:06:28 INFO  com.luan.vendas.controller.ClienteController - Listando todos os clientes
+2026-07-08 14:06:28 INFO  com.luan.vendas.controller.FornecedorController - Listando todos os fornecedores

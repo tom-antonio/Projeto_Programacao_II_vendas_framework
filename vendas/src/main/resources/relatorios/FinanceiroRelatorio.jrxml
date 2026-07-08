@@ -1,0 +1,104 @@
+<!-- Created for the vendas project based on VendaRelatorio.jrxml -->
+<jasperReport name="FinanceiroRelatorio" language="java" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20">
+	<parameter name="dataInicial" class="java.sql.Date"/>
+	<parameter name="dataFinal" class="java.sql.Date"/>
+	<parameter name="pagarOuReceber" class="java.lang.Integer"/>
+	<queryString language="SQL"><![CDATA[SELECT financeiro.id,
+	financeiro.data_conta,
+	financeiro.pagar_ou_receber,
+	cliente.nome AS cliente_nome,
+	fornecedor.nome_fantasia AS fornecedor_nome
+FROM financeiro
+	LEFT JOIN cliente ON financeiro.cliente_id = cliente.id
+	LEFT JOIN fornecedor ON financeiro.fornecedor_id = fornecedor.id
+WHERE financeiro.data_conta BETWEEN $P{dataInicial} AND $P{dataFinal}
+	AND ($P{pagarOuReceber} IS NULL OR financeiro.pagar_ou_receber = $P{pagarOuReceber})
+ORDER BY financeiro.id]]></queryString>
+	<field name="id" class="java.lang.Integer"/>
+	<field name="data_conta" class="java.sql.Date"/>
+	<field name="pagar_ou_receber" class="java.lang.Integer"/>
+	<field name="cliente_nome" class="java.lang.String"/>
+	<field name="fornecedor_nome" class="java.lang.String"/>
+	<background/>
+	<title>
+		<band height="40">
+			<staticText>
+				<reportElement x="0" y="0" width="555" height="30"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="18" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Relatório Financeiro]]></text>
+			</staticText>
+		</band>
+	</title>
+	<pageHeader>
+		<band height="20"/>
+	</pageHeader>
+	<columnHeader>
+		<band height="24">
+			<staticText>
+				<reportElement x="0" y="0" width="40" height="20"/>
+				<textElement><font isBold="true"/></textElement>
+				<text><![CDATA[ID]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="40" y="0" width="80" height="20"/>
+				<textElement><font isBold="true"/></textElement>
+				<text><![CDATA[Data Conta]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="120" y="0" width="90" height="20"/>
+				<textElement><font isBold="true"/></textElement>
+				<text><![CDATA[Tipo]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="210" y="0" width="170" height="20"/>
+				<textElement><font isBold="true"/></textElement>
+				<text><![CDATA[Cliente]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="380" y="0" width="175" height="20"/>
+				<textElement><font isBold="true"/></textElement>
+				<text><![CDATA[Fornecedor]]></text>
+			</staticText>
+		</band>
+	</columnHeader>
+	<detail>
+		<band height="22">
+			<textField>
+				<reportElement x="0" y="0" width="40" height="20"/>
+				<textElement/>
+				<textFieldExpression><![CDATA[$F{id}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="40" y="0" width="80" height="20"/>
+				<textElement/>
+				<textFieldExpression><![CDATA[$F{data_conta} == null ? "" : new java.text.SimpleDateFormat("dd/MM/yyyy").format($F{data_conta})]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="120" y="0" width="90" height="20"/>
+				<textElement/>
+				<textFieldExpression><![CDATA[$F{pagar_ou_receber} != null && $F{pagar_ou_receber}.intValue() == 0 ? "Pagar" : "Receber"]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="210" y="0" width="170" height="20"/>
+				<textElement/>
+				<textFieldExpression><![CDATA[$F{cliente_nome} == null ? "" : $F{cliente_nome}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="380" y="0" width="175" height="20"/>
+				<textElement/>
+				<textFieldExpression><![CDATA[$F{fornecedor_nome} == null ? "" : $F{fornecedor_nome}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+	<columnFooter>
+		<band height="10"/>
+	</columnFooter>
+	<pageFooter>
+		<band height="20"/>
+	</pageFooter>
+	<summary>
+		<band height="10"/>
+	</summary>
+</jasperReport>
