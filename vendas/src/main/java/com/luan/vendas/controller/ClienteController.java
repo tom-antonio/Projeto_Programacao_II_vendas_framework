@@ -101,8 +101,7 @@ public class ClienteController {
 
 	public boolean validarDados(Cliente cliente) {
 		logger.info("Validando dados do cliente: " + cliente.getNome());
-		return cliente != null
-			&& cliente.getNome() != null
+		return cliente.getNome() != null
 			&& !cliente.getNome().trim().isEmpty()
 			&& cliente.getCpf() != null
 			&& !cliente.getCpf().trim().isEmpty()

@@ -95,8 +95,7 @@ public class FormaPagamentoController {
 
 	public boolean validarDados(FormaPagamento formaPagamento) {
 		logger.info("Validando dados da forma de pagamento com ID: {}", formaPagamento.getId());
-		return formaPagamento != null
-			&& formaPagamento.getNome() != null
+		return formaPagamento.getNome() != null
 			&& !formaPagamento.getNome().trim().isEmpty();
 	}
 }

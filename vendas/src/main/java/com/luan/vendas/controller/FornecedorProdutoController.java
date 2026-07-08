@@ -99,8 +99,7 @@ public class FornecedorProdutoController {
 
 	public boolean validarDados(FornecedorProduto fornecedorProduto) {
 		logger.info("Validando dados do fornecedor-produto com ID: {}", fornecedorProduto.getId());
-		return fornecedorProduto != null
-			&& fornecedorProduto.getFornecedor() != null
+		return fornecedorProduto.getFornecedor() != null
 			&& fornecedorProduto.getFornecedor().getId() > 0
 			&& fornecedorProduto.getProduto() != null
 			&& fornecedorProduto.getProduto().getId() > 0;

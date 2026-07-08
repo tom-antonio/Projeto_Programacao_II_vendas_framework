@@ -99,8 +99,7 @@ public class TipoContaController {
 
 	public boolean validarDados(TipoConta tipoConta) {
 		logger.info("Validando dados do tipo de conta com ID: {}", tipoConta.getId());
-		return tipoConta != null
-			&& tipoConta.getDescricao() != null
+		return tipoConta.getDescricao() != null
 			&& !tipoConta.getDescricao().trim().isEmpty();
 	}
 }

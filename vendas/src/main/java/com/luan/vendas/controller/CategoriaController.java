@@ -102,8 +102,7 @@ public class CategoriaController {
 
 	public boolean validarDados(Categoria categoria) {
 		logger.info("Validando dados da categoria: " + categoria.getNome());
-		return categoria != null
-			&& categoria.getNome() != null
+		return categoria.getNome() != null
 			&& !categoria.getNome().trim().isEmpty();
 	}
 
