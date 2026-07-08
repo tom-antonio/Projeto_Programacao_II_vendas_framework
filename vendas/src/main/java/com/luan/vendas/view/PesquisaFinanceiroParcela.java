@@ -62,13 +62,21 @@ public class PesquisaFinanceiroParcela extends JDialog {
         btnBuscar.addActionListener(e -> buscarParcelas());
         txtPesquisa.addActionListener(e -> buscarParcelas());
         btnSelecionar.addActionListener(e -> selecionarParcela());
+
+        carregarParcelas();
+    }
+
+    private void carregarParcelas() {
+        parcelasEncontradas.clear();
+        parcelasEncontradas.addAll(financeiroParcelaController.listarFinanceiroParcelas());
+        atualizarTabela();
     }
 
     private void buscarParcelas() {
         String textoPesquisa = txtPesquisa.getText().trim();
 
         if (textoPesquisa.isEmpty()) {
-            JOptionPane.showMessageDialog(this, "Digite o ID do Financeiro para pesquisar.", "Aviso", JOptionPane.WARNING_MESSAGE);
+            carregarParcelas();
             return;
         }
 
@@ -83,6 +91,14 @@ public class PesquisaFinanceiroParcela extends JDialog {
         parcelasEncontradas.clear();
         parcelasEncontradas.addAll(financeiroParcelaController.listarFinanceiroParcelasPorFinanceiro(financeiroId));
 
+        atualizarTabela();
+
+        if (parcelasEncontradas.isEmpty()) {
+            JOptionPane.showMessageDialog(this, "Nenhuma parcela financeira encontrada.", "Aviso", JOptionPane.INFORMATION_MESSAGE);
+        }
+    }
+
+    private void atualizarTabela() {
         modeloTabela.setRowCount(0);
 
         for (FinanceiroParcela parcela : parcelasEncontradas) {
@@ -94,10 +110,6 @@ public class PesquisaFinanceiroParcela extends JDialog {
                 parcela.getFinanceiro() != null ? parcela.getFinanceiro().getId() : "",
                 parcela.getValor_final()
             });
-        }
-
-        if (parcelasEncontradas.isEmpty()) {
-            JOptionPane.showMessageDialog(this, "Nenhuma parcela financeira encontrada.", "Aviso", JOptionPane.INFORMATION_MESSAGE);
         }
     }
 

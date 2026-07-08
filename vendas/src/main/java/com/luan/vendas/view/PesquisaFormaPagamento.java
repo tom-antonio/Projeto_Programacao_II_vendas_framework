@@ -62,19 +62,35 @@ public class PesquisaFormaPagamento extends JDialog {
         btnBuscar.addActionListener(e -> buscarFormasPagamento());
         txtPesquisa.addActionListener(e -> buscarFormasPagamento());
         btnSelecionar.addActionListener(e -> selecionarFormaPagamento());
+
+        carregarFormasPagamento();
+    }
+
+    private void carregarFormasPagamento() {
+        formasPagamentoEncontradas.clear();
+        formasPagamentoEncontradas.addAll(formaPagamentoController.listarFormasPagamento());
+        atualizarTabela();
     }
 
     private void buscarFormasPagamento() {
         String nomeBusca = txtPesquisa.getText().trim();
 
         if (nomeBusca.isEmpty()) {
-            JOptionPane.showMessageDialog(this, "Digite o nome da forma de pagamento para pesquisar.", "Aviso", JOptionPane.WARNING_MESSAGE);
+            carregarFormasPagamento();
             return;
         }
 
         formasPagamentoEncontradas.clear();
         formasPagamentoEncontradas.addAll(formaPagamentoController.listarFormasPagamentoPorNome(nomeBusca));
 
+        atualizarTabela();
+
+        if (formasPagamentoEncontradas.isEmpty()) {
+            JOptionPane.showMessageDialog(this, "Nenhuma forma de pagamento encontrada.", "Aviso", JOptionPane.INFORMATION_MESSAGE);
+        }
+    }
+
+    private void atualizarTabela() {
         modeloTabela.setRowCount(0);
 
         for (FormaPagamento formaPagamento : formasPagamentoEncontradas) {
@@ -82,10 +98,6 @@ public class PesquisaFormaPagamento extends JDialog {
                 formaPagamento.getId(),
                 formaPagamento.getNome()
             });
-        }
-
-        if (formasPagamentoEncontradas.isEmpty()) {
-            JOptionPane.showMessageDialog(this, "Nenhuma forma de pagamento encontrada.", "Aviso", JOptionPane.INFORMATION_MESSAGE);
         }
     }
 

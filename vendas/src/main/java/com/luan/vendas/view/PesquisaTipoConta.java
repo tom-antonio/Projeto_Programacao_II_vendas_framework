@@ -62,19 +62,35 @@ public class PesquisaTipoConta extends JDialog {
         btnBuscar.addActionListener(e -> buscarTipoContas());
         txtPesquisa.addActionListener(e -> buscarTipoContas());
         btnSelecionar.addActionListener(e -> selecionarTipoConta());
+
+        carregarTipoContas();
+    }
+
+    private void carregarTipoContas() {
+        tipoContasEncontradas.clear();
+        tipoContasEncontradas.addAll(tipoContaController.listarTiposConta());
+        atualizarTabela();
     }
 
     private void buscarTipoContas() {
         String descricaoBusca = txtPesquisa.getText().trim();
 
         if (descricaoBusca.isEmpty()) {
-            JOptionPane.showMessageDialog(this, "Digite a descrição do tipo de conta para pesquisar.", "Aviso", JOptionPane.WARNING_MESSAGE);
+            carregarTipoContas();
             return;
         }
 
         tipoContasEncontradas.clear();
         tipoContasEncontradas.addAll(tipoContaController.listarTipoContasPorDescricao(descricaoBusca));
 
+        atualizarTabela();
+
+        if (tipoContasEncontradas.isEmpty()) {
+            JOptionPane.showMessageDialog(this, "Nenhum tipo de conta encontrado.", "Aviso", JOptionPane.INFORMATION_MESSAGE);
+        }
+    }
+
+    private void atualizarTabela() {
         modeloTabela.setRowCount(0);
 
         for (TipoConta tipoConta : tipoContasEncontradas) {
@@ -82,10 +98,6 @@ public class PesquisaTipoConta extends JDialog {
                 tipoConta.getId(),
                 tipoConta.getDescricao()
             });
-        }
-
-        if (tipoContasEncontradas.isEmpty()) {
-            JOptionPane.showMessageDialog(this, "Nenhum tipo de conta encontrado.", "Aviso", JOptionPane.INFORMATION_MESSAGE);
         }
     }
 

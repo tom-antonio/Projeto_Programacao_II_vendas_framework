@@ -62,14 +62,35 @@ public class PesquisaVenda extends JDialog {
         btnBuscar.addActionListener(e -> buscarVendas());
         txtPesquisa.addActionListener(e -> buscarVendas());
         btnSelecionar.addActionListener(e -> selecionarVenda());
+
+        carregarVendas();
+    }
+
+    private void carregarVendas() {
+        vendasEncontradas.clear();
+        vendasEncontradas.addAll(vendaController.listarVendas());
+        atualizarTabela();
     }
 
     private void buscarVendas() {
         String textoBusca = txtPesquisa.getText().trim();
 
+        if (textoBusca.isEmpty()) {
+            carregarVendas();
+            return;
+        }
+
         vendasEncontradas.clear();
         vendasEncontradas.addAll(vendaController.listarVendasPorTermo(textoBusca));
 
+        atualizarTabela();
+
+        if (vendasEncontradas.isEmpty()) {
+            JOptionPane.showMessageDialog(this, "Nenhuma venda encontrada.", "Aviso", JOptionPane.INFORMATION_MESSAGE);
+        }
+    }
+
+    private void atualizarTabela() {
         modeloTabela.setRowCount(0);
         for (Venda venda : vendasEncontradas) {
             modeloTabela.addRow(new Object[] {
@@ -79,10 +100,6 @@ public class PesquisaVenda extends JDialog {
                 venda.getValor_total(),
                 venda.getProdutoVenda() != null ? venda.getProdutoVenda().size() : 0
             });
-        }
-
-        if (vendasEncontradas.isEmpty()) {
-            JOptionPane.showMessageDialog(this, "Nenhuma venda encontrada.", "Aviso", JOptionPane.INFORMATION_MESSAGE);
         }
     }
 

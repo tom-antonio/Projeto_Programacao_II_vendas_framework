@@ -55,7 +55,7 @@ public class FormCliente extends JFrame {
         gbc.gridy = 0;
         gbc.fill = GridBagConstraints.NONE;
         gbc.weightx = 0;
-        painelPrincipal.add(new JLabel("Nome Fantasia:"), gbc);
+        painelPrincipal.add(new JLabel("Nome:"), gbc);
 
         gbc.gridx = 1;
         gbc.fill = GridBagConstraints.HORIZONTAL;

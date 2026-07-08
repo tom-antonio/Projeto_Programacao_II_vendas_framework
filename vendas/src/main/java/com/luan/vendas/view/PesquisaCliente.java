@@ -62,21 +62,37 @@ public class PesquisaCliente extends JDialog {
         btnBuscar.addActionListener(e -> buscarClientes());
         txtPesquisa.addActionListener(e -> buscarClientes());
         btnSelecionar.addActionListener(e -> selecionarCliente());
+
+        carregarClientes();
+    }
+
+    private void carregarClientes() {
+        clientesEncontrados.clear();
+        clientesEncontrados.addAll(clienteController.listarClientes());
+        atualizarTabela();
     }
 
     private void buscarClientes() {
         String nomeBusca = txtPesquisa.getText().trim();
 
         if (nomeBusca.isEmpty()) {
-            JOptionPane.showMessageDialog(this, "Digite o nome do cliente para pesquisar.", "Aviso", JOptionPane.WARNING_MESSAGE);
+            carregarClientes();
             return;
         }
 
         clientesEncontrados.clear();
         clientesEncontrados.addAll(clienteController.listarClientesPorNome(nomeBusca));
 
-        modeloTabela.setRowCount(0);
+        atualizarTabela();
 
+        if (clientesEncontrados.isEmpty()) {
+            JOptionPane.showMessageDialog(this, "Nenhum cliente encontrado.", "Aviso", JOptionPane.INFORMATION_MESSAGE);
+        }
+    }
+
+    private void atualizarTabela() {
+
+        modeloTabela.setRowCount(0);
         for (Cliente cliente : clientesEncontrados) {
             modeloTabela.addRow(new Object[] {
                 cliente.getId(),
@@ -86,10 +102,6 @@ public class PesquisaCliente extends JDialog {
                 cliente.getEndereco(),
                 cliente.getTelefone()
             });
-        }
-
-        if (clientesEncontrados.isEmpty()) {
-            JOptionPane.showMessageDialog(this, "Nenhum cliente encontrado.", "Aviso", JOptionPane.INFORMATION_MESSAGE);
         }
     }
 

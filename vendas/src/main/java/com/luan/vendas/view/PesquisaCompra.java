@@ -62,14 +62,35 @@ public class PesquisaCompra extends JDialog {
         btnBuscar.addActionListener(e -> buscarCompras());
         txtPesquisa.addActionListener(e -> buscarCompras());
         btnSelecionar.addActionListener(e -> selecionarCompra());
+
+        carregarCompras();
+    }
+
+    private void carregarCompras() {
+        comprasEncontradas.clear();
+        comprasEncontradas.addAll(compraController.listarComprasPorTermo(""));
+        atualizarTabela();
     }
 
     private void buscarCompras() {
         String textoBusca = txtPesquisa.getText().trim();
 
+        if (textoBusca.isEmpty()) {
+            carregarCompras();
+            return;
+        }
+
         comprasEncontradas.clear();
         comprasEncontradas.addAll(compraController.listarComprasPorTermo(textoBusca));
 
+        atualizarTabela();
+
+        if (comprasEncontradas.isEmpty()) {
+            JOptionPane.showMessageDialog(this, "Nenhuma compra encontrada.", "Aviso", JOptionPane.INFORMATION_MESSAGE);
+        }
+    }
+
+    private void atualizarTabela() {
         modeloTabela.setRowCount(0);
         for (Compra compra : comprasEncontradas) {
             modeloTabela.addRow(new Object[] {
@@ -79,10 +100,6 @@ public class PesquisaCompra extends JDialog {
                 compra.getValor_total(),
                 compra.getCompraProduto() != null ? compra.getCompraProduto().size() : 0
             });
-        }
-
-        if (comprasEncontradas.isEmpty()) {
-            JOptionPane.showMessageDialog(this, "Nenhuma compra encontrada.", "Aviso", JOptionPane.INFORMATION_MESSAGE);
         }
     }
 

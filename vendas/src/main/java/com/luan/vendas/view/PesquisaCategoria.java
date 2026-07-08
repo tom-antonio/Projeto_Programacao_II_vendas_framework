@@ -62,19 +62,34 @@ public class PesquisaCategoria extends JDialog {
         btnBuscar.addActionListener(e -> buscarCategorias());
         txtPesquisa.addActionListener(e -> buscarCategorias());
         btnSelecionar.addActionListener(e -> selecionarCategoria());
+
+        carregarCategorias();
+    }
+
+    private void carregarCategorias() {
+        categoriasEncontradas.clear();
+        categoriasEncontradas.addAll(categoriaController.listarCategorias());
+        atualizarTabela();
     }
 
     private void buscarCategorias() {
         String nomeBusca = txtPesquisa.getText().trim();
 
         if (nomeBusca.isEmpty()) {
-            JOptionPane.showMessageDialog(this, "Digite o nome da categoria para pesquisar.", "Aviso", JOptionPane.WARNING_MESSAGE);
+            carregarCategorias();
             return;
         }
 
         categoriasEncontradas.clear();
         categoriasEncontradas.addAll(categoriaController.listarCategoriasPorNome(nomeBusca));
+        atualizarTabela();
 
+        if (categoriasEncontradas.isEmpty()) {
+            JOptionPane.showMessageDialog(this, "Nenhuma categoria encontrada.", "Aviso", JOptionPane.INFORMATION_MESSAGE);
+        }
+    }
+
+    private void atualizarTabela() {
         modeloTabela.setRowCount(0);
 
         for (Categoria categoria : categoriasEncontradas) {
@@ -82,10 +97,6 @@ public class PesquisaCategoria extends JDialog {
                 categoria.getId(),
                 categoria.getNome()
             });
-        }
-
-        if (categoriasEncontradas.isEmpty()) {
-            JOptionPane.showMessageDialog(this, "Nenhuma categoria encontrada.", "Aviso", JOptionPane.INFORMATION_MESSAGE);
         }
     }
 

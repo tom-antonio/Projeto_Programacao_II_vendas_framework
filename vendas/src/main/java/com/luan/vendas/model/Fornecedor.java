@@ -30,7 +30,7 @@ public class Fornecedor {
     @Column(nullable = false, length = 100)
     private String razao_social;
 
-    @Column(nullable = false, length = 14)
+    @Column(nullable = false, length = 20)
     private String cnpj;
 
     @OneToMany(mappedBy = "fornecedor", cascade = CascadeType.ALL, orphanRemoval = true)

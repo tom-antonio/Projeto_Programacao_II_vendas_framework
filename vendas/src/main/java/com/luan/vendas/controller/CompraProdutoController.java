@@ -27,50 +27,64 @@ public class CompraProdutoController {
 		this.produtoDao = new ProdutoDao();
     }
 
-    public boolean salvarCompraProduto(int id, int compraId, int produtoId, int qtdeProduto, double valorUnit) {
-        logger.info("Salvando compraProduto com ID: {}, CompraID: {}, ProdutoID: {}, Qtde: {}, ValorUnit: {}",
-                id, compraId, produtoId, qtdeProduto, valorUnit);
-        if (id <= 0) {
-            return false;
-        }
-        if (compraId <= 0) {
-            return false;
-        }
-        if (produtoId <= 0) {
-            return false;
-        }
-        if (qtdeProduto < 0) {
-            return false;
-        }
-        if (valorUnit < 0) {
+    public boolean salvarCompraProduto(CompraProduto compraProduto) {
+        if (compraProduto == null) {
             return false;
         }
 
-        Compra compra = (Compra) compraDao.pesquisarHibernate(compraId);
+        logger.info("Salvando compraProduto com ID: {}", compraProduto.getId());
+        if (!validarDadosCompraProduto(compraProduto)) {
+            return false;
+        }
+
+        Compra compra = compraDao.pesquisarHibernate(compraProduto.getCompra().getId());
         if (compra == null) {
-            logger.warn("Compra não encontrada para o produto: {}", produtoId);
+            logger.warn("Compra não encontrada para o compraProduto com ID: {}", compraProduto.getId());
             return false;
         }
 
-        Produto produto = produtoDao.pesquisarHibernate(produtoId);
+        Produto produto = produtoDao.pesquisarHibernate(compraProduto.getProduto().getId());
         if (produto == null) {
-            logger.warn("Produto não encontrado para a compra: {}", compra.getId());
+            logger.warn("Produto não encontrado para o compraProduto com ID: {}", compraProduto.getId());
             return false;
         }
 
-        CompraProduto compraProduto = new CompraProduto();
-        compraProduto.setId(id);
-        compraProduto.setCompra(compra);
-        compraProduto.setProduto(produto);
-        compraProduto.setQtdeProduto(qtdeProduto);
-        compraProduto.setValorUnit(valorUnit);
+        CompraProduto preparado = new CompraProduto();
+        preparado.setId(compraProduto.getId());
+        preparado.setCompra(compra);
+        preparado.setProduto(produto);
+        preparado.setQtdeProduto(compraProduto.getQtdeProduto());
+        preparado.setValorUnit(compraProduto.getValorUnit());
 
 		try {
-			return compraProdutoDao.salvarHibernate(compraProduto);
+			if (preparado.getId() > 0) {
+				return compraProdutoDao.alterarHibernate(preparado);
+			}
+
+			return compraProdutoDao.salvarHibernate(preparado);
 		} catch (SystemException e) {
-            logger.error("Erro ao salvar compraProduto: {}", compraProduto.getId(), e);
+            logger.error("Erro ao salvar compraProduto com ID: {}", compraProduto.getId(), e);
 			return false;
 		}
+    }
+
+    private boolean validarDadosCompraProduto(CompraProduto compraProduto) {
+        if (compraProduto == null) {
+            return false;
+        }
+        if (compraProduto.getId() < 0) {
+            return false;
+        }
+        if (compraProduto.getCompra() == null || compraProduto.getCompra().getId() <= 0) {
+            return false;
+        }
+        if (compraProduto.getProduto() == null || compraProduto.getProduto().getId() <= 0) {
+            return false;
+        }
+        if (compraProduto.getQtdeProduto() < 0) {
+            return false;
+        }
+        return compraProduto.getValorUnit() >= 0;
     }
 
     public boolean excluirCompraProduto(int id) {

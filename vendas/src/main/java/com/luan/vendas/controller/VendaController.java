@@ -214,10 +214,6 @@ public class VendaController {
 
 	private boolean validarDadosVenda(Venda venda) {
 		logger.info("Validando dados da venda com ID: {}", venda.getId());
-		if (venda == null) {
-			logger.warn("Venda nula na validação");
-			return false;
-		}
 		if (venda.getId() < 0) {
 			logger.warn("ID da venda inválido: {}", venda.getId());
 			return false;

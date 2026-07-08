@@ -62,19 +62,35 @@ public class PesquisaProduto extends JDialog {
         btnBuscar.addActionListener(e -> buscarProdutos());
         txtPesquisa.addActionListener(e -> buscarProdutos());
         btnSelecionar.addActionListener(e -> selecionarProduto());
+
+        carregarProdutos();
+    }
+
+    private void carregarProdutos() {
+        produtosEncontrados.clear();
+        produtosEncontrados.addAll(produtoController.listarProdutos());
+        atualizarTabela();
     }
 
     private void buscarProdutos() {
         String nomeBusca = txtPesquisa.getText().trim();
 
         if (nomeBusca.isEmpty()) {
-            JOptionPane.showMessageDialog(this, "Digite o nome do produto para pesquisar.", "Aviso", JOptionPane.WARNING_MESSAGE);
+            carregarProdutos();
             return;
         }
 
         produtosEncontrados.clear();
         produtosEncontrados.addAll(produtoController.listarProdutosPorNome(nomeBusca));
 
+        atualizarTabela();
+
+        if (produtosEncontrados.isEmpty()) {
+            JOptionPane.showMessageDialog(this, "Nenhum produto encontrado.", "Aviso", JOptionPane.INFORMATION_MESSAGE);
+        }
+    }
+
+    private void atualizarTabela() {
         modeloTabela.setRowCount(0);
 
         for (Produto produto : produtosEncontrados) {
@@ -86,10 +102,6 @@ public class PesquisaProduto extends JDialog {
                 produto.getValor_venda(),
                 produto.getQtde_estoque()
             });
-        }
-
-        if (produtosEncontrados.isEmpty()) {
-            JOptionPane.showMessageDialog(this, "Nenhum produto encontrado.", "Aviso", JOptionPane.INFORMATION_MESSAGE);
         }
     }
 

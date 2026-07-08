@@ -62,19 +62,35 @@ public class PesquisaFornecedor extends JDialog {
         btnBuscar.addActionListener(e -> buscarFornecedores());
         txtPesquisa.addActionListener(e -> buscarFornecedores());
         btnSelecionar.addActionListener(e -> selecionarFornecedor());
+
+        carregarFornecedores();
+    }
+
+    private void carregarFornecedores() {
+        fornecedoresEncontrados.clear();
+        fornecedoresEncontrados.addAll(fornecedorController.listarFornecedores());
+        atualizarTabela();
     }
 
     private void buscarFornecedores() {
         String nomeBusca = txtPesquisa.getText().trim();
 
         if (nomeBusca.isEmpty()) {
-            JOptionPane.showMessageDialog(this, "Digite o nome do fornecedor para pesquisar.", "Aviso", JOptionPane.WARNING_MESSAGE);
+            carregarFornecedores();
             return;
         }
 
         fornecedoresEncontrados.clear();
         fornecedoresEncontrados.addAll(fornecedorController.listarFornecedoresPorNome(nomeBusca));
 
+        atualizarTabela();
+
+        if (fornecedoresEncontrados.isEmpty()) {
+            JOptionPane.showMessageDialog(this, "Nenhum fornecedor encontrado.", "Aviso", JOptionPane.INFORMATION_MESSAGE);
+        }
+    }
+
+    private void atualizarTabela() {
         modeloTabela.setRowCount(0);
 
         for (Fornecedor fornecedor : fornecedoresEncontrados) {
@@ -84,10 +100,6 @@ public class PesquisaFornecedor extends JDialog {
                 fornecedor.getRazao_social(),
                 fornecedor.getCnpj()
             });
-        }
-
-        if (fornecedoresEncontrados.isEmpty()) {
-            JOptionPane.showMessageDialog(this, "Nenhum fornecedor encontrado.", "Aviso", JOptionPane.INFORMATION_MESSAGE);
         }
     }
 

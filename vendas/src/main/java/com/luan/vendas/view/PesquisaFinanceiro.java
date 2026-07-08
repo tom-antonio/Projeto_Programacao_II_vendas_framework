@@ -66,18 +66,25 @@ public class PesquisaFinanceiro extends JDialog {
         btnBuscar.addActionListener(e -> buscarFinanceiros());
         txtPesquisa.addActionListener(e -> buscarFinanceiros());
         btnSelecionar.addActionListener(e -> selecionarFinanceiro());
+
+        carregarFinanceiros();
+    }
+
+    private void carregarFinanceiros() {
+        financeirosEncontrados.clear();
+        financeirosEncontrados.addAll(financeiroController.listarFinanceiros());
+        atualizarTabela();
     }
 
     private void buscarFinanceiros() {
         String textoPesquisa = txtPesquisa.getText().trim();
 
         if (textoPesquisa.isEmpty()) {
-            JOptionPane.showMessageDialog(this, "Digite um termo ou ID para pesquisar.", "Aviso", JOptionPane.WARNING_MESSAGE);
+            carregarFinanceiros();
             return;
         }
 
         financeirosEncontrados.clear();
-        modeloTabela.setRowCount(0);
 
         try {
             int id = Integer.parseInt(textoPesquisa);
@@ -89,6 +96,15 @@ public class PesquisaFinanceiro extends JDialog {
             financeirosEncontrados.addAll(financeiroController.listarFinanceirosPorTermo(textoPesquisa));
         }
 
+        atualizarTabela();
+
+        if (financeirosEncontrados.isEmpty()) {
+            JOptionPane.showMessageDialog(this, "Nenhum financeiro encontrado.", "Aviso", JOptionPane.INFORMATION_MESSAGE);
+        }
+    }
+
+    private void atualizarTabela() {
+        modeloTabela.setRowCount(0);
         for (Financeiro financeiro : financeirosEncontrados) {
             List<FinanceiroParcela> parcelas = financeiroParcelaController.listarFinanceiroParcelasPorFinanceiro(financeiro.getId());
             modeloTabela.addRow(new Object[] {
@@ -101,10 +117,6 @@ public class PesquisaFinanceiro extends JDialog {
                 financeiro.getFormaPagamento() != null ? financeiro.getFormaPagamento().getNome() : "",
                 parcelas.size()
             });
-        }
-
-        if (financeirosEncontrados.isEmpty()) {
-            JOptionPane.showMessageDialog(this, "Nenhum financeiro encontrado.", "Aviso", JOptionPane.INFORMATION_MESSAGE);
         }
     }
 
