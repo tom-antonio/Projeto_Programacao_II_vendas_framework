@@ -43,4 +43,9 @@ public class Fornecedor {
     public String getNome() {
         return nome_fantasia;
     }
+
+    @Override
+    public String toString() {
+        return nome_fantasia != null ? nome_fantasia : "Fornecedor";
+    }
 }

@@ -53,12 +53,15 @@ public class Produto {
     private List<CompraProduto> compraProduto = new ArrayList<>();
 
     public Object getValor_compra() {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'getValor_compra'");
+        return valor_ultima_compra;
     }
 
     public Object getValor_venda() {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'getValor_venda'");
+        return valor_ultima_venda;
+    }
+
+    @Override
+    public String toString() {
+        return nome != null ? nome : "Produto";
     }
 }

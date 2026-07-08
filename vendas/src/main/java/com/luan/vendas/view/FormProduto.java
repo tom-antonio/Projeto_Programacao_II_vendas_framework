@@ -170,7 +170,14 @@ public class FormProduto extends JFrame {
         btnPesquisar = new JButton("Pesquisar");
 
         btnSalvar.addActionListener(e -> salvarProduto());
-        btnAlterar.addActionListener(e -> alterarProduto());
+        btnAlterar.addActionListener(e -> {
+            if (precisaPesquisarProduto()) {
+                abrirPesquisaProduto();
+                return;
+            }
+
+            alterarProduto();
+        });
         btnExcluir.addActionListener(e -> excluirProduto());
         btnPesquisar.addActionListener(e -> abrirPesquisaProduto());
 
@@ -214,7 +221,7 @@ public class FormProduto extends JFrame {
     }
 
     private void abrirEscolherFornecedor() {
-        EscolherFornecedor dialog = new EscolherFornecedor(this, fornecedorController, fornecedoresSelecionados);
+        FormFornecedorProduto dialog = new FormFornecedorProduto(this, fornecedorController, fornecedoresSelecionados);
         dialog.setVisible(true);
 
         if (dialog.isSalvo()) {
@@ -224,13 +231,27 @@ public class FormProduto extends JFrame {
     }
 
     private void abrirPesquisaProduto() {
-        PesquisaProduto dialog = new PesquisaProduto(this, produtoController);
-        dialog.setVisible(true);
+        try {
+            PesquisaProduto dialog = new PesquisaProduto(this, produtoController);
+            dialog.setVisible(true);
 
-        Produto selecionado = dialog.getProdutoSelecionado();
-        if (selecionado != null) {
-            preencherCampos(selecionado);
+            Produto selecionado = dialog.getProdutoSelecionado();
+            if (selecionado != null) {
+                preencherCampos(selecionado);
+            }
+        } catch (Exception ex) {
+            JOptionPane.showMessageDialog(
+                this,
+                "Não foi possível abrir a pesquisa de produtos.\n" + ex.getClass().getSimpleName() + ": " + ex.getMessage(),
+                "Erro",
+                JOptionPane.ERROR_MESSAGE
+            );
         }
+    }
+
+    private boolean precisaPesquisarProduto() {
+        return idProdutoAtual == null
+            && txtNomeProduto.getText().trim().isEmpty();
     }
 
     private void preencherCampos(Produto produto) {

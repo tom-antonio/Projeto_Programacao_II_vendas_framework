@@ -230,7 +230,11 @@ public class FormCliente extends JFrame {
 
     private Cliente montarClienteAtual() {
         Cliente cliente = new Cliente();
-        cliente.setId(idClienteAtual);
+        int idCliente = 0;
+        if (idClienteAtual != null) {
+            idCliente = idClienteAtual;
+        }
+        cliente.setId(idCliente);
         cliente.setNome(txtNome_cliente.getText().trim());
         cliente.setCpf(txtCPF.getText().trim());
         cliente.setRg(txtRG.getText().trim());

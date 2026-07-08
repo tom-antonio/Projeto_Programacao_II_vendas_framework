@@ -63,7 +63,13 @@ public class PesquisaProduto extends JDialog {
         txtPesquisa.addActionListener(e -> buscarProdutos());
         btnSelecionar.addActionListener(e -> selecionarProduto());
 
-        carregarProdutos();
+        try {
+            carregarProdutos();
+        } catch (Exception ex) {
+            modeloTabela.setRowCount(0);
+            produtosEncontrados.clear();
+        }
+
     }
 
     private void carregarProdutos() {

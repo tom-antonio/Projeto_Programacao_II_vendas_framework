@@ -136,7 +136,14 @@ public class FormCompra extends JFrame {
         btnPesquisar = new JButton("Pesquisar");
 
         btnSalvar.addActionListener(e -> salvarCompra());
-        btnAlterar.addActionListener(e -> alterarCompra());
+        btnAlterar.addActionListener(e -> {
+            if (precisaPesquisarCompra()) {
+                abrirPesquisaCompra();
+                return;
+            }
+
+            alterarCompra();
+        });
         btnExcluir.addActionListener(e -> excluirCompra());
         btnPesquisar.addActionListener(e -> abrirPesquisaCompra());
 
@@ -262,9 +269,17 @@ public class FormCompra extends JFrame {
         }
         txtValorTotal.setText(String.valueOf(total));
     }
+    
 
     private boolean precisaPesquisarCompra() {
-        return idCompraAtual == null;
+        return idCompraAtual == null
+            && campoDataCompraVazio()
+            && itensCompra.isEmpty();
+    }
+
+    private boolean campoDataCompraVazio() {
+        String dataTexto = txtDataCompra.getText().trim();
+        return dataTexto.isEmpty() || dataTexto.replace("_", "").replace("/", "").trim().isEmpty();
     }
 
     private void salvarCompra() {

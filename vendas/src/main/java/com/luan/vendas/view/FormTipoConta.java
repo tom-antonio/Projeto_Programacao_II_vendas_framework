@@ -171,7 +171,11 @@ public class FormTipoConta extends JFrame {
 
     private TipoConta montarTipoContaAtual() {
         TipoConta tipoConta = new TipoConta();
-        tipoConta.setId(idTipoContaAtual);
+        int idTipoConta = 0;
+        if (idTipoContaAtual != null) {
+            idTipoConta = idTipoContaAtual;
+        }
+        tipoConta.setId(idTipoConta);
         tipoConta.setDescricao(txtDescricao_tipo_conta.getText().trim());
         return tipoConta;
     }

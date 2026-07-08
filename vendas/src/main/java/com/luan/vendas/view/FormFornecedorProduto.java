@@ -11,6 +11,7 @@ import java.awt.Insets;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.swing.DefaultComboBoxModel;
 import javax.swing.DefaultListCellRenderer;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
@@ -26,7 +27,7 @@ import javax.swing.table.DefaultTableModel;
 import com.luan.vendas.controller.FornecedorController;
 import com.luan.vendas.model.Fornecedor;
 
-public class EscolherFornecedor extends JDialog {
+public class FormFornecedorProduto extends JDialog {
 
     private final JComboBox<Fornecedor> cmbFornecedores;
     private final JTable tabelaFornecedores;
@@ -35,7 +36,7 @@ public class EscolherFornecedor extends JDialog {
     private final List<Fornecedor> fornecedoresSelecionados;
     private boolean salvo;
 
-    public EscolherFornecedor(Frame parent, FornecedorController fornecedorController, List<Fornecedor> fornecedoresIniciais) {
+    public FormFornecedorProduto(Frame parent, FornecedorController fornecedorController, List<Fornecedor> fornecedoresIniciais) {
         super(parent, "Escolher Fornecedor", true);
         this.fornecedorController = fornecedorController;
         this.fornecedoresSelecionados = new ArrayList<>();
@@ -133,10 +134,21 @@ public class EscolherFornecedor extends JDialog {
     }
 
     private void carregarFornecedores() {
-        cmbFornecedores.removeAllItems();
-        cmbFornecedores.addItem(null);
-        for (Fornecedor fornecedor : fornecedorController.listarFornecedores()) {
-            cmbFornecedores.addItem(fornecedor);
+        DefaultComboBoxModel<Fornecedor> model = new DefaultComboBoxModel<>();
+        model.addElement(null);
+
+        List<Fornecedor> fornecedores = fornecedorController.listarFornecedores();
+        for (Fornecedor fornecedor : fornecedores) {
+            model.addElement(fornecedor);
+        }
+
+        cmbFornecedores.setModel(model);
+        cmbFornecedores.setSelectedIndex(0);
+        cmbFornecedores.revalidate();
+        cmbFornecedores.repaint();
+
+        if (fornecedores.isEmpty()) {
+            JOptionPane.showMessageDialog(this, "Nenhum fornecedor cadastrado no banco de dados.", "Aviso", JOptionPane.INFORMATION_MESSAGE);
         }
     }
 

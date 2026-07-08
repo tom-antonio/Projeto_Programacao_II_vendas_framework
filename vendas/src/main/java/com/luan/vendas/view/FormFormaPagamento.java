@@ -255,7 +255,11 @@ public class FormFormaPagamento extends JFrame {
         }
 
         FormaPagamento formaPagamento = new FormaPagamento();
-        formaPagamento.setId(idFormaPagamentoAtual);
+        int idFormaPagamento = 0;
+        if (idFormaPagamentoAtual != null) {
+            idFormaPagamento = idFormaPagamentoAtual;
+        }
+        formaPagamento.setId(idFormaPagamento);
         formaPagamento.setNome(txtNome.getText().trim());
         formaPagamento.setQtde_parcela(qtdeParcelas);
         formaPagamento.setPrazo(ehPrazo ? 1 : 0);

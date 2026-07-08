@@ -9,11 +9,9 @@ import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.text.ParseException;
 import java.time.LocalDate;
-import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 import javax.swing.DefaultListCellRenderer;
@@ -143,7 +141,14 @@ public class FormVenda extends JFrame {
         btnPesquisar = new JButton("Pesquisar");
 
         btnSalvar.addActionListener(e -> salvarVenda());
-        btnAlterar.addActionListener(e -> alterarVenda());
+        btnAlterar.addActionListener(e -> {
+            if (precisaPesquisarVenda()) {
+                abrirPesquisaVenda();
+                return;
+            }
+
+            alterarVenda();
+        });
         btnExcluir.addActionListener(e -> excluirVenda());
         btnPesquisar.addActionListener(e -> abrirPesquisaVenda());
 
@@ -287,11 +292,27 @@ public class FormVenda extends JFrame {
     }
 
     private boolean precisaPesquisarVenda() {
-        return idVendaAtual == null;
+        return idVendaAtual == null
+            && campoDataVendaVazio()
+            && itensVenda.isEmpty();
+    }
+
+    private boolean campoDataVendaVazio() {
+        String dataTexto = txtDataVenda.getText().trim();
+        return dataTexto.isEmpty() || dataTexto.replace("_", "").replace("/", "").trim().isEmpty();
     }
 
     private void salvarVenda() {
-        persistirVenda(false);
+        try {
+            persistirVenda(false);
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(
+                this,
+                "Erro ao salvar a venda: " + e.getMessage(),
+                "Erro",
+                JOptionPane.ERROR_MESSAGE
+            );
+        }
     }
 
     private void alterarVenda() {
@@ -300,7 +321,16 @@ public class FormVenda extends JFrame {
             return;
         }
 
-        persistirVenda(true);
+        try {
+            persistirVenda(true);
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(
+                this,
+                "Erro ao alterar a venda: " + e.getMessage(),
+                "Erro",
+                JOptionPane.ERROR_MESSAGE
+            );
+        }
     }
 
     private void excluirVenda() {
@@ -350,9 +380,9 @@ public class FormVenda extends JFrame {
     }
 
     private Venda montarVenda() {
-        Date dataVenda;
+        LocalDate dataVenda;
         try {
-            dataVenda = java.sql.Date.valueOf(LocalDate.parse(txtDataVenda.getText().trim(), UI_DATE_FORMATTER));
+            dataVenda = LocalDate.parse(txtDataVenda.getText().trim(), UI_DATE_FORMATTER);
         } catch (DateTimeParseException e) {
             JOptionPane.showMessageDialog(this, "Informe uma data válida no formato dd/MM/yyyy.", "Aviso", JOptionPane.WARNING_MESSAGE);
             return null;
@@ -375,7 +405,7 @@ public class FormVenda extends JFrame {
             idVenda = idVendaAtual;
         }
         venda.setId(idVenda);
-        venda.setData_venda(dataVenda.toInstant().atZone(ZoneId.systemDefault()).toLocalDate());
+        venda.setData_venda(dataVenda);
         venda.setValor_total(calcularValorTotal());
         venda.setCliente(cliente);
 
