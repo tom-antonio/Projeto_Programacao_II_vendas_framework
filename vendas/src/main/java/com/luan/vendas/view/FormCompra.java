@@ -113,6 +113,7 @@ public class FormCompra extends JFrame {
         gbc.weightx = 1;
         txtValorTotal = new JTextField(28);
         txtValorTotal.setEditable(false);
+        txtValorTotal.setFocusable(false);
         painelPrincipal.add(txtValorTotal, gbc);
 
         gbc.gridx = 0;
@@ -193,6 +194,10 @@ public class FormCompra extends JFrame {
                 adicionarOuAtualizarItem(compraProduto);
             }
         }
+    }
+
+    public void atualizarValorTotalCompra(double valorTotal) {
+        txtValorTotal.setText(String.valueOf(valorTotal));
     }
 
     private void abrirPesquisaCompra() {
@@ -346,7 +351,9 @@ public class FormCompra extends JFrame {
 
     private void abrirFormularioFinanceiro(Compra compra) {
         try {
-            new FormFinanceiro(compra).setVisible(true);
+            FormFinanceiro formFinanceiro = new FormFinanceiro(this, compra);
+            formFinanceiro.setVisible(true);
+            formFinanceiro.toFront();
         } catch (ParseException e) {
             JOptionPane.showMessageDialog(
                 this,

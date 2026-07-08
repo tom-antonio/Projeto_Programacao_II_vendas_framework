@@ -31,6 +31,22 @@ public class VendaController {
 		this.clienteDao = new ClienteDao();
 	}
 
+	public double calcularValorTotalVenda(List<ProdutoVenda> itensVenda) {
+		logger.info("Calculando valor total da venda com {} itens.", itensVenda != null ? itensVenda.size() : 0);
+		if (itensVenda == null || itensVenda.isEmpty()) {
+			return 0.0;
+		}
+
+		double total = 0.0;
+		for (ProdutoVenda item : itensVenda) {
+			if (item == null) {
+				continue;
+			}
+			total += item.getQtdeProduto() * item.getValorUnit();
+		}
+		return total;
+	}
+
 	public boolean salvarVenda(Venda venda) {
 		logger.info("Iniciando o processo de salvar venda com ID: {}", venda.getId());
 		if (!validarDadosVenda(venda)) {

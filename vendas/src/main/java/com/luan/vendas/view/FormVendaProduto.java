@@ -25,6 +25,7 @@ import javax.swing.JTextField;
 import javax.swing.table.DefaultTableModel;
 
 import com.luan.vendas.controller.ProdutoController;
+import com.luan.vendas.controller.VendaController;
 import com.luan.vendas.model.Produto;
 import com.luan.vendas.model.ProdutoVenda;
 
@@ -36,15 +37,21 @@ public class FormVendaProduto extends JDialog {
     private final JTable tabelaProdutos;
     private final DefaultTableModel modeloTabelaProdutos;
     private final ProdutoController produtoController;
+    private final VendaController vendaController;
     private final List<Produto> produtosDisponiveis;
     private final List<ProdutoVenda> produtosSelecionados;
+    private final FormVenda formVendaPai;
     private boolean selecionado;
+    private double valorTotalSelecionado;
 
     public FormVendaProduto(Frame parent) {
         super(parent, "Selecionar Produto da Venda", true);
         this.produtoController = new ProdutoController();
+        this.vendaController = new VendaController();
         this.produtosDisponiveis = new ArrayList<>();
         this.produtosSelecionados = new ArrayList<>();
+        this.formVendaPai = parent instanceof FormVenda ? (FormVenda) parent : null;
+        this.valorTotalSelecionado = 0.0;
 
         setSize(820, 540);
         setLocationRelativeTo(parent);
@@ -129,7 +136,7 @@ public class FormVendaProduto extends JDialog {
         painelPrincipal.add(scrollTabela, gbc);
 
         JPanel painelRodape = new JPanel(new FlowLayout(FlowLayout.CENTER));
-        JButton btnSelecionar = new JButton("Selecionar");
+        JButton btnSelecionar = new JButton("Salvar");
         painelRodape.add(btnSelecionar);
 
         gbc.gridx = 0;
@@ -260,6 +267,10 @@ public class FormVendaProduto extends JDialog {
             return;
         }
 
+        valorTotalSelecionado = vendaController.calcularValorTotalVenda(produtosSelecionados);
+        if (formVendaPai != null) {
+            formVendaPai.atualizarValorTotalVenda(valorTotalSelecionado);
+        }
         selecionado = true;
         dispose();
     }
@@ -278,5 +289,9 @@ public class FormVendaProduto extends JDialog {
             copia.add(preparado);
         }
         return copia;
+    }
+
+    public double getValorTotalSelecionado() {
+        return valorTotalSelecionado;
     }
 }

@@ -24,7 +24,6 @@ import javax.swing.JList;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
-import javax.swing.table.DefaultTableModel;
 import javax.swing.text.MaskFormatter;
 
 import com.luan.vendas.controller.ClienteController;
@@ -40,7 +39,6 @@ public class FormVenda extends JFrame {
     private JTextField txtDataVenda;
     private JTextField txtValorTotal;
     private JComboBox<Cliente> cmbCliente;
-    private DefaultTableModel modeloProdutos;
     private JButton btnEscolherProduto;
     private JButton btnPesquisar;
     private JButton btnSalvar;
@@ -117,6 +115,7 @@ public class FormVenda extends JFrame {
         gbc.weightx = 1;
         txtValorTotal = new JTextField(28);
         txtValorTotal.setEditable(false);
+        txtValorTotal.setFocusable(false);
         painelPrincipal.add(txtValorTotal, gbc);
 
         gbc.gridx = 0;
@@ -133,6 +132,7 @@ public class FormVenda extends JFrame {
         btnEscolherProduto = new JButton("Escolher Produto");
         btnEscolherProduto.addActionListener(e -> abrirFormVendaProduto());
         painelPrincipal.add(btnEscolherProduto, gbc);
+
 
         JPanel painelBotoes = new JPanel(new FlowLayout(FlowLayout.CENTER, 10, 0));
         btnSalvar = new JButton("Salvar");
@@ -160,6 +160,7 @@ public class FormVenda extends JFrame {
         gbc.gridx = 0;
         gbc.gridy = 5;
         gbc.gridwidth = 2;
+        gbc.weighty = 0;
         gbc.fill = GridBagConstraints.HORIZONTAL;
         painelPrincipal.add(painelBotoes, gbc);
 
@@ -200,6 +201,10 @@ public class FormVenda extends JFrame {
         }
     }
 
+    public void atualizarValorTotalVenda(double valorTotal) {
+        txtValorTotal.setText(String.valueOf(valorTotal));
+    }
+
     private void abrirPesquisaVenda() {
         PesquisaVenda dialog = new PesquisaVenda(this, vendaController);
         dialog.setVisible(true);
@@ -237,8 +242,6 @@ public class FormVenda extends JFrame {
                 itensVenda.add(copiado);
             }
         }
-
-        atualizarTabelaProdutos();
     }
 
     private void selecionarClientePorId(int idCliente) {
@@ -258,29 +261,13 @@ public class FormVenda extends JFrame {
             if (itemAtual.getProduto() != null && produtoVenda.getProduto() != null
                 && itemAtual.getProduto().getId() == produtoVenda.getProduto().getId()) {
                 itensVenda.set(i, produtoVenda);
-                atualizarTabelaProdutos();
                 atualizarValorTotal();
                 return;
             }
         }
 
         itensVenda.add(produtoVenda);
-        atualizarTabelaProdutos();
         atualizarValorTotal();
-    }
-
-    private void atualizarTabelaProdutos() {
-        modeloProdutos.setRowCount(0);
-        for (ProdutoVenda item : itensVenda) {
-            double subtotal = item.getQtdeProduto() * item.getValorUnit();
-            modeloProdutos.addRow(new Object[] {
-                item.getProduto() != null ? item.getProduto().getId() : null,
-                item.getProduto() != null ? item.getProduto().getNome() : "",
-                item.getQtdeProduto(),
-                item.getValorUnit(),
-                subtotal
-            });
-        }
     }
 
     private void atualizarValorTotal() {
@@ -356,7 +343,6 @@ public class FormVenda extends JFrame {
             return;
         }
 
-        JOptionPane.showMessageDialog(this, "Venda excluída com sucesso!", "Sucesso", JOptionPane.INFORMATION_MESSAGE);
         limparCampos();
     }
 
@@ -376,7 +362,25 @@ public class FormVenda extends JFrame {
         }
 
         JOptionPane.showMessageDialog(this, atualizando ? "Venda alterada com sucesso!" : "Venda salva com sucesso!", "Sucesso", JOptionPane.INFORMATION_MESSAGE);
+        if (!atualizando) {
+            abrirFormularioFinanceiro(venda);
+        }
         limparCampos();
+    }
+
+    private void abrirFormularioFinanceiro(Venda venda) {
+        try {
+            FormFinanceiro formFinanceiro = new FormFinanceiro(this, venda);
+            formFinanceiro.setVisible(true);
+            formFinanceiro.toFront();
+        } catch (ParseException e) {
+            JOptionPane.showMessageDialog(
+                this,
+                "Venda salva, mas não foi possível abrir o financeiro: " + e.getMessage(),
+                "Aviso",
+                JOptionPane.WARNING_MESSAGE
+            );
+        }
     }
 
     private Venda montarVenda() {
@@ -436,7 +440,6 @@ public class FormVenda extends JFrame {
         txtValorTotal.setText("");
         cmbCliente.setSelectedIndex(0);
         itensVenda.clear();
-        atualizarTabelaProdutos();
         idVendaAtual = null;
         txtDataVenda.requestFocus();
     }

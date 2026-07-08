@@ -7,6 +7,7 @@ import java.awt.FlowLayout;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
+import java.awt.Window;
 import java.text.ParseException;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
@@ -37,6 +38,7 @@ import com.luan.vendas.model.Financeiro;
 import com.luan.vendas.model.FormaPagamento;
 import com.luan.vendas.model.Fornecedor;
 import com.luan.vendas.model.TipoConta;
+import com.luan.vendas.model.Venda;
 
 public class FormFinanceiro extends JFrame {
 
@@ -48,6 +50,7 @@ public class FormFinanceiro extends JFrame {
 	private JComboBox<Cliente> comboCliente;
 	private JComboBox<TipoConta> comboTipoConta;
 	private JComboBox<FormaPagamento> comboFormaPagamento;
+	    private JComboBox<String> comboBoxparcelamento;
 	private JButton btnAbrirFinanceiroParcela;
 	private JButton btnSalvar;
 	private JButton btnAlterar;
@@ -60,13 +63,30 @@ public class FormFinanceiro extends JFrame {
 	private final ClienteController clienteController;
 	private final TipoContaController tipoContaController;
 	private final FormaPagamentoController formaPagamentoController;
+	private final Window janelaPai;
 	private Integer idFinanceiroAtual;
 
 	public FormFinanceiro() throws ParseException {
-		this(null);
+		this(null, null, null);
 	}
 
 	public FormFinanceiro(Compra compraPreenchida) throws ParseException {
+		this(null, compraPreenchida, null);
+	}
+
+	public FormFinanceiro(Venda vendaPreenchida) throws ParseException {
+		this(null, null, vendaPreenchida);
+	}
+
+	public FormFinanceiro(Window janelaPai, Compra compraPreenchida) throws ParseException {
+		this(janelaPai, compraPreenchida, null);
+	}
+
+	public FormFinanceiro(Window janelaPai, Venda vendaPreenchida) throws ParseException {
+		this(janelaPai, null, vendaPreenchida);
+	}
+
+	private FormFinanceiro(Window janelaPai, Compra compraPreenchida, Venda vendaPreenchida) throws ParseException {
 		setTitle("Cadastro de Financeiro");
 		financeiroController = new FinanceiroController();
 		financeiroParcelaController = new FinanceiroParcelaController();
@@ -74,17 +94,45 @@ public class FormFinanceiro extends JFrame {
 		clienteController = new ClienteController();
 		tipoContaController = new TipoContaController();
 		formaPagamentoController = new FormaPagamentoController();
+		this.janelaPai = janelaPai;
 		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+		setAlwaysOnTop(true);
+		setAutoRequestFocus(true);
 
 		inicializarComponentes();
 		carregarCombosRelacionamentos();
 		if (compraPreenchida != null) {
 			preencherCamposCompra(compraPreenchida);
+		} else if (vendaPreenchida != null) {
+			preencherCamposVenda(vendaPreenchida);
 		}
+		atualizarVisibilidadeFinanceiroParcela();
+		configurarBloqueioDaJanelaPai();
 
 		pack();
 		setMinimumSize(new Dimension(700, 380));
 		setLocationRelativeTo(null);
+	}
+
+	private void configurarBloqueioDaJanelaPai() {
+		if (janelaPai == null) {
+			return;
+		}
+
+		if (janelaPai instanceof JFrame framePai) {
+			framePai.setEnabled(false);
+		}
+
+		addWindowListener(new java.awt.event.WindowAdapter() {
+			@Override
+			public void windowClosed(java.awt.event.WindowEvent e) {
+				if (janelaPai instanceof JFrame framePai) {
+					framePai.setEnabled(true);
+					framePai.toFront();
+					framePai.requestFocus();
+				}
+			}
+		});
 	}
 
 	private void inicializarComponentes() throws ParseException {
@@ -98,6 +146,7 @@ public class FormFinanceiro extends JFrame {
 		gbc.gridy = 0;
 		gbc.fill = GridBagConstraints.NONE;
 		gbc.weightx = 0;
+		comboBoxparcelamento.addActionListener(e -> atualizarVisibilidadeFinanceiroParcela());
 		painelPrincipal.add(new JLabel("Data da Conta:"), gbc);
 
 		gbc.gridx = 1;
@@ -171,14 +220,39 @@ public class FormFinanceiro extends JFrame {
 		comboFormaPagamento = new JComboBox<>();
 		painelPrincipal.add(comboFormaPagamento, gbc);
 
+		gbc.gridx = 0;
+        gbc.gridy = 6;
+        gbc.fill = GridBagConstraints.NONE;
+        gbc.weightx = 0;
+        painelPrincipal.add(new JLabel("Parcelamento:"), gbc);
+
+        gbc.gridx = 1;
+        gbc.fill = GridBagConstraints.HORIZONTAL;
+        gbc.weightx = 1;
+		comboBoxparcelamento = new JComboBox<>(new String[] {"Sim", "Não"});
+		comboBoxparcelamento.addActionListener(e -> atualizarVisibilidadeFinanceiroParcela());
+        painelPrincipal.add(comboBoxparcelamento, gbc);
+
 		btnAbrirFinanceiroParcela = new JButton("Abrir Financeiro Parcela");
-		btnAbrirFinanceiroParcela.addActionListener(e -> new FormFinanceiroParcela());
+		btnAbrirFinanceiroParcela.addActionListener(e -> {
+			try {
+				FormFinanceiroParcela formFinanceiroParcela = new FormFinanceiroParcela(this);
+				formFinanceiroParcela.toFront();
+			} catch (ParseException ex) {
+				JOptionPane.showMessageDialog(
+					this,
+					"Não foi possível abrir o financeiro parcela: " + ex.getMessage(),
+					"Erro",
+					JOptionPane.ERROR_MESSAGE
+				);
+			}
+		});
 
 		JPanel painelAbrirParcela = new JPanel(new FlowLayout(FlowLayout.CENTER, 10, 0));
 		painelAbrirParcela.add(btnAbrirFinanceiroParcela);
 
 		gbc.gridx = 0;
-		gbc.gridy = 6;
+		gbc.gridy = 7;
 		gbc.gridwidth = 2;
 		gbc.fill = GridBagConstraints.HORIZONTAL;
 		painelPrincipal.add(painelAbrirParcela, gbc);
@@ -245,7 +319,7 @@ public class FormFinanceiro extends JFrame {
 		painelBotoes.add(btnPesquisar);
 
 		gbc.gridx = 0;
-		gbc.gridy = 7;
+		gbc.gridy = 8;
 		gbc.gridwidth = 2;
 		gbc.fill = GridBagConstraints.HORIZONTAL;
 		painelPrincipal.add(painelBotoes, gbc);
@@ -351,6 +425,14 @@ public class FormFinanceiro extends JFrame {
 		}
 	}
 
+	private void atualizarVisibilidadeFinanceiroParcela() {
+		boolean parcelado = "Sim".equals(comboBoxparcelamento.getSelectedItem());
+		btnAbrirFinanceiroParcela.setEnabled(parcelado);
+		btnAbrirFinanceiroParcela.setVisible(parcelado);
+		btnAbrirFinanceiroParcela.setFocusable(parcelado);
+		btnAbrirFinanceiroParcela.getParent().setVisible(parcelado);
+	}
+
 	private void abrirPesquisaFinanceiro() {
 		PesquisaFinanceiro dialog = new PesquisaFinanceiro(this, financeiroController, financeiroParcelaController);
 		dialog.setVisible(true);
@@ -365,6 +447,11 @@ public class FormFinanceiro extends JFrame {
 		idFinanceiroAtual = financeiro.getId();
 		txtDataConta.setText(financeiro.getData_conta() != null ? financeiro.getData_conta().format(UI_DATE_FORMATTER) : "");
 		comboPagarOuReceber.setSelectedIndex(financeiro.getPagar_ou_receber() == 1 ? 0 : 1);
+		boolean ehParcelamento = financeiro.getFinanceiroParcelas() != null && !financeiro.getFinanceiroParcelas().isEmpty();
+		comboBoxparcelamento.setSelectedItem(ehParcelamento ? "Sim" : "Não");
+		atualizarVisibilidadeFinanceiroParcela();
+
+
 		selecionarItemPorId(comboFornecedor, financeiro.getFornecedor() != null ? financeiro.getFornecedor().getId() : 0, Fornecedor::getId);
 		selecionarItemPorId(comboCliente, financeiro.getCliente() != null ? financeiro.getCliente().getId() : 0, Cliente::getId);
 		selecionarItemPorId(comboTipoConta, financeiro.getTipoConta() != null ? financeiro.getTipoConta().getId() : 0, TipoConta::getId);
@@ -383,6 +470,20 @@ public class FormFinanceiro extends JFrame {
 		}
 
 		comboCliente.setSelectedIndex(0);
+	}
+
+	private void preencherCamposVenda(Venda venda) {
+		if (venda.getData_venda() != null) {
+			txtDataConta.setText(venda.getData_venda().format(UI_DATE_FORMATTER));
+		}
+
+		comboPagarOuReceber.setSelectedIndex(1);
+
+		if (venda.getCliente() != null) {
+			selecionarItemPorId(comboCliente, venda.getCliente().getId(), Cliente::getId);
+		}
+
+		comboFornecedor.setSelectedIndex(0);
 	}
 
 	private void salvarFinanceiro() {

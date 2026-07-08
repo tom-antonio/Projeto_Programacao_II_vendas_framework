@@ -29,6 +29,22 @@ public class CompraController {
         this.fornecedorDao = new FornecedorDao();
     }
 
+    public double calcularValorTotalCompra(List<CompraProduto> itensCompra) {
+        logger.info("Calculando valor total da compra com {} itens.", itensCompra != null ? itensCompra.size() : 0);
+        if (itensCompra == null || itensCompra.isEmpty()) {
+            return 0.0;
+        }
+
+        double total = 0.0;
+        for (CompraProduto item : itensCompra) {
+            if (item == null) {
+                continue;
+            }
+            total += item.getQtdeProduto() * item.getValorUnit();
+        }
+        return total;
+    }
+
     // Método para validar e salvar uma compra, incluindo atualização de estoque e preço médio
     public boolean salvarCompra(Compra compra) {
         logger.info("Salvando compra com fornecedor: " + (compra.getFornecedor() != null ? compra.getFornecedor().getNome_fantasia() : "N/A"));

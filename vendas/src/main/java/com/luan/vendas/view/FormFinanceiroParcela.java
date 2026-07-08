@@ -6,16 +6,20 @@ import java.awt.FlowLayout;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
+import java.awt.Window;
+import java.text.ParseException;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 
 import javax.swing.JButton;
+import javax.swing.JFormattedTextField;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
+import javax.swing.text.MaskFormatter;
 
 import com.luan.vendas.controller.FinanceiroParcelaController;
 import com.luan.vendas.model.Financeiro;
@@ -38,22 +42,46 @@ public class FormFinanceiroParcela extends JFrame {
     private JButton btnExcluir;
     private JButton btnPesquisar;
     private final FinanceiroParcelaController financeiroParcelaController;
+    private final Window janelaPai;
     private Integer idFinanceiroParcelaAtual;
 
-    public FormFinanceiroParcela() {
+    public FormFinanceiroParcela() throws ParseException {
+        this(null);
+    }
+
+    public FormFinanceiroParcela(Window janelaPai) throws ParseException {
         setTitle("Cadastro de Financeiro Parcela");
         financeiroParcelaController = new FinanceiroParcelaController();
+        this.janelaPai = janelaPai;
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+        setAlwaysOnTop(true);
+        setAutoRequestFocus(true);
+
+        if (janelaPai instanceof JFrame framePai) {
+            framePai.setEnabled(false);
+        }
+
+        addWindowListener(new java.awt.event.WindowAdapter() {
+            @Override
+            public void windowClosed(java.awt.event.WindowEvent e) {
+                if (FormFinanceiroParcela.this.janelaPai instanceof JFrame framePai) {
+                    framePai.setEnabled(true);
+                    framePai.toFront();
+                    framePai.requestFocus();
+                }
+            }
+        });
 
         inicializarComponentes();
 
         pack();
-        setMinimumSize(new Dimension(600, 420));
+        setMinimumSize(new Dimension(400, 380));
         setLocationRelativeTo(null);
+        toFront();
         setVisible(true);
     }
 
-    private void inicializarComponentes() {
+    private void inicializarComponentes() throws ParseException {
         JPanel painelPrincipal = new JPanel(new GridBagLayout());
         GridBagConstraints gbc = new GridBagConstraints();
 
@@ -76,24 +104,34 @@ public class FormFinanceiroParcela extends JFrame {
         gbc.gridy = 1;
         gbc.fill = GridBagConstraints.NONE;
         gbc.weightx = 0;
-        painelPrincipal.add(new JLabel("Data de Vencimento (DD/MM/YYYY):"), gbc);
+        painelPrincipal.add(new JLabel("Data de Vencimento:"), gbc);
 
         gbc.gridx = 1;
         gbc.fill = GridBagConstraints.HORIZONTAL;
         gbc.weightx = 1;
-        txtDataVencimento = new JTextField(50);
+        
+        MaskFormatter mascaraDataVenc = new MaskFormatter("##/##/####");
+        mascaraDataVenc.setPlaceholderCharacter('_');    
+        txtDataVencimento = new JFormattedTextField(mascaraDataVenc);
+
+        ((JFormattedTextField) txtDataVencimento).setColumns(28);
         painelPrincipal.add(txtDataVencimento, gbc);
 
         gbc.gridx = 0;
         gbc.gridy = 2;
         gbc.fill = GridBagConstraints.NONE;
         gbc.weightx = 0;
-        painelPrincipal.add(new JLabel("Data de Pagamento (DD/MM/YYYY):"), gbc);
+        painelPrincipal.add(new JLabel("Data de Pagamento:"), gbc);
 
         gbc.gridx = 1;
         gbc.fill = GridBagConstraints.HORIZONTAL;
         gbc.weightx = 1;
-        txtDataPagamento = new JTextField(50);
+        
+        MaskFormatter mascaraDataPag = new MaskFormatter("##/##/####");
+        mascaraDataPag.setPlaceholderCharacter('_');
+        txtDataPagamento = new JFormattedTextField(mascaraDataPag);
+        
+        ((JFormattedTextField) txtDataPagamento).setColumns(28);
         painelPrincipal.add(txtDataPagamento, gbc);
 
         gbc.gridx = 0;
